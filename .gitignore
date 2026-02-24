@@ -22,6 +22,9 @@ logs/
 # PHP
 *.phar
 
+# Credentials — ne jamais committer
+php/config.php
+
 # PrestaShop (prestations/)
 prestations/vendor/
 prestations/cache/

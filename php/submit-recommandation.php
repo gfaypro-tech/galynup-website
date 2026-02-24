@@ -7,15 +7,8 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-// Configuration de la base de données
-// À MODIFIER avec vos identifiants OVH
-define('DB_HOST', 'galynusgaellefay.mysql.db');
-define('DB_NAME', 'galynusgaellefay');
-define('DB_USER', 'galynusgaellefay');
-define('DB_PASS', 'Newlife2026et253545y');
-
-// Email de notification
-define('NOTIFICATION_EMAIL', 'recommandation@galynup.fr');
+// Configuration de la base de données (credentials dans config.php, ignoré par git)
+require_once __DIR__ . '/config.php';
 
 // Fonction pour nettoyer les données
 function clean_input($data) {

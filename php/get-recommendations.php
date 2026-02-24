@@ -4,11 +4,8 @@
  * Retourne les recommandations depuis la base de données MySQL
  */
 
-// Configuration de la base de données
-define('DB_HOST', 'galynusgaellefay.mysql.db');
-define('DB_NAME', 'galynusgaellefay');
-define('DB_USER', 'galynusgaellefay');
-define('DB_PASS', 'Newlife2026et253545y');
+// Configuration de la base de données (credentials dans config.php, ignoré par git)
+require_once __DIR__ . '/config.php';
 
 /**
  * Récupère les recommandations approuvées depuis la base de données
