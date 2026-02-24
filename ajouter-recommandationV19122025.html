@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>Ajouter une recommandation - GALYN'UP</title>
+    <meta name="description" content="Partagez votre expérience de collaboration avec Gaëlle FAY">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/galynup-logo.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="images/galynup-logo-180.png">
+    <link rel="apple-touch-icon" href="images/galynup-logo-180.png">
+    
+    <link rel="stylesheet" href="css/style.css?v=1.0.9">
+    <style>
+        .recommendation-form-container {
+            min-height: 100vh;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 180px;
+        }
+        
+        .form-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .form-header p {
+            font-size: 1.125rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .recommendation-form {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .form-group label .required {
+            color: #ef4444;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .rating-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .rating-label {
+            font-weight: 500;
+            color: #374151;
+            flex: 1;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 0.25rem;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .star-rating input {
+            display: none;
+        }
+        
+        .star-rating label {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #d1d5db;
+            transition: all 0.2s ease;
+            margin: 0;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #d97706;
+            transform: scale(1.1);
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background: #f5f3ff;
+        }
+        
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .consent-group {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background: #fef3c7;
+            border-radius: 0.5rem;
+            border: 2px solid #fbbf24;
+        }
+        
+        .consent-group input[type="checkbox"] {
+            margin-top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+        
+        .consent-group label {
+            cursor: pointer;
+            color: #78350f;
+            line-height: 1.6;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(147, 51, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        #charCounter.valid {
+            color: #9333ea;
+        }
+        
+        .success-message,
+        .error-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        @media (max-width: 768px) {
+            .form-header {
+                padding-top: 100px;
+            }
+            
+            .form-header h1 {
+                font-size: 1.875rem;
+            }
+            
+            .recommendation-form {
+                padding: 2rem 1.5rem;
+            }
+            
+            .rating-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <div style="background: white; padding: 1.5rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/" style="text-decoration: none;">
+                <img src="images/galynup-logo-180.png" alt="GALYN'UP Logo" style="height: 50px; width: auto;">
+            </a>
+            <div style="display: flex; gap: 3rem; align-items: center;">
+                <!-- Symbole 1: Valise -->
+                <div style="text-align: center;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="1.5" style="margin: 0 auto 0.5rem;">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Aide ma visibilité</p>
+                </div>
+                <!-- Symbole 2: Diamant -->
+                <div style="text-align: center;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="1.5" style="margin: 0 auto 0.5rem;">
+                        <path d="M6 3h12l3 6-9 12-9-12 3-6z"></path>
+                        <line x1="9" y1="9" x2="15" y2="9"></line>
+                    </svg>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Inspire confiance</p>
+                </div>
+                <!-- Symbole 3: Horloge -->
+                <div style="text-align: center;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="1.5" style="margin: 0 auto 0.5rem;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Rapide et simple</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="recommendation-form-container">
+        <div class="container">
+            <div class="form-header">
+                <h1>✨ Partagez votre expérience</h1>
+                <p>Votre recommandation aide d'autres professionnels à mieux connaître mon travail. Merci de prendre quelques minutes pour partager votre retour d'expérience.</p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <strong>✅ Merci !</strong> Votre recommandation a été envoyée avec succès. Elle sera publiée après validation.
+            </div>
+            
+            <div id="errorMessage" class="error-message">
+                <strong>❌ Erreur</strong> Une erreur est survenue. Veuillez réessayer ou me contacter directement à <a href="mailto:recommandation@galynup.fr">recommandation@galynup.fr</a>
+            </div>
+            
+            <form id="recommendationForm" class="recommendation-form" method="POST" action="php/submit-recommandation.php" enctype="multipart/form-data">
+                <!-- Informations personnelles -->
+                <div class="form-section">
+                    <h2 class="form-section-title">📋 Vos informations</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom complet <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required placeholder="Jean Dupont">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="position">Poste <span class="required">*</span></label>
+                        <input type="text" id="position" name="position" required placeholder="Directeur des Systèmes d'Information">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Entreprise <span class="required">*</span></label>
+                        <input type="text" id="company" name="company" required placeholder="Banque de France">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email (optionnel)</label>
+                        <input type="email" id="email" name="email" placeholder="jean.dupont@example.com">
+                        <small style="color: #6b7280; font-size: 0.875rem;">Votre email ne sera pas publié</small>
+                    </div>
+                </div>
+                
+                <!-- Évaluations -->
+                <div class="form-section">
+                    <h2 class="form-section-title">⭐ Évaluez les compétences</h2>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Notez de 1 à 5 étoiles les compétences suivantes</p>
+                    
+                    <div class="rating-group">
+                        <span class="rating-label">Leadership</span>
+                        <div class="star-rating">
+                            <input type="radio" id="leadership-5" name="leadership" value="5" required>
+                            <label for="leadership-5">★</label>
+                            <input type="radio" id="leadership-4" name="leadership" value="4">
+                            <label for="leadership-4">★</label>
+                            <input type="radio" id="leadership-3" name="leadership" value="3">
+                            <label for="leadership-3">★</label>
+                            <input type="radio" id="leadership-2" name="leadership" value="2">
+                            <label for="leadership-2">★</label>
+                            <input type="radio" id="leadership-1" name="leadership" value="1">
+                            <label for="leadership-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-group">
+                        <span class="rating-label">Direction de projet</span>
+                        <div class="star-rating">
+                            <input type="radio" id="project-5" name="project_management" value="5" required>
+                            <label for="project-5">★</label>
+                            <input type="radio" id="project-4" name="project_management" value="4">
+                            <label for="project-4">★</label>
+                            <input type="radio" id="project-3" name="project_management" value="3">
+                            <label for="project-3">★</label>
+                            <input type="radio" id="project-2" name="project_management" value="2">
+                            <label for="project-2">★</label>
+                            <input type="radio" id="project-1" name="project_management" value="1">
+                            <label for="project-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-group">
+                        <span class="rating-label">Stratégie</span>
+                        <div class="star-rating">
+                            <input type="radio" id="strategy-5" name="strategy" value="5" required>
+                            <label for="strategy-5">★</label>
+                            <input type="radio" id="strategy-4" name="strategy" value="4">
+                            <label for="strategy-4">★</label>
+                            <input type="radio" id="strategy-3" name="strategy" value="3">
+                            <label for="strategy-3">★</label>
+                            <input type="radio" id="strategy-2" name="strategy" value="2">
+                            <label for="strategy-2">★</label>
+                            <input type="radio" id="strategy-1" name="strategy" value="1">
+                            <label for="strategy-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-group">
+                        <span class="rating-label">Méthodologie</span>
+                        <div class="star-rating">
+                            <input type="radio" id="methodology-5" name="methodology" value="5" required>
+                            <label for="methodology-5">★</label>
+                            <input type="radio" id="methodology-4" name="methodology" value="4">
+                            <label for="methodology-4">★</label>
+                            <input type="radio" id="methodology-3" name="methodology" value="3">
+                            <label for="methodology-3">★</label>
+                            <input type="radio" id="methodology-2" name="methodology" value="2">
+                            <label for="methodology-2">★</label>
+                            <input type="radio" id="methodology-1" name="methodology" value="1">
+                            <label for="methodology-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-group">
+                        <span class="rating-label">Gouvernance</span>
+                        <div class="star-rating">
+                            <input type="radio" id="governance-5" name="governance" value="5" required>
+                            <label for="governance-5">★</label>
+                            <input type="radio" id="governance-4" name="governance" value="4">
+                            <label for="governance-4">★</label>
+                            <input type="radio" id="governance-3" name="governance" value="3">
+                            <label for="governance-3">★</label>
+                            <input type="radio" id="governance-2" name="governance" value="2">
+                            <label for="governance-2">★</label>
+                            <input type="radio" id="governance-1" name="governance" value="1">
+                            <label for="governance-1">★</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Témoignage -->
+                <div class="form-section">
+                    <h2 class="form-section-title">💬 Votre témoignage</h2>
+                    
+                    <div class="form-group">
+                        <label for="testimonial">Partagez votre expérience <span class="required">*</span></label>
+                        <textarea id="testimonial" name="testimonial" required placeholder="Décrivez votre expérience de collaboration avec Gaëlle FAY : contexte du projet, résultats obtenus, points forts..."></textarea>
+                        <small style="color: #6b7280; font-size: 0.875rem;">Minimum 50 caractères</small>
+                    </div>
+                </div>
+                
+                <!-- Document (optionnel) -->
+                <div class="form-section">
+                    <h2 class="form-section-title">📎 Joindre un document (optionnel)</h2>
+                    
+                    <div class="form-group">
+                        <div class="file-upload">
+                            <input type="file" id="photo" name="photo" accept="image/*">
+                            <div class="file-upload-label">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span>Cliquez pour joindre un document</span>
+                            </div>
+                        </div>
+                        <div id="fileName" class="file-name"></div>
+                        <small style="color: #6b7280; font-size: 0.875rem;">Format: JPG, PNG - Max 2 Mo</small>
+                    </div>
+                </div>
+                
+                <!-- Consentement RGPD -->
+                <div class="form-section">
+                    <div class="consent-group">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label for="consent">
+                            J'accepte que mes données personnelles soient collectées et traitées par GALYN'UP dans le cadre de cette recommandation. Ces données seront utilisées uniquement pour publication sur le site web après validation. Conformément au RGPD, je peux demander l'accès, la rectification ou la suppression de mes données en contactant <a href="mailto:recommandation@galynup.fr" style="color: #78350f; text-decoration: underline;">recommandation@galynup.fr</a> <span class="required">*</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Envoyer ma recommandation</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Compteur de caractères
+        const testimonialInput = document.getElementById('testimonial');
+        const charCounter = document.getElementById('charCounter');
+        const minChars = 50;
+        
+        testimonialInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCounter.textContent = length + '/' + minChars;
+            
+            if (length >= minChars) {
+                charCounter.classList.add('valid');
+            } else {
+                charCounter.classList.remove('valid');
+            }
+        });
+        
+        // Afficher le nom du fichier sélectionné
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || '';
+            const fileNameDisplay = document.getElementById('fileName');
+            if (fileName) {
+                fileNameDisplay.textContent = '📎 ' + fileName;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        });
+        
+        // Gestion de la soumission du formulaire
+        document.getElementById('recommendationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = form.querySelector('.submit-btn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Vérifier la longueur du témoignage
+            const testimonial = document.getElementById('testimonial').value;
+            if (testimonial.length < 50) {
+                errorMessage.textContent = '❌ Votre témoignage doit contenir au moins 50 caractères.';
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                return;
+            }
+            
+            // Désactiver le bouton et afficher l'état de chargement
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Envoi en cours...';
+            
+            // Masquer les messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            try {
+                const formData = new FormData(form);
+                
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    document.getElementById('fileName').textContent = '';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    errorMessage.innerHTML = '<strong>❌ Erreur</strong> ' + (result.message || 'Une erreur est survenue.');
+                    errorMessage.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } catch (error) {
+                errorMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Envoyer ma recommandation';
+            }
+        });
+    </script>
+</body>
+</html>

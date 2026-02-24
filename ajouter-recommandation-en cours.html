@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une recommandation - GALYN'UP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">    
+    <style>
+        /* ============================================
+           STYLES SPÉCIFIQUES PAGE RECOMMANDATION
+           ============================================ */
+        
+        /* ─────────────────────────────────────────
+           1. HERO SECTION
+           ───────────────────────────────────────── */
+        .recommendation-hero {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(217, 119, 6, 0.03) 100%);
+            padding: 3rem 1rem 2rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .recommendation-hero {
+                padding: 4rem 2rem 3rem;
+            }
+        }
+        
+        .hero-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 4px solid #9333ea;
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.3);
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+        }
+        
+        .hero-title {
+            font-size: 1.75rem;
+            color: #9333ea;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #9333ea;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* ─────────────────────────────────────────
+           2. WHY SECTION (Pourquoi votre avis)
+           ───────────────────────────────────────── */
+        .why-section {
+            padding: 3rem 1rem;
+            background: white;
+        }
+        
+        @media (min-width: 768px) {
+            .why-section {
+                padding: 4rem 2rem;
+            }
+        }
+        
+        .why-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 768px) {
+            .why-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+            }
+        }
+        
+        .why-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: #f9fafb;
+            border-radius: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .why-card:hover {
+            border-color: #9333ea;
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        .why-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .why-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .why-description {
+            font-size: 0.9375rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        /* ─────────────────────────────────────────
+           3. FORM SECTION
+           ───────────────────────────────────────── */
+        .form-section {
+            padding: 2rem 1rem 4rem;
+            background: #f9fafb;
+        }
+        
+        @media (min-width: 768px) {
+            .form-section {
+                padding: 3rem 2rem 5rem;
+            }
+        }
+        
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        @media (min-width: 768px) {
+            .form-container {
+                padding: 3rem;
+            }
+        }
+        
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #9333ea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3e8ff;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-label .required {
+            color: #dc2626;
+        }
+        
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            color: #1f2937;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #9333ea;
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-hint {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.375rem;
+        }
+        
+        /* Stars Rating */
+        .rating-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .rating-label {
+            display: block;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stars-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all 0.2s;
+        }
+        
+        .star:hover,
+        .star.filled {
+            color: #d97706;
+            transform: scale(1.1);
+        }
+        
+      /* Photo Upload */
+.photo-upload {
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f9fafb;
+    display: block;
+}
+
+.photo-upload:hover {
+    border-color: #9333ea;
+    background: rgba(147, 51, 234, 0.05);
+}
+
+.photo-upload-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.photo-upload-text {
+    font-size: 0.9375rem;
+    color: #6b7280;
+    display: block;
+}
+
+.photo-upload input[type="file"] {
+    display: none;
+}
+        
+        /* Checkbox RGPD */
+        .checkbox-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .checkbox-label a {
+            color: #9333ea;
+            text-decoration: underline;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(147, 51, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Messages */
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .message.show {
+            display: block;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="recommendation-hero">
+        <div class="container">
+            <!-- Avatar (initiales ou photo) -->
+            <div class="hero-avatar">GF</div>
+            
+            <!-- Titre principal -->
+            <h1 class="hero-title">
+                <span>✨</span> Partagez votre expérience
+            </h1>
+            
+            <!-- Sous-titre -->
+            <p class="hero-subtitle">
+                Votre recommandation aide d'autres professionnels à mieux connaître mon travail. 
+                Merci de prendre quelques minutes pour partager votre retour d'expérience.
+            </p>
+            
+            <div class="stat-item">
+                    <div class="stat-number">2 min</div>
+                    <div class="stat-label">Temps estimé</div>
+        </div>
+    </section>
+    
+    <!-- ============================================
+         WHY SECTION (Pourquoi votre avis compte)
+         ============================================ -->
+    <section class="why-section">
+        <div class="container">
+            <div class="why-grid">
+                <!-- Carte 1 -->
+                <div class="why-card">
+                    <div class="why-icon">💼</div>
+                    <h3 class="why-title">Aide ma visibilité</h3>
+                    <p class="why-description">
+                        Votre recommandation renforce ma crédibilité professionnelle
+                    </p>
+                </div>
+                
+                <!-- Carte 2 -->
+                <div class="why-card">
+                    <div class="why-icon">🤝</div>
+                    <h3 class="why-title">Inspire confiance</h3>
+                    <p class="why-description">
+                        Vos mots aident les futurs clients à me choisir en toute sérénité
+                    </p>
+                </div>
+                
+                <!-- Carte 3 -->
+                <div class="why-card">
+                    <div class="why-icon">⏱️</div>
+                    <h3 class="why-title">Rapide et simple</h3>
+                    <p class="why-description">
+                        Seulement 2 minutes pour faire une vraie différence
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ============================================
+         FORM SECTION
+         ============================================ -->
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                
+                <!-- Messages de succès/erreur -->
+                <div class="message success" id="successMessage">
+                    <strong>✅ Merci !</strong> Votre recommandation a été envoyée avec succès. 
+                    Elle sera publiée après validation.
+                </div>
+                
+                <div class="message error" id="errorMessage">
+                    <strong>❌ Erreur</strong> Une erreur est survenue. Veuillez réessayer ou me contacter 
+                    directement à <a href="mailto:recommandation@galynup.fr">recommandation@galynup.fr</a>
+                </div>
+                
+                <!-- Formulaire -->
+                <form id="recommendationForm" method="POST" action="php/submit-recommandation.php" enctype="multipart/form-data">
+                    
+                    <!-- ─────────────────────────────────
+                         SECTION 1 : Vos informations
+                         ───────────────────────────────── -->
+                    <h2 class="form-section-title">
+                        <span>📋</span> Vos informations
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">
+                            Nom complet <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            class="form-input" 
+                            placeholder="Jean Dupont"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="position" class="form-label">
+                            Poste <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="position" 
+                            name="position" 
+                            class="form-input" 
+                            placeholder="Directeur des Systèmes d'Information"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company" class="form-label">
+                            Entreprise <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="company" 
+                            name="company" 
+                            class="form-input" 
+                            placeholder="OneDrive"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            Email (optionnel)
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="jean.dupont@exemple.com"
+                        >
+                        <div class="form-hint">Votre email ne sera pas publié</div>
+                    </div>
+                    
+                    <!-- ─────────────────────────────────
+                         SECTION 2 : Évaluez les compétences
+                         ───────────────────────────────── -->
+                    <h2 class="form-section-title">
+                        <span>⭐</span> Évaluez les compétences
+                    </h2>
+                    <p style="color: #6b7280; font-size: 0.9375rem; margin-bottom: 1.5rem;">
+                        Notez de 1 à 5 étoiles les compétences suivantes
+                    </p>
+                    
+                    <!-- Leadership -->
+                    <div class="rating-group">
+                        <label class="rating-label">Leadership</label>
+                        <div class="stars-container" data-rating="leadership">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="leadership" id="leadership" value="0">
+                    </div>
+                    
+                    <!-- Direction de projet -->
+                    <div class="rating-group">
+                        <label class="rating-label">Direction de projet</label>
+                        <div class="stars-container" data-rating="project_management">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="project_management" id="project_management" value="0">
+                    </div>
+                    
+                    <!-- Stratégie -->
+                    <div class="rating-group">
+                        <label class="rating-label">Stratégie</label>
+                        <div class="stars-container" data-rating="strategy">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="strategy" id="strategy" value="0">
+                    </div>
+                    
+                    <!-- Méthodologie -->
+                    <div class="rating-group">
+                        <label class="rating-label">Méthodologie</label>
+                        <div class="stars-container" data-rating="methodology">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="methodology" id="methodology" value="0">
+                    </div>
+                    
+                    <!-- Gouvernance -->
+                    <div class="rating-group">
+                        <label class="rating-label">Gouvernance</label>
+                        <div class="stars-container" data-rating="governance">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="governance" id="governance" value="0">
+                    </div>
+                    
+                    <!-- ─────────────────────────────────
+                         SECTION 3 : Votre témoignage
+                         ───────────────────────────────── -->
+                    <h2 class="form-section-title">
+                        <span>💬</span> Votre témoignage
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="testimonial" class="form-label">
+                            Partagez votre expérience <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            id="testimonial" 
+                            name="testimonial" 
+                            class="form-textarea" 
+                            placeholder="Décrivez votre collaboration, les résultats obtenus, ce qui vous a marqué..."
+                            required
+                            minlength="50"
+                        ></textarea>
+                        <div class="form-hint" style="display: flex; justify-content: space-between; align-items: center;">
+    <span>Minimum 50 caractères</span>
+    <span id="charCount" style="font-weight: 600; color: #d97706;">0/50</span>
+</div>
+                    </div>
+                    
+                    <!-- ─────────────────────────────────
+                         SECTION 4 : Photo (optionnel)
+                         ───────────────────────────────── -->
+                    <h2 class="form-section-title">
+                        <span>📸</span> Photo (optionnel)
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="photo" class="photo-upload">
+                            <div class="photo-upload-icon">📷</div>
+                            <div class="photo-upload-text">
+                                Cliquez pour ajouter votre photo<br>
+                                <small style="color: #9ca3af;">Format: JPG, PNG - Max 2 Mo</small>
+                            </div>
+                            <input 
+                                type="file" 
+                                id="photo" 
+                                name="photo" 
+                                accept="image/jpeg,image/png"
+                            >
+                        </label>
+                    </div>
+                    
+                    <!-- ─────────────────────────────────
+                         RGPD & Submit
+                         ───────────────────────────────── -->
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input 
+                                type="checkbox" 
+                                id="rgpd" 
+                                name="rgpd" 
+                                required
+                            >
+                            <label for="rgpd" class="checkbox-label">
+                                J'accepte que mes données personnelles soient collectées et traitées par GALYN'UP 
+                                dans le cadre de cette recommandation. Ces données seront utilisées uniquement pour 
+                                publication sur le site web après validation. Conformément au RGPD, je peux demander 
+                                l'accès, la rectification ou la suppression de mes données en contactant 
+                                <a href="mailto:recommandation@galynup.fr">recommandation@galynup.fr</a> 
+                                <span class="required">*</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton Submit -->
+                    <button type="submit" class="submit-btn">
+                        Envoyer ma recommandation
+                    </button>
+                    
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
+    <script>
+// Compteur de caractères
+const testimonialInput = document.getElementById('testimonial');
+const charCountDisplay = document.getElementById('charCount');
+
+testimonialInput.addEventListener('input', function() {
+    const length = this.value.length;
+    charCountDisplay.textContent = `${length}/50`;
+    
+    // Orange foncé < 50, Violet ≥ 50
+    if (length >= 50) {
+        charCountDisplay.style.color = '#9333ea'; // Violet
+    } else {
+        charCountDisplay.style.color = '#d97706'; // Orange foncé
+    }
+});
+        // ─────────────────────────────────────────
+        // Gestion des étoiles de notation
+        // ─────────────────────────────────────────
+        document.querySelectorAll('.stars-container').forEach(container => {
+            const stars = container.querySelectorAll('.star');
+            const ratingType = container.getAttribute('data-rating');
+const hiddenInput = document.getElementById(ratingType);
+            
+            stars.forEach((star, index) => {
+                // Au clic
+                star.addEventListener('click', () => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    hiddenInput.value = value;
+                    
+                    // Mettre à jour l'affichage
+                    stars.forEach((s, i) => {
+                        if (i < value) {
+                            s.classList.add('filled');
+                        } else {
+                            s.classList.remove('filled');
+                        }
+                    });
+                });
+                
+                // Au survol
+                star.addEventListener('mouseenter', () => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    stars.forEach((s, i) => {
+                        if (i < value) {
+                            s.style.color = '#d97706';
+                        } else {
+                            s.style.color = '#d1d5db';
+                        }
+                    });
+                });
+            });
+            
+            // Quand la souris quitte
+            container.addEventListener('mouseleave', () => {
+                const currentValue = parseInt(hiddenInput.value);
+                stars.forEach((s, i) => {
+                    if (i < currentValue) {
+                        s.style.color = '#d97706';
+                    } else {
+                        s.style.color = '#d1d5db';
+                    }
+                });
+            });
+        });
+        
+        // ─────────────────────────────────────────
+        // Gestion du formulaire
+        // ─────────────────────────────────────────
+        document.getElementById('recommendationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(this);
+            
+            // Validation basique
+            const fullName = formData.get('fullName');
+            const position = formData.get('position');
+            const company = formData.get('company');
+            const testimonial = formData.get('testimonial');
+            
+            if (!fullName || !position || !company || !testimonial) {
+                showMessage('error', 'Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            if (testimonial.length < 50) {
+                showMessage('error', 'Votre témoignage doit contenir au moins 50 caractères');
+                return;
+            }
+            
+            // Ici : Envoyer les données à votre backend
+            // Pour l'instant, simulation d'envoi
+            console.log('Données du formulaire:', Object.fromEntries(formData));
+            
+            // Simuler un envoi réussi
+            setTimeout(() => {
+                showMessage('success');
+                this.reset();
+                
+                // Réinitialiser les étoiles
+                document.querySelectorAll('.star').forEach(star => {
+                    star.classList.remove('filled');
+                    star.style.color = '#d1d5db';
+                });
+                document.querySelectorAll('input[type="hidden"]').forEach(input => {
+    if (input.name === 'leadership' || input.name === 'project_management' || 
+        input.name === 'strategy' || input.name === 'methodology' || 
+        input.name === 'governance') {
+        input.value = '0';
+    }
+});
+                
+                // Scroll vers le haut
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 500);
+        });
+        
+        // Fonction pour afficher les messages
+        function showMessage(type, customMessage) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Cacher tous les messages
+            successMsg.classList.remove('show');
+            errorMsg.classList.remove('show');
+            
+            // Afficher le bon message
+            if (type === 'success') {
+                successMsg.classList.add('show');
+            } else {
+                if (customMessage) {
+                    errorMsg.innerHTML = '<strong>❌ Erreur</strong> ' + customMessage;
+                }
+                errorMsg.classList.add('show');
+            }
+        }
+        
+        // ─────────────────────────────────────────
+        // Gestion de l'upload photo
+        // ─────────────────────────────────────────
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Vérifier la taille (2 Mo max)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('La photo ne doit pas dépasser 2 Mo');
+                    this.value = '';
+                    return;
+                }
+                
+                // Afficher le nom du fichier
+                const label = this.closest('.photo-upload');
+                const textDiv = label.querySelector('.photo-upload-text');
+                textDiv.innerHTML = `✅ ${file.name}<br><small style="color: #9ca3af;">Cliquez pour changer</small>`;
+            }
+        });
+    </script>
+    
+</body>
+</html>

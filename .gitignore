@@ -1,0 +1,51 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Editeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# PHP
+*.phar
+
+# PrestaShop (prestations/)
+prestations/vendor/
+prestations/cache/
+prestations/var/
+prestations/upload/
+prestations/img/p/
+prestations/img/c/
+prestations/img/m/
+prestations/img/tmp/
+prestations/app/cache/
+prestations/app/logs/
+prestations/config/settings.inc.php
+
+# Dépendances Composer
+vendor/
+composer.phar
+
+# Node / NPM (si utilisé)
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# Archives et fichiers de build
+*.zip
+*.tar.gz
+*.bak
+*.tmp
