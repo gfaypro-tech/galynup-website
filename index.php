@@ -127,55 +127,58 @@
                     <img src="images/hero-ai-governance.png" alt="AI-powered IT Governance and Strategy" class="hero-main-image">
                 </div>
 
-                <!-- Certifications Badges -->
-                <div class="certifications-section">
-                    <h3 class="certifications-title">Certifications & Expertise</h3>
-                    <div class="certifications-grid">
-                        <a href="#cert-strategy" class="cert-badge" title="Stratégie d'entreprise - HEC Paris (24 semaines)">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                            </svg>
-                            <div class="cert-name">Strategy@HEC</div>
-                        </a>
-                        <a href="#cert-togaf" class="cert-badge" title="Architecture d'entreprise - The Open Group">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                <path d="M3 9h18M9 21V9"/>
-                            </svg>
-                            <div class="cert-name">TOGAF®10</div>
-                        </a>
-                        <a href="#cert-itil" class="cert-badge" title="Gestion des services IT - AXELOS">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
-                            </svg>
-                            <div class="cert-name">ITIL®4</div>
-                        </a>
-                        <a href="#cert-pmp" class="cert-badge" title="Project Management Professional - PMI (Above Target)">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 3v18h18"/>
-                                <path d="M18 17V9M13 17v-6M8 17v-3"/>
-                            </svg>
-                            <div class="cert-name">PMP®</div>
-                        </a>
-                        <a href="#cert-acp" class="cert-badge" title="Agile Certified Practitioner - PMI">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
-                                <polyline points="7.5 19.79 7.5 14.6 3 12"/>
-                                <polyline points="21 12 16.5 14.6 16.5 19.79"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                            <div class="cert-name">ACP®</div>
-                        </a>
-                        <a href="#cert-asf" class="cert-badge" title="Agile Scrum Foundation - Exin">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                            </svg>
-                            <div class="cert-name">ASF</div>
-                        </a>
+                <!-- À propos -->
+                <div class="about-content">
+                    <div class="about-photo">
+                        <img src="images/gaelle-fay-photo.jpg" alt="Gaëlle FAY" class="profile-photo">
+                    </div>
+                    <div class="about-text-wrapper">
+                        <h3 class="about-name">Gaëlle FAY</h3>
+                        <p class="about-text">
+                            Présidente de GALYN'UP et CIO ADVISORY, j'accompagne les organisations dans leur transformation numérique en apportant une expertise de Direction des Systèmes d'Information. Mes certifications Strategy@HEC, TOGAF®10, ITIL®4, complétées par PMP®, ACP® et ASF, me donnent une vision stratégique globale de l'alignement entre le SI, les services IT et les objectifs business de l'entreprise. Forte de plus de 20 ans d'expérience en gouvernance IT et pilotage des systèmes d'information, j'apporte une approche holistique alliant vision stratégique, architecture d'entreprise et excellence opérationnelle.
+                            <br><br>
+                            Auteure et créatrice de contenu, je conçois des méthodologies projet/produit augmentées par l'IA, avec une approche centrée sur les cas d'usage concrets et la vision stratégique. J'ai piloté des initiatives de transformation digitale dans les secteurs bancaire, finance, assurance, public et conseil, en coordonnant des équipes de plus de 150 personnes et des budgets supérieurs à 20 millions d'euros par an.
+                            <br><br>
+                            Passionnée par la transmission de connaissances, je suis auteure du livre <a href="https://www.boutique.afnor.org/fr-fr/livre/lia-au-service-de-la-gestion-de-projet-transformons-nos-pratiques/fa213549/443550" target="_blank" rel="noopener noreferrer" class="text-link">"L'IA au service de la gestion de projet, transformons nos pratiques"</a> publié aux éditions AFNOR. Je rédige également des articles pour le <a href="https://blog-gestion-de-projet.com/gaelle-fay/" target="_blank" rel="noopener noreferrer" class="text-link">Blog Gestion De Projet (BGDP)</a> et je crée des contenus pédagogiques à travers mon Live Café IA et ma chaîne YouTube <a href="https://www.youtube.com/@MindGaëlle" target="_blank" rel="noopener noreferrer" class="text-link">MindGaëlle</a>, où je partage mon expertise sur l'intelligence artificielle appliquée à la gestion de projet.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="expertise-carousel">
+                    <div class="expertise-card active" data-index="0">
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        <p>Certifiée Strategy@HEC, TOGAF®10, PMP®, ACP®, ASF, ITIL®4</p>
+                    </div>
+                    <div class="expertise-card" data-index="1">
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        <p>Experte en management de projets/produits avec budget 20 M/an</p>
+                    </div>
+                    <div class="expertise-card" data-index="2">
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        <p>Coordination de projets transverses (>150 personnes)</p>
+                    </div>
+                    <div class="expertise-card" data-index="3">
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        <p>Secteurs: bancaire, finance, assurance, public, conseil</p>
+                    </div>
+                    <div class="expertise-card" data-index="4">
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        <p>Auteure et créatrice de contenus pédagogiques (Live Café IA, YouTube 'MindGaëlle', méthodologies projet/produit augmentées par l'IA)</p>
                     </div>
                 </div>
 
@@ -217,69 +220,6 @@
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="section section-gray">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">À propos</h2>
-            </div>
-            
-            <div class="about-content">
-                <div class="about-photo">
-                    <img src="images/gaelle-fay-photo.jpg" alt="Gaëlle FAY" class="profile-photo">
-                </div>
-                <div class="about-text-wrapper">
-                    <h3 class="about-name">Gaëlle FAY</h3>
-                    <p class="about-text">
-                        Présidente de GALYN'UP et CIO ADVISORY, j'accompagne les organisations dans leur transformation numérique en apportant une expertise de Direction des Systèmes d'Information. Mes certifications Strategy@HEC, TOGAF®10, ITIL®4, complétées par PMP®, ACP® et ASF, me donnent une vision stratégique globale de l'alignement entre le SI, les services IT et les objectifs business de l'entreprise. Forte de plus de 20 ans d'expérience en gouvernance IT et pilotage des systèmes d'information, j'apporte une approche holistique alliant vision stratégique, architecture d'entreprise et excellence opérationnelle.
-                        <br><br>
-                        Auteure et créatrice de contenu, je conçois des méthodologies projet/produit augmentées par l'IA, avec une approche centrée sur les cas d'usage concrets et la vision stratégique. J'ai piloté des initiatives de transformation digitale dans les secteurs bancaire, finance, assurance, public et conseil, en coordonnant des équipes de plus de 150 personnes et des budgets supérieurs à 20 millions d'euros par an.
-                        <br><br>
-                        Passionnée par la transmission de connaissances, je suis auteure du livre <a href="https://www.boutique.afnor.org/fr-fr/livre/lia-au-service-de-la-gestion-de-projet-transformons-nos-pratiques/fa213549/443550" target="_blank" rel="noopener noreferrer" class="text-link">"L'IA au service de la gestion de projet, transformons nos pratiques"</a> publié aux éditions AFNOR. Je rédige également des articles pour le <a href="https://blog-gestion-de-projet.com/gaelle-fay/" target="_blank" rel="noopener noreferrer" class="text-link">Blog Gestion De Projet (BGDP)</a> et je crée des contenus pédagogiques à travers mon Live Café IA et ma chaîne YouTube <a href="https://www.youtube.com/@MindGaëlle" target="_blank" rel="noopener noreferrer" class="text-link">MindGaëlle</a>, où je partage mon expertise sur l'intelligence artificielle appliquée à la gestion de projet.
-                    </p>
-                </div>
-            </div>
-
-            <div class="expertise-carousel">
-                <div class="expertise-card active" data-index="0">
-                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <path d="M22 4L12 14.01l-3-3"/>
-                    </svg>
-                    <p>Certifiée Strategy@HEC, TOGAF®10, PMP®, ACP®, ASF, ITIL®4</p>
-                </div>
-                <div class="expertise-card" data-index="1">
-                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <path d="M22 4L12 14.01l-3-3"/>
-                    </svg>
-                    <p>Experte en management de projets/produits avec budget 20 M/an</p>
-                </div>
-                <div class="expertise-card" data-index="2">
-                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <path d="M22 4L12 14.01l-3-3"/>
-                    </svg>
-                    <p>Coordination de projets transverses (>150 personnes)</p>
-                </div>
-                <div class="expertise-card" data-index="3">
-                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <path d="M22 4L12 14.01l-3-3"/>
-                    </svg>
-                    <p>Secteurs: bancaire, finance, assurance, public, conseil</p>
-                </div>
-                <div class="expertise-card" data-index="4">
-                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <path d="M22 4L12 14.01l-3-3"/>
-                    </svg>
-                    <p>Auteure et créatrice de contenus pédagogiques (Live Café IA, YouTube 'MindGaëlle', méthodologies projet/produit augmentées par l'IA)</p>
                 </div>
             </div>
         </div>
