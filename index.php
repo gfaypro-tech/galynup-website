@@ -113,14 +113,17 @@
     <section class="hero-section">
         <div class="container">
             <div class="hero-content-new">
-                <!-- Branding -->
-                <div class="brand-container">
-                    <h1 class="brand-name">GALYN'UP</h1>
-                    <p class="brand-subtitle">CIO ADVISORY</p>
+                <!-- Branding + Image -->
+                <div class="hero-brand-row">
+                    <div class="brand-container">
+                        <h1 class="brand-name">GALYN'UP</h1>
+                        <p class="brand-subtitle">CIO ADVISORY</p>
+                        <p class="positioning-text">DSI Advisory | Stratégie SI & IA | Transformation Digitale</p>
+                    </div>
+                    <div class="hero-brand-image">
+                        <img src="images/hero-ai-governance.png" alt="AI-powered IT Governance and Strategy">
+                    </div>
                 </div>
-
-                <!-- Positioning -->
-                <p class="positioning-text">DSI Advisory | Stratégie SI & IA | Transformation Digitale</p>
 
                 <!-- À propos -->
                 <div class="about-content">
@@ -137,11 +140,6 @@
                             Passionnée par la transmission de connaissances, je suis auteure du livre <a href="https://www.boutique.afnor.org/fr-fr/livre/lia-au-service-de-la-gestion-de-projet-transformons-nos-pratiques/fa213549/443550" target="_blank" rel="noopener noreferrer" class="text-link">"L'IA au service de la gestion de projet, transformons nos pratiques"</a> publié aux éditions AFNOR. Je rédige également des articles pour le <a href="https://blog-gestion-de-projet.com/gaelle-fay/" target="_blank" rel="noopener noreferrer" class="text-link">Blog Gestion De Projet (BGDP)</a> et je crée des contenus pédagogiques à travers mon Live Café IA et ma chaîne YouTube <a href="https://www.youtube.com/@MindGaëlle" target="_blank" rel="noopener noreferrer" class="text-link">MindGaëlle</a>, où je partage mon expertise sur l'intelligence artificielle appliquée à la gestion de projet.
                         </p>
                     </div>
-                </div>
-
-                <!-- Hero Image -->
-                <div class="hero-image-center">
-                    <img src="images/hero-ai-governance.png" alt="AI-powered IT Governance and Strategy" class="hero-main-image">
                 </div>
 
                 <div class="expertise-carousel">

@@ -598,9 +598,39 @@ h3 {
     padding: 0 1rem;
 }
 
-/* Branding */
+/* Branding + Image row */
+.hero-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+}
+
 .brand-container {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.hero-brand-image img {
+    width: 200px;
+    height: auto;
+    border-radius: 1rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+    .hero-brand-row {
+        flex-direction: column;
+        text-align: center;
+    }
+    .brand-container {
+        text-align: center;
+    }
+    .hero-brand-image img {
+        width: 150px;
+    }
 }
 
 .brand-name {
