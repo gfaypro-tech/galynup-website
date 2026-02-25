@@ -83,7 +83,6 @@
                         <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
                         <path d="M12 6v6l4 2"/>
                     </svg>
-                    <span class="navbar-name">Gaëlle FAY</span>
                 </div>
                 <div class="nav-menu" id="navMenu">
                     <a href="#about" class="nav-link">À propos</a>
@@ -235,6 +234,7 @@
                     <img src="images/gaelle-fay-photo.jpg" alt="Gaëlle FAY" class="profile-photo">
                 </div>
                 <div class="about-text-wrapper">
+                    <h3 class="about-name">Gaëlle FAY</h3>
                     <p class="about-text">
                         Présidente de GALYN'UP et CIO ADVISORY, j'accompagne les organisations dans leur transformation numérique en apportant une expertise de Direction des Systèmes d'Information. Mes certifications Strategy@HEC, TOGAF®10, ITIL®4, complétées par PMP®, ACP® et ASF, me donnent une vision stratégique globale de l'alignement entre le SI, les services IT et les objectifs business de l'entreprise. Forte de plus de 20 ans d'expérience en gouvernance IT et pilotage des systèmes d'information, j'apporte une approche holistique alliant vision stratégique, architecture d'entreprise et excellence opérationnelle.
                         <br><br>
@@ -282,176 +282,150 @@
                     <p>Auteure et créatrice de contenus pédagogiques (Live Café IA, YouTube 'MindGaëlle', méthodologies projet/produit augmentées par l'IA)</p>
                 </div>
             </div>
-
-            <div class="about-image">
-                <img src="images/team-collaboration.jpg" alt="Collaboration d'équipe" class="rounded-image">
-            </div>
         </div>
     </section>
 
 
 
-    <!-- Certifications Details Sections -->
-    <section id="competences" class="section" style="padding: 2rem 0 1rem;">
+    <!-- Certifications Section -->
+    <section id="competences" class="section">
         <div class="container">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
+            <div class="section-header">
                 <h2 class="section-title">Compétences</h2>
                 <p class="section-description">
                     Découvrez en détail mes certifications et les compétences associées pour accompagner votre transformation.
                 </p>
             </div>
-        </div>
-    </section>
-    
-    <!-- Strategy@HEC Detail -->
-    <section id="cert-strategy" class="section section-gray">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
-                <h2 class="section-title">Strategy@HEC</h2>
-                <p class="cert-detail-subtitle">Stratégie d'entreprise - HEC Paris (24 semaines)</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Formation approfondie en stratégie d'entreprise dispensée par HEC Paris, l'une des meilleures business schools au monde. Cette certification de 24 semaines couvre les aspects fondamentaux de la stratégie corporate et business.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Analyse stratégique et diagnostic d'entreprise</li>
-                    <li>Formulation et déploiement de stratégies corporate</li>
-                    <li>Alignement stratégique SI/Business</li>
-                    <li>Gouvernance d'entreprise et pilotage stratégique</li>
-                    <li>Vision globale de la chaîne de valeur</li>
-                </ul>
-            </div>
-        </div>
-    </section>
 
-    <!-- TOGAF®10 Detail -->
-    <section id="cert-togaf" class="section">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <path d="M3 9h18M9 21V9"/>
-                </svg>
-                <h2 class="section-title">TOGAF®10</h2>
-                <p class="cert-detail-subtitle">Architecture d'entreprise - The Open Group</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Certification en architecture d'entreprise selon le framework TOGAF (The Open Group Architecture Framework), référence mondiale pour structurer et gouverner l'architecture des systèmes d'information.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Architecture d'entreprise et urbanisation du SI</li>
-                    <li>Méthode ADM (Architecture Development Method)</li>
-                    <li>Gouvernance et gestion du portefeuille d'architecture</li>
-                    <li>Alignement architecture/stratégie business</li>
-                    <li>Modélisation et documentation d'architecture</li>
-                </ul>
-            </div>
-        </div>
-    </section>
+            <div class="certifications-grid">
+                <!-- Certification 1 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">Strategy@HEC</h3>
+                    <p class="certification-badge-text">Stratégie d'entreprise - HEC Paris (24 semaines)</p>
+                    <p class="certification-description">
+                        Formation approfondie en stratégie d'entreprise dispensée par HEC Paris, l'une des meilleures business schools au monde.
+                    </p>
+                    <ul class="certification-features">
+                        <li>Analyse stratégique et diagnostic d'entreprise</li>
+                        <li>Formulation et déploiement de stratégies corporate</li>
+                        <li>Alignement stratégique SI/Business</li>
+                        <li>Gouvernance d'entreprise et pilotage stratégique</li>
+                    </ul>
+                </div>
 
-    <!-- ITIL®4 Detail -->
-    <section id="cert-itil" class="section section-gray">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
-                </svg>
-                <h2 class="section-title">ITIL®4</h2>
-                <p class="cert-detail-subtitle">Gestion des services IT - AXELOS</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Certification ITIL 4 (Information Technology Infrastructure Library), framework de référence pour la gestion des services IT et l'excellence opérationnelle.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Gestion des services IT et ITSM</li>
-                    <li>Chaîne de valeur des services (Service Value Chain)</li>
-                    <li>Pratiques ITIL et amélioration continue</li>
-                    <li>Gouvernance IT et gestion des opérations</li>
-                    <li>Vision end-to-end de la delivery SI</li>
-                </ul>
-            </div>
-        </div>
-    </section>
+                <!-- Certification 2 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M9 21V9"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">TOGAF®10</h3>
+                    <p class="certification-badge-text">Architecture d'entreprise - The Open Group</p>
+                    <p class="certification-description">
+                        Certification en architecture d'entreprise selon le framework TOGAF, référence mondiale pour structurer et gouverner l'architecture des systèmes d'information.
+                    </p>
+                    <ul class="certification-features">
+                        <li>Architecture d'entreprise et urbanisation du SI</li>
+                        <li>Méthode ADM (Architecture Development Method)</li>
+                        <li>Gouvernance et gestion du portefeuille d'architecture</li>
+                        <li>Alignement architecture/stratégie business</li>
+                    </ul>
+                </div>
 
-    <!-- PMP® Detail -->
-    <section id="cert-pmp" class="section">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 3v18h18"/>
-                    <path d="M18 17V9M13 17v-6M8 17v-3"/>
-                </svg>
-                <h2 class="section-title">PMP®</h2>
-                <p class="cert-detail-subtitle">Project Management Professional - PMI (Above Target)</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Certification PMP (Project Management Professional) du PMI, référence mondiale en management de projet. Obtenue avec mention "Above Target", attestant d'une maîtrise approfondie des pratiques de gestion de projet.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Management de projets complexes (budget 20 M€/an)</li>
-                    <li>Coordination de projets transverses (>150 personnes)</li>
-                    <li>Gestion de portefeuille projets et gouvernance</li>
-                    <li>Pilotage budgétaire et gestion des risques</li>
-                    <li>Leadership et management d'équipes pluridisciplinaires</li>
-                </ul>
-            </div>
-        </div>
-    </section>
+                <!-- Certification 3 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">ITIL®4</h3>
+                    <p class="certification-badge-text">Gestion des services IT - AXELOS</p>
+                    <p class="certification-description">
+                        Framework de référence pour la gestion des services IT et l'excellence opérationnelle.
+                    </p>
+                    <ul class="certification-features">
+                        <li>Gestion des services IT et ITSM</li>
+                        <li>Chaîne de valeur des services (Service Value Chain)</li>
+                        <li>Pratiques ITIL et amélioration continue</li>
+                        <li>Gouvernance IT et gestion des opérations</li>
+                    </ul>
+                </div>
 
-    <!-- ACP® Detail -->
-    <section id="cert-acp" class="section section-gray">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                    <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
-                    <polyline points="7.5 19.79 7.5 14.6 3 12"/>
-                    <polyline points="21 12 16.5 14.6 16.5 19.79"/>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                    <line x1="12" y1="22.08" x2="12" y2="12"/>
-                </svg>
-                <h2 class="section-title">ACP®</h2>
-                <p class="cert-detail-subtitle">Agile Certified Practitioner - PMI</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Certification Agile Certified Practitioner du PMI, attestant d'une expertise dans les méthodologies agiles et leur application dans des contextes projets variés.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Méthodologies agiles (Scrum, Kanban, Lean)</li>
-                    <li>Pilotage de projets en mode hybride</li>
-                    <li>Facilitation et coaching d'équipes agiles</li>
-                    <li>Amélioration continue et rétrospectives</li>
-                    <li>Adaptation des pratiques agiles aux contextes d'entreprise</li>
-                </ul>
-            </div>
-        </div>
-    </section>
+                <!-- Certification 4 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18 17V9M13 17v-6M8 17v-3"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">PMP®</h3>
+                    <p class="certification-badge-text">Project Management Professional - PMI (Above Target)</p>
+                    <p class="certification-description">
+                        Certification du PMI, référence mondiale en management de projet. Obtenue avec mention "Above Target".
+                    </p>
+                    <ul class="certification-features">
+                        <li>Management de projets complexes (budget 20 M€/an)</li>
+                        <li>Coordination de projets transverses (>150 personnes)</li>
+                        <li>Gestion de portefeuille projets et gouvernance</li>
+                        <li>Leadership et management d'équipes pluridisciplinaires</li>
+                    </ul>
+                </div>
 
-    <!-- ASF Detail -->
-    <section id="cert-asf" class="section">
-        <div class="container">
-            <div class="cert-detail-header">
-                <svg class="cert-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                </svg>
-                <h2 class="section-title">ASF</h2>
-                <p class="cert-detail-subtitle">Agile Scrum Foundation - Exin</p>
-            </div>
-            <div class="cert-detail-content">
-                <p>Certification Agile Scrum Foundation d'Exin, validant la compréhension des principes fondamentaux de Scrum et de l'agilité.</p>
-                <h3>Compétences acquises</h3>
-                <ul>
-                    <li>Framework Scrum (rôles, événements, artefacts)</li>
-                    <li>Principes et valeurs agiles</li>
-                    <li>Cérémonies Scrum (Sprint Planning, Daily, Review, Retrospective)</li>
-                    <li>Gestion du backlog et user stories</li>
-                    <li>Collaboration et auto-organisation d'équipe</li>
-                </ul>
+                <!-- Certification 5 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+                            <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+                            <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">ACP®</h3>
+                    <p class="certification-badge-text">Agile Certified Practitioner - PMI</p>
+                    <p class="certification-description">
+                        Expertise dans les méthodologies agiles et leur application dans des contextes projets variés.
+                    </p>
+                    <ul class="certification-features">
+                        <li>Méthodologies agiles (Scrum, Kanban, Lean)</li>
+                        <li>Pilotage de projets en mode hybride</li>
+                        <li>Facilitation et coaching d'équipes agiles</li>
+                        <li>Amélioration continue et rétrospectives</li>
+                    </ul>
+                </div>
+
+                <!-- Certification 6 -->
+                <div class="certification-card">
+                    <div class="certification-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="certification-title">ASF</h3>
+                    <p class="certification-badge-text">Agile Scrum Foundation - Exin</p>
+                    <p class="certification-description">
+                        Compréhension des principes fondamentaux de Scrum et de l'agilité.
+                    </p>
+                    <ul class="certification-features">
+                        <li>Framework Scrum (rôles, événements, artefacts)</li>
+                        <li>Principes et valeurs agiles</li>
+                        <li>Cérémonies Scrum (Sprint Planning, Daily, Review, Retrospective)</li>
+                        <li>Collaboration et auto-organisation d'équipe</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
@@ -460,7 +434,7 @@
     <section id="prestations" class="section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Mes Prestations</h2>
+                <h2 class="section-title">Prestations</h2>
                 <p class="section-description">
                     Découvrez mes offres d'accompagnement pour transformer votre fonction SI et accélérer votre stratégie IA.
                 </p>
