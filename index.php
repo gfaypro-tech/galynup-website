@@ -142,44 +142,6 @@
                     </div>
                 </div>
 
-                <div class="expertise-carousel">
-                    <div class="expertise-card active" data-index="0">
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        <p>Certifiée Strategy@HEC, TOGAF®10, PMP®, ACP®, ASF, ITIL®4</p>
-                    </div>
-                    <div class="expertise-card" data-index="1">
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        <p>Experte en management de projets/produits avec budget 20 M/an</p>
-                    </div>
-                    <div class="expertise-card" data-index="2">
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        <p>Coordination de projets transverses (>150 personnes)</p>
-                    </div>
-                    <div class="expertise-card" data-index="3">
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        <p>Secteurs: bancaire, finance, assurance, public, conseil</p>
-                    </div>
-                    <div class="expertise-card" data-index="4">
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        <p>Auteure et créatrice de contenus pédagogiques (Live Café IA, YouTube 'MindGaëlle', méthodologies projet/produit augmentées par l'IA)</p>
-                    </div>
-                </div>
-
                 <!-- Strategic Keywords Carousel -->
                 <div class="keywords-carousel">
                     <div class="keyword-carousel-item active" data-keyword="0">
