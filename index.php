@@ -454,7 +454,7 @@
     </section>
 
     <!-- Réalisations Section -->
-    <section id="realisations" class="section section-gray">
+    <section id="realisations" class="section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Réalisations</h2>
@@ -484,8 +484,8 @@
                         </g>
                         <!-- Pétale 2 : Architecture d'Entreprise -->
                         <g class="wheel-petal" data-domain="architecture" tabindex="0" aria-label="Architecture d'Entreprise">
-                            <path d="M 412.49 165.95 A 175 175 0 0 1 469.80 342.33 L 377.62 319.35 A 80 80 0 0 0 351.42 238.72 Z" fill="#7c3aed"/>
-                            <circle cx="433" cy="257" r="6" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                            <path d="M 412.49 165.95 A 175 175 0 0 1 469.80 342.33 L 377.62 319.35 A 80 80 0 0 0 351.42 238.72 Z" fill="#7e22ce"/>
+                            <circle cx="433" cy="257" r="6" fill="white" stroke="#7e22ce" stroke-width="2"/>
                             <text x="424" y="252" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">TOGAF</text>
                             <title>Architecture d'Entreprise — TOGAF 10 Foundation</title>
                         </g>
@@ -498,15 +498,15 @@
                         </g>
                         <!-- Pétale 4 : Gestion des Risques -->
                         <g class="wheel-petal" data-domain="risques" tabindex="0" aria-label="Gestion des Risques">
-                            <path d="M 287.78 474.58 A 175 175 0 0 1 137.74 365.56 L 225.82 329.97 A 80 80 0 0 0 294.42 379.81 Z" fill="#0369a1"/>
-                            <circle cx="218" cy="413" r="6" fill="white" stroke="#0369a1" stroke-width="2"/>
+                            <path d="M 287.78 474.58 A 175 175 0 0 1 137.74 365.56 L 225.82 329.97 A 80 80 0 0 0 294.42 379.81 Z" fill="#b45309"/>
+                            <circle cx="218" cy="413" r="6" fill="white" stroke="#b45309" stroke-width="2"/>
                             <text x="218" y="408" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">PMP</text>
                             <title>Gestion des Risques — PMP</title>
                         </g>
                         <!-- Pétale 5 : Leadership -->
                         <g class="wheel-petal" data-domain="leadership" tabindex="0" aria-label="Leadership">
-                            <path d="M 130.20 342.33 A 175 175 0 0 1 187.51 165.95 L 248.58 238.72 A 80 80 0 0 0 222.38 319.35 Z" fill="#059669"/>
-                            <circle cx="167" cy="257" r="6" fill="white" stroke="#059669" stroke-width="2"/>
+                            <path d="M 130.20 342.33 A 175 175 0 0 1 187.51 165.95 L 248.58 238.72 A 80 80 0 0 0 222.38 319.35 Z" fill="#c026d3"/>
+                            <circle cx="167" cy="257" r="6" fill="white" stroke="#c026d3" stroke-width="2"/>
                             <text x="175" y="252" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">PMI-ACP</text>
                             <title>Leadership — PMI-ACP + Agile Scrum Foundation</title>
                         </g>
@@ -516,7 +516,7 @@
                             <tspan x="300" dy="15" font-size="10" fill="#6b7280">ITIL 4 Foundation</tspan>
                         </text>
                         <text text-anchor="middle" font-family="Roboto,sans-serif">
-                            <tspan x="487" y="232" font-size="12" font-weight="700" fill="#7c3aed">Architecture</tspan>
+                            <tspan x="487" y="232" font-size="12" font-weight="700" fill="#7e22ce">Architecture</tspan>
                             <tspan x="487" dy="15" font-size="10" fill="#6b7280">TOGAF 10</tspan>
                         </text>
                         <text text-anchor="middle" font-family="Roboto,sans-serif">
@@ -524,11 +524,11 @@
                             <tspan x="422" dy="15" font-size="10" fill="#6b7280">Stratégie@HEC</tspan>
                         </text>
                         <text text-anchor="middle" font-family="Roboto,sans-serif">
-                            <tspan x="178" y="467" font-size="12" font-weight="700" fill="#0369a1">Gestion des Risques</tspan>
+                            <tspan x="178" y="467" font-size="12" font-weight="700" fill="#b45309">Gestion des Risques</tspan>
                             <tspan x="178" dy="15" font-size="10" fill="#6b7280">PMP</tspan>
                         </text>
                         <text text-anchor="middle" font-family="Roboto,sans-serif">
-                            <tspan x="113" y="232" font-size="12" font-weight="700" fill="#059669">Leadership</tspan>
+                            <tspan x="113" y="232" font-size="12" font-weight="700" fill="#c026d3">Leadership</tspan>
                             <tspan x="113" dy="15" font-size="10" fill="#6b7280">PMI-ACP + ASF</tspan>
                         </text>
                         <!-- Cercle central -->
@@ -561,7 +561,7 @@
 
                 <!-- Carte 2 — ANAH Architecture -->
                 <div class="realisation-card" data-domain="architecture">
-                    <span class="realisation-domain-tag" style="background:#7c3aed;">Architecture d'Entreprise</span>
+                    <span class="realisation-domain-tag" style="background:#7e22ce;">Architecture d'Entreprise</span>
                     <h3 class="realisation-card-title">Architecture d'Entreprise (TOGAF 10)</h3>
                     <p class="realisation-card-client">ANAH — Service Architecture d'Entreprise</p>
                     <p class="realisation-card-duration">8 mois | Jan / Août 2025</p>
@@ -603,7 +603,7 @@
 
                 <!-- Carte 5 — SG ESG -->
                 <div class="realisation-card" data-domain="risques">
-                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <span class="realisation-domain-tag" style="background:#b45309;">Gestion des Risques</span>
                     <h3 class="realisation-card-title">Gouvernance Data ESG</h3>
                     <p class="realisation-card-client">Société Générale CIB — Programme ESG by Design</p>
                     <p class="realisation-card-duration">5 mois | Oct 2022 / Fév 2023</p>
@@ -617,7 +617,7 @@
 
                 <!-- Carte 6 — BNP Data Quality -->
                 <div class="realisation-card" data-domain="risques">
-                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <span class="realisation-domain-tag" style="background:#b45309;">Gestion des Risques</span>
                     <h3 class="realisation-card-title">Data Quality &amp; Protection du Business</h3>
                     <p class="realisation-card-client">BNP Paribas CIB — Data Quality KYC</p>
                     <p class="realisation-card-duration">4 mois | Août / Déc 2018</p>
@@ -631,7 +631,7 @@
 
                 <!-- Carte 7 — BNP KYC -->
                 <div class="realisation-card" data-domain="risques">
-                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <span class="realisation-domain-tag" style="background:#b45309;">Gestion des Risques</span>
                     <h3 class="realisation-card-title">KYC, Conformité &amp; Data Privacy</h3>
                     <p class="realisation-card-client">BNP Paribas CIB — Programme CLM (Fenergo)</p>
                     <p class="realisation-card-duration">14 mois | Août 2018 / Nov 2019</p>
@@ -645,7 +645,7 @@
 
                 <!-- Carte 8 — SIACI -->
                 <div class="realisation-card" data-domain="leadership">
-                    <span class="realisation-domain-tag" style="background:#059669;">Leadership</span>
+                    <span class="realisation-domain-tag" style="background:#c026d3;">Leadership</span>
                     <h3 class="realisation-card-title">Leadership &amp; Conduite du Changement</h3>
                     <p class="realisation-card-client">SIACI SAINT HONORÉ — Dispenses de frais de santé</p>
                     <p class="realisation-card-duration">2 ans | Déc 2019 / Nov 2021</p>
@@ -659,7 +659,7 @@
 
                 <!-- Carte 9 — Entrepreneuriat -->
                 <div class="realisation-card" data-domain="leadership">
-                    <span class="realisation-domain-tag" style="background:#059669;">Leadership</span>
+                    <span class="realisation-domain-tag" style="background:#c026d3;">Leadership</span>
                     <h3 class="realisation-card-title">Leadership Entrepreneurial — Différenciation CIO</h3>
                     <p class="realisation-card-client">TPE &amp; Association des Commerçants</p>
                     <p class="realisation-card-duration">5 ans | 2013-2018 — Région parisienne</p>

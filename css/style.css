@@ -3225,17 +3225,17 @@ h3 {
 
 .filter-btn[data-domain="all"] { color: var(--text-primary); border-color: var(--border); }
 .filter-btn[data-domain="gouvernance"] { color: #9333ea; }
-.filter-btn[data-domain="architecture"] { color: #7c3aed; }
+.filter-btn[data-domain="architecture"] { color: #7e22ce; }
 .filter-btn[data-domain="transformation"] { color: #d97706; }
-.filter-btn[data-domain="risques"] { color: #0369a1; }
-.filter-btn[data-domain="leadership"] { color: #059669; }
+.filter-btn[data-domain="risques"] { color: #b45309; }
+.filter-btn[data-domain="leadership"] { color: #c026d3; }
 
 .filter-btn[data-domain="all"].active { background: var(--text-primary); }
 .filter-btn[data-domain="gouvernance"].active { background: #9333ea; }
-.filter-btn[data-domain="architecture"].active { background: #7c3aed; }
+.filter-btn[data-domain="architecture"].active { background: #7e22ce; }
 .filter-btn[data-domain="transformation"].active { background: #d97706; }
-.filter-btn[data-domain="risques"].active { background: #0369a1; }
-.filter-btn[data-domain="leadership"].active { background: #059669; }
+.filter-btn[data-domain="risques"].active { background: #b45309; }
+.filter-btn[data-domain="leadership"].active { background: #c026d3; }
 
 /* --- Grille des réalisations --- */
 .realisations-grid {
@@ -3260,20 +3260,47 @@ h3 {
 
 /* --- Carte réalisation (condensée & complète) --- */
 .realisation-card {
+    padding: 1.5rem;
     background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(30px);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px 0 rgba(147, 51, 234, 0.22),
+                inset 0 2px 4px rgba(255, 255, 255, 1),
+                inset 0 -3px 6px rgba(217, 119, 6, 0.12),
+                inset 1px 0 1px rgba(255, 255, 255, 0.8),
+                inset -1px 0 1px rgba(147, 51, 234, 0.1);
+    border: 2px solid rgba(147, 51, 234, 0.40);
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.25s ease;
+}
+
+.realisation-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.20) 0%, rgba(217, 119, 6, 0.18) 100%);
+    backdrop-filter: blur(15px);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.realisation-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .realisation-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 12px 40px 0 rgba(147, 51, 234, 0.18);
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 12px 40px 0 rgba(147, 51, 234, 0.30),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(217, 119, 6, 0.15),
+                inset 1px 0 1px rgba(147, 51, 234, 0.1),
+                inset -1px 0 1px rgba(217, 119, 6, 0.08);
 }
 
 /* --- Tag domaine --- */
