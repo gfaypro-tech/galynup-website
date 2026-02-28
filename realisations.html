@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Réalisations de Gaëlle FAY — Missions CIO Advisory : gouvernance IT, architecture d'entreprise, transformation digitale, gestion des risques, leadership.">
+    <meta name="author" content="Gaëlle FAY">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Réalisations — Gaëlle FAY | CIO ADVISORY</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/galynup-logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/galynup-logo-180.png">
+    <link rel="stylesheet" href="css/style.css?v=1.2.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <a href="index.php">
+                        <img src="images/galynup-logo-180.png" alt="GALYN'UP Logo" class="nav-logo">
+                    </a>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <a href="index.php#about" class="nav-link">À propos</a>
+                    <a href="index.php#competences" class="nav-link">Compétences</a>
+                    <a href="index.php#prestations" class="nav-link">Prestations</a>
+                    <a href="realisations.html" class="nav-link" style="color: var(--primary); font-weight: 600;">Réalisations</a>
+                    <a href="index.php#recommandations" class="nav-link">Recommandations</a>
+                    <a href="index.php#contact" class="nav-link">Contact</a>
+                    <div class="nav-cta-group-mobile">
+                        <a href="index.php#contact" class="btn btn-primary-mobile">Demander un devis</a>
+                        <a href="ajouter-recommandation.html" target="_blank" class="btn btn-secondary-mobile">Ajouter une recommandation</a>
+                    </div>
+                </div>
+                <div class="nav-cta-group">
+                    <a href="index.php#contact" class="btn btn-primary">Demander un devis</a>
+                    <a href="ajouter-recommandation.html" target="_blank" class="btn btn-secondary-subtle">Ajouter une recommandation</a>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page principale -->
+    <main style="padding-top: 80px;">
+    <section class="section">
+        <div class="container">
+
+            <!-- Hero -->
+            <div class="realisations-page-hero">
+                <h1>Réalisations</h1>
+                <p>Missions récentes — Impact mesurable, contextes complexes</p>
+                <p style="margin-top:0.5rem; font-size:0.875rem; color: var(--text-muted);">Cliquer un domaine pour filtrer &bull; Cliquer à nouveau ou sur le centre pour tout afficher</p>
+            </div>
+
+            <!-- Roue de compétences interactive -->
+            <div class="wheel-container">
+                <!-- Filtres mobiles -->
+                <div class="wheel-mobile-filters">
+                    <button class="filter-btn active" data-domain="all">Tous</button>
+                    <button class="filter-btn" data-domain="gouvernance">Gouvernance IT</button>
+                    <button class="filter-btn" data-domain="architecture">Architecture</button>
+                    <button class="filter-btn" data-domain="transformation">Transformation</button>
+                    <button class="filter-btn" data-domain="risques">Risques</button>
+                    <button class="filter-btn" data-domain="leadership">Leadership</button>
+                </div>
+                <!-- Roue SVG -->
+                <div class="competence-wheel-wrapper">
+                    <svg id="competenceWheel" viewBox="0 0 600 600" class="competence-wheel" role="img" aria-label="Roue de compétences — cliquer un domaine pour filtrer les réalisations">
+                        <!-- Pétale 1 : Gouvernance IT -->
+                        <g class="wheel-petal" data-domain="gouvernance" tabindex="0" aria-label="Gouvernance IT">
+                            <path d="M 207.27 151.60 A 175 175 0 0 1 392.73 151.60 L 342.39 232.16 A 80 80 0 0 0 257.61 232.16 Z" fill="#9333ea"/>
+                            <circle cx="300" cy="160" r="6" fill="white" stroke="#9333ea" stroke-width="2"/>
+                            <text x="300" y="155" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">ITIL 4</text>
+                            <title>Gouvernance IT — ITIL 4 Foundation</title>
+                        </g>
+                        <!-- Pétale 2 : Architecture d'Entreprise -->
+                        <g class="wheel-petal" data-domain="architecture" tabindex="0" aria-label="Architecture d'Entreprise">
+                            <path d="M 412.49 165.95 A 175 175 0 0 1 469.80 342.33 L 377.62 319.35 A 80 80 0 0 0 351.42 238.72 Z" fill="#7c3aed"/>
+                            <circle cx="433" cy="257" r="6" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                            <text x="424" y="252" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">TOGAF</text>
+                            <title>Architecture d'Entreprise — TOGAF 10 Foundation</title>
+                        </g>
+                        <!-- Pétale 3 : Transformation Digitale -->
+                        <g class="wheel-petal" data-domain="transformation" tabindex="0" aria-label="Transformation Digitale">
+                            <path d="M 462.26 365.56 A 175 175 0 0 1 312.22 474.58 L 305.58 379.81 A 80 80 0 0 0 374.18 329.97 Z" fill="#d97706"/>
+                            <circle cx="382" cy="413" r="6" fill="white" stroke="#d97706" stroke-width="2"/>
+                            <text x="382" y="408" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">HEC</text>
+                            <title>Transformation Digitale — Stratégie@HEC</title>
+                        </g>
+                        <!-- Pétale 4 : Gestion des Risques -->
+                        <g class="wheel-petal" data-domain="risques" tabindex="0" aria-label="Gestion des Risques">
+                            <path d="M 287.78 474.58 A 175 175 0 0 1 137.74 365.56 L 225.82 329.97 A 80 80 0 0 0 294.42 379.81 Z" fill="#0369a1"/>
+                            <circle cx="218" cy="413" r="6" fill="white" stroke="#0369a1" stroke-width="2"/>
+                            <text x="218" y="408" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">PMP</text>
+                            <title>Gestion des Risques — PMP</title>
+                        </g>
+                        <!-- Pétale 5 : Leadership -->
+                        <g class="wheel-petal" data-domain="leadership" tabindex="0" aria-label="Leadership">
+                            <path d="M 130.20 342.33 A 175 175 0 0 1 187.51 165.95 L 248.58 238.72 A 80 80 0 0 0 222.38 319.35 Z" fill="#059669"/>
+                            <circle cx="167" cy="257" r="6" fill="white" stroke="#059669" stroke-width="2"/>
+                            <text x="175" y="252" text-anchor="middle" font-family="Roboto,sans-serif" font-size="8" fill="white" font-weight="700">PMI-ACP</text>
+                            <title>Leadership — PMI-ACP + Agile Scrum Foundation</title>
+                        </g>
+                        <!-- Étiquettes externes -->
+                        <text text-anchor="middle" font-family="Roboto,sans-serif">
+                            <tspan x="300" y="97" font-size="12" font-weight="700" fill="#9333ea">Gouvernance IT</tspan>
+                            <tspan x="300" dy="15" font-size="10" fill="#6b7280">ITIL 4 Foundation</tspan>
+                        </text>
+                        <text text-anchor="middle" font-family="Roboto,sans-serif">
+                            <tspan x="487" y="232" font-size="12" font-weight="700" fill="#7c3aed">Architecture</tspan>
+                            <tspan x="487" dy="15" font-size="10" fill="#6b7280">TOGAF 10</tspan>
+                        </text>
+                        <text text-anchor="middle" font-family="Roboto,sans-serif">
+                            <tspan x="422" y="467" font-size="12" font-weight="700" fill="#d97706">Transformation</tspan>
+                            <tspan x="422" dy="15" font-size="10" fill="#6b7280">Stratégie@HEC</tspan>
+                        </text>
+                        <text text-anchor="middle" font-family="Roboto,sans-serif">
+                            <tspan x="178" y="467" font-size="12" font-weight="700" fill="#0369a1">Gestion des Risques</tspan>
+                            <tspan x="178" dy="15" font-size="10" fill="#6b7280">PMP</tspan>
+                        </text>
+                        <text text-anchor="middle" font-family="Roboto,sans-serif">
+                            <tspan x="113" y="232" font-size="12" font-weight="700" fill="#059669">Leadership</tspan>
+                            <tspan x="113" dy="15" font-size="10" fill="#6b7280">PMI-ACP + ASF</tspan>
+                        </text>
+                        <!-- Cercle central -->
+                        <circle id="wheelCenter" cx="300" cy="300" r="80" fill="white" stroke="#9333ea" stroke-width="2" style="cursor:pointer;"/>
+                        <text text-anchor="middle" font-family="Roboto,sans-serif" pointer-events="none">
+                            <tspan x="300" y="291" font-size="11.5" font-weight="700" fill="#1f2937">Gaëlle Fay</tspan>
+                            <tspan x="300" y="307" font-size="10" font-weight="600" fill="#9333ea">CIO Advisory</tspan>
+                            <tspan x="300" y="321" font-size="8" fill="#9ca3af">↺ tout afficher</tspan>
+                        </text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Grille de cartes complètes -->
+            <div class="realisations-grid" id="realisationsGrid">
+
+                <!-- Carte 1 — AFNOR -->
+                <div class="realisation-card realisation-card-full" data-domain="gouvernance">
+                    <span class="realisation-domain-tag" style="background:#9333ea;">Gouvernance IT</span>
+                    <h2 class="realisation-card-title">Gouvernance IT &amp; Pilotage de la DSI</h2>
+                    <p class="realisation-card-client">AFNOR Groupe — Secteur public</p>
+                    <p class="realisation-card-duration">8 semaines | Août / Oct 2025</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">8 sem. mission</span>
+                        <span class="realisation-kpi">10 collaborateurs senior</span>
+                        <span class="realisation-kpi">15 j. diagnostic</span>
+                        <span class="realisation-kpi">4 chantiers simultanés</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">DSI récemment élevée au rang de direction, avec une légitimité encore à consolider. Prise en main d'un nouveau département CIO Office (10 collaborateurs, PMO + Architecture d'Entreprise) ayant connu plusieurs managers et DSI en deux ans. Absence de cadre commun, pratiques Agile fragmentées, aucune gouvernance de la demande métier.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>STRUCTURATION DU CIO OFFICE</h4> Identification des rôles et compétences, board de suivi dans Azure DevOps, tableaux de bord par profil et pour la DSI, entretiens hebdomadaires individuels.</li>
+                        <li><h4>HARMONISATION DE LA CHAÎNE DE DELIVERY</h4> Diagnostic en moins de 15 jours. Nouveau rythme : 3 semaines de sprint + 1 semaine inter-sprint. Sprint Planning élargi (POs, dev, prod, flux, test, RSSI). 2 POCs lancés. Objectif cible : PI Planning (SAFe).</li>
+                        <li><h4>GOUVERNANCE DE LA DEMANDE</h4> Design Authority — instance centralisée (Business Architect, Architecte applicatif, Architecte solution IA, RSSI). Restitution sous 48h.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">En 8 semaines : diagnostic livré, département structuré, delivery fluidifié, Design Authority validée, tableau de bord C-Level opérationnel.</p>
+                </div>
+
+                <!-- Carte 2 — ANAH Architecture -->
+                <div class="realisation-card realisation-card-full" data-domain="architecture">
+                    <span class="realisation-domain-tag" style="background:#7c3aed;">Architecture d'Entreprise</span>
+                    <h2 class="realisation-card-title">Architecture d'Entreprise (TOGAF 10)</h2>
+                    <p class="realisation-card-client">ANAH — Service Architecture d'Entreprise</p>
+                    <p class="realisation-card-duration">8 mois | Jan / Août 2025</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">14 architectes fédérés</span>
+                        <span class="realisation-kpi">2 projets stratégiques</span>
+                        <span class="realisation-kpi">Jira + Confluence</span>
+                        <span class="realisation-kpi">Métiers inclus</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Équipe de 14 architectes en silos, sans gouvernance commune. Les BU ne pouvaient pas suivre les études menées par le SAE. Le responsable de service, surchargé, avait besoin d'un bras droit opérationnel.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>STRUCTURATION DE LA GOUVERNANCE</h4> Cadre commun, Jira + Confluence, visibilité étendue aux BU.</li>
+                        <li><h4>ANALYSE BPMN</h4> Modélisation des processus métier et SI, schémas de référence partagés.</li>
+                        <li><h4>PLATEFORME UNIQUE DES AIDES</h4> Coordination sur le chantier stratégique de la future plateforme ANAH.</li>
+                        <li><h4>APPEL D'OFFRES BACK-OFFICE</h4> Cadrage technique du renouvellement du plus gros contrat ANAH.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">14 architectes fédérés. Visibilité étendue aux métiers. Deux projets majeurs contribués dans les délais.</p>
+                </div>
+
+                <!-- Carte 3 — ANAH Transformation -->
+                <div class="realisation-card realisation-card-full" data-domain="transformation">
+                    <span class="realisation-domain-tag" style="background:#d97706;">Transformation Digitale</span>
+                    <h2 class="realisation-card-title">Transformation Digitale &amp; Interface Stratégique</h2>
+                    <p class="realisation-card-client">ANAH — MaPrimeRénov', MaPrimeAdapt'</p>
+                    <p class="realisation-card-duration">20 mois | Mars 2023 / Nov 2024</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">50 000 dossiers/jour</span>
+                        <span class="realisation-kpi">10-20M€ budget</span>
+                        <span class="realisation-kpi">100+ parties prenantes</span>
+                        <span class="realisation-kpi">0 rupture de service</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">SI critique portant des dispositifs nationaux majeurs, dans un contexte de réorganisation simultanée DSI/métiers. Évolutions réglementaires fréquentes, pression politique forte, multitude d'acteurs aux enjeux divergents.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>INTERFACE STRATÉGIQUE</h4> Pont entre usagers, politiques, directions métier et DSI.</li>
+                        <li><h4>PILOTAGE PROJETS</h4> 4 à 5 projets simultanés, équipe de 5, 100+ parties prenantes coordonnées.</li>
+                        <li><h4>GESTION OBSOLESCENCE</h4> Montée de version simultanée + serveurs Ministère. 50 personnes. Livraison dans les délais.</li>
+                        <li><h4>CONTINUITÉ DE SERVICE</h4> 50 000 dossiers/jour sans rupture majeure sur 20 mois.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Continuité garantie. Conformité maintenue. Obsolescence livrée. Réorganisation accompagnée avec succès malgré les résistances.</p>
+                </div>
+
+                <!-- Carte 4 — SG Leasing -->
+                <div class="realisation-card realisation-card-full" data-domain="transformation">
+                    <span class="realisation-domain-tag" style="background:#d97706;">Transformation Digitale</span>
+                    <h2 class="realisation-card-title">Cadrage Programme International — Leasing &amp; Financements Structurés</h2>
+                    <p class="realisation-card-client">Société Générale CIB</p>
+                    <p class="realisation-card-duration">6 mois | Mars / Oct 2022</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">80+ parties prenantes</span>
+                        <span class="realisation-kpi">4 pays</span>
+                        <span class="realisation-kpi">5-10M€ validés</span>
+                        <span class="realisation-kpi">6 mois sous contrainte</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Refonte totale d'une plateforme internationale à cadrer en urgence. Tentative précédente échouée. 4 streams internationaux aux intérêts divergents (Paris, Londres, Luxembourg, Roumanie), enjeux fiscaux multi-pays, tensions jusqu'aux menaces de démission en steerco.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>CADRAGE ARCHITECTURE &amp; GOUVERNANCE</h4> Gouvernance du programme, 4 streams structurés, contraintes fiscales multi-pays intégrées.</li>
+                        <li><h4>RFP &amp; ÉDITEURS</h4> Pilotage des appels d'offres, démonstrations, analyse comparative des scénarios.</li>
+                        <li><h4>GESTION CONFLICTUELLE</h4> Désamorçage des tensions, mise en confiance progressive des réfractaires.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Scénario validé en 6 mois. Consensus obtenu malgré l'historique d'échec. Recommandation directe pour le programme ESG.</p>
+                </div>
+
+                <!-- Carte 5 — SG ESG -->
+                <div class="realisation-card realisation-card-full" data-domain="risques">
+                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <h2 class="realisation-card-title">Gouvernance Data ESG</h2>
+                    <p class="realisation-card-client">Société Générale CIB — Programme ESG by Design</p>
+                    <p class="realisation-card-duration">5 mois | Oct 2022 / Fév 2023</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">50+ parties prenantes</span>
+                        <span class="realisation-kpi">4 streams</span>
+                        <span class="realisation-kpi">5 mois</span>
+                        <span class="realisation-kpi">0 base documentaire</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Programme ESG stratégique venant de changer de direction. Équipes data non structurées, processus non formalisés. 50+ contributeurs de 4 streams à aligner sans base organisationnelle.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>GOUVERNANCE DATA</h4> Cartographie complète du processus de modification de la donnée ESG.</li>
+                        <li><h4>INSTANCES</h4> Composition et rôle de chaque instance, circulation de l'information.</li>
+                        <li><h4>REPORTING</h4> Coordination transverse 50+ parties prenantes, mise en place du suivi.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Gouvernance structurée en 5 mois. Bases transmises. Départ unanimement regretté.</p>
+                </div>
+
+                <!-- Carte 6 — BNP Data Quality -->
+                <div class="realisation-card realisation-card-full" data-domain="risques">
+                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <h2 class="realisation-card-title">Data Quality &amp; Protection du Business</h2>
+                    <p class="realisation-card-client">BNP Paribas CIB — Data Quality KYC</p>
+                    <p class="realisation-card-duration">4 mois | Août / Déc 2018</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">3 régions</span>
+                        <span class="realisation-kpi">Global Markets protégé</span>
+                        <span class="realisation-kpi">Décommissionnement annulé</span>
+                        <span class="realisation-kpi">→ Mission Fenergo</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Donnée identifiée comme redondante sur le point d'être décommissionnée. Aucun impact business anticipé. Étude commandée pour la forme.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>ENQUÊTE MONDIALE</h4> Investigation USA, EMEA, Asie.</li>
+                        <li><h4>ATELIERS WORLDWIDE</h4> Découverte que la donnée impactait directement le trading Global Markets.</li>
+                        <li><h4>RECOMMANDATION</h4> Maintien de la donnée documenté et défendu.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Décommissionnement annulé. Global Markets protégé. Mission Fenergo obtenue par reconnaissance de la rigueur.</p>
+                </div>
+
+                <!-- Carte 7 — BNP KYC -->
+                <div class="realisation-card realisation-card-full" data-domain="risques">
+                    <span class="realisation-domain-tag" style="background:#0369a1;">Gestion des Risques</span>
+                    <h2 class="realisation-card-title">KYC, Conformité &amp; Data Privacy</h2>
+                    <p class="realisation-card-client">BNP Paribas CIB — Programme CLM (Fenergo)</p>
+                    <p class="realisation-card-duration">14 mois | Août 2018 / Nov 2019</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">3 juridictions</span>
+                        <span class="realisation-kpi">10 consultants</span>
+                        <span class="realisation-kpi">PIA validé</span>
+                        <span class="realisation-kpi">Fenergo implémenté</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Modernisation KYC via Fenergo. Besoins non fonctionnels (RGPD, confidentialité par juridiction : Suisse, Jersey, Luxembourg) peu formalisés au démarrage.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>NON FONCTIONNEL &amp; DATA</h4> Dictionnaire de données, contraintes juridictions intégrées.</li>
+                        <li><h4>RGPD</h4> PIA élaboré, comités RGPD avec CDO et DPO.</li>
+                        <li><h4>COORDINATION</h4> Contributrice projet + correspondante Altran pour 10 consultants.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Périmètre structuré. RGPD tracé. Multi-juridictions intégrés. Facilitatrice reconnue au-delà du projet.</p>
+                </div>
+
+                <!-- Carte 8 — SIACI -->
+                <div class="realisation-card realisation-card-full" data-domain="leadership">
+                    <span class="realisation-domain-tag" style="background:#059669;">Leadership</span>
+                    <h2 class="realisation-card-title">Leadership &amp; Conduite du Changement</h2>
+                    <p class="realisation-card-client">SIACI SAINT HONORÉ — Dispenses de frais de santé</p>
+                    <p class="realisation-card-duration">2 ans | Déc 2019 / Nov 2021</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">3M€ revenus</span>
+                        <span class="realisation-kpi">54 000+ salariés</span>
+                        <span class="realisation-kpi">1 framework créé</span>
+                        <span class="realisation-kpi">2 directeurs ont cherché à retenir</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Industrialisation d'une solution de gestion des dispenses de frais de santé. Coordination complète entre front, back, DSI, éditeurs et équipes métier client à chaque déploiement.</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>TRIPLE CASQUETTE</h4> Chef de projet + interlocutrice commerciale + développement fonctionnel.</li>
+                        <li><h4>DÉPLOIEMENTS</h4> 3 déploiements majeurs (distribution 54 000 salariés, textile 5-9 000 salariés).</li>
+                        <li><h4>FRAMEWORK</h4> Création d'un framework de déploiement pour standardiser les futures implémentations.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">3 déploiements livrés. 3M€ de revenus pour SIACI. Framework transmis. Deux directeurs ont cherché à retenir.</p>
+                </div>
+
+                <!-- Carte 9 — Entrepreneuriat -->
+                <div class="realisation-card realisation-card-full" data-domain="leadership">
+                    <span class="realisation-domain-tag" style="background:#059669;">Leadership</span>
+                    <h2 class="realisation-card-title">Leadership Entrepreneurial — Différenciation CIO</h2>
+                    <p class="realisation-card-client">TPE &amp; Association des Commerçants</p>
+                    <p class="realisation-card-duration">5 ans | 2013-2018 — Région parisienne</p>
+                    <div class="realisation-kpis">
+                        <span class="realisation-kpi">12 salariés</span>
+                        <span class="realisation-kpi">900K€ CA annuel</span>
+                        <span class="realisation-kpi">80 commerces représentés</span>
+                        <span class="realisation-kpi">5 financements obtenus</span>
+                    </div>
+                    <span class="realisation-section-label">CONSTAT</span>
+                    <p class="realisation-section-text">Création et développement de 3 entreprises en parallèle. Mandat simultané de présidente de l'association des commerçants (80 commerces).</p>
+                    <span class="realisation-section-label">APPROCHE</span>
+                    <ul class="realisation-approche-list">
+                        <li><h4>DIRECTION OPÉRATIONNELLE</h4> Brûlerie &amp; épicerie fine, cave à vins, conseil marketing. 12 salariés, CA jusqu'à 900K€.</li>
+                        <li><h4>FINANCEMENT &amp; NÉGOCIATION</h4> 3 prêts à taux 0 CCI, 2 prêts bancaires, liquidation via mandataire.</li>
+                        <li><h4>LEADERSHIP TERRITORIAL</h4> 80 commerces, stratégie communication et marketing du centre commercial.</li>
+                    </ul>
+                    <span class="realisation-section-label">RÉSULTAT</span>
+                    <p class="realisation-section-text">Compétences rares pour un profil CIO : gestion de crise, négociation sous pression, management humain, pilotage budgétaire. Lauréate CCI Essonne. Vision business 360°.</p>
+                </div>
+
+            </div>
+
+            <!-- Retour accueil -->
+            <div style="text-align:center; padding: 1rem 0 2rem;">
+                <a href="index.php#realisations" class="btn btn-outline">← Retour à l'accueil</a>
+            </div>
+
+        </div>
+    </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span>GALYN'UP</span>
+                </div>
+                <div class="footer-legal">
+                    <p class="footer-text">Hébergeur : OVH SAS - 2 rue Kellermann, 59100 Roubaix - Tél : 1007</p>
+                </div>
+                <div class="footer-links">
+                    <a href="mentions-legales.html">Mentions légales</a>
+                    <span class="footer-separator">|</span>
+                    <a href="politique-confidentialite.html">Politique de confidentialité</a>
+                </div>
+                <p class="footer-copyright">© <span id="currentYear"></span> GALYN'UP - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Année courante
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    // Menu mobile
+    var mobileBtn = document.getElementById('mobileMenuBtn');
+    var navMenu = document.getElementById('navMenu');
+    if (mobileBtn && navMenu) {
+        mobileBtn.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+    }
+
+    // Roue de compétences interactive
+    (function() {
+        var petals = document.querySelectorAll('#competenceWheel .wheel-petal');
+        var filterBtns = document.querySelectorAll('.filter-btn');
+        var cards = document.querySelectorAll('#realisationsGrid .realisation-card');
+        var wheelCenter = document.getElementById('wheelCenter');
+        var activeFilter = 'all';
+
+        function setFilter(domain) {
+            if (domain === activeFilter && domain !== 'all') {
+                domain = 'all';
+            }
+            activeFilter = domain;
+
+            petals.forEach(function(p) {
+                if (domain === 'all') {
+                    p.classList.remove('active', 'dimmed');
+                } else if (p.dataset.domain === domain) {
+                    p.classList.add('active');
+                    p.classList.remove('dimmed');
+                } else {
+                    p.classList.add('dimmed');
+                    p.classList.remove('active');
+                }
+            });
+
+            filterBtns.forEach(function(b) {
+                var match = b.dataset.domain === domain || (domain === 'all' && b.dataset.domain === 'all');
+                b.classList.toggle('active', match);
+            });
+
+            cards.forEach(function(c) { c.style.opacity = '0'; });
+
+            setTimeout(function() {
+                cards.forEach(function(c) {
+                    var show = domain === 'all' || c.dataset.domain === domain;
+                    c.style.display = show ? '' : 'none';
+                });
+                requestAnimationFrame(function() {
+                    cards.forEach(function(c) {
+                        if (c.style.display !== 'none') c.style.opacity = '1';
+                    });
+                });
+            }, 220);
+        }
+
+        petals.forEach(function(p) {
+            p.addEventListener('click', function() { setFilter(p.dataset.domain); });
+            p.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFilter(p.dataset.domain); }
+            });
+        });
+
+        if (wheelCenter) {
+            wheelCenter.addEventListener('click', function() { setFilter('all'); });
+        }
+
+        filterBtns.forEach(function(b) {
+            b.addEventListener('click', function() { setFilter(b.dataset.domain); });
+        });
+    })();
+    </script>
+</body>
+</html>

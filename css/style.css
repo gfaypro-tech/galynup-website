@@ -3134,3 +3134,296 @@ h3 {
         transform: scale(1.3);
     }
 }
+
+/* ============================================
+   RÉALISATIONS — Roue de compétences & Cartes
+   ============================================ */
+
+/* --- Conteneur de la roue --- */
+.wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.competence-wheel-wrapper {
+    width: 100%;
+    max-width: 560px;
+}
+
+.competence-wheel {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- Interaction pétales --- */
+.wheel-petal {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.wheel-petal > path {
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.wheel-petal:hover > path {
+    filter: brightness(1.15);
+}
+
+.wheel-petal.active > path {
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.35));
+}
+
+.wheel-petal.dimmed > path {
+    opacity: 0.28;
+}
+
+.wheel-petal.dimmed > circle {
+    opacity: 0.28;
+}
+
+.wheel-petal.dimmed > text {
+    opacity: 0.28;
+}
+
+/* --- Filtres mobiles (substitution de la roue) --- */
+.wheel-mobile-filters {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 767px) {
+    .competence-wheel-wrapper {
+        display: none;
+    }
+    .wheel-mobile-filters {
+        display: flex;
+    }
+}
+
+.filter-btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 2rem;
+    border: 2px solid currentColor;
+    background: transparent;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    line-height: 1.4;
+}
+
+.filter-btn.active {
+    color: white !important;
+}
+
+.filter-btn[data-domain="all"] { color: var(--text-primary); border-color: var(--border); }
+.filter-btn[data-domain="gouvernance"] { color: #9333ea; }
+.filter-btn[data-domain="architecture"] { color: #7c3aed; }
+.filter-btn[data-domain="transformation"] { color: #d97706; }
+.filter-btn[data-domain="risques"] { color: #0369a1; }
+.filter-btn[data-domain="leadership"] { color: #059669; }
+
+.filter-btn[data-domain="all"].active { background: var(--text-primary); }
+.filter-btn[data-domain="gouvernance"].active { background: #9333ea; }
+.filter-btn[data-domain="architecture"].active { background: #7c3aed; }
+.filter-btn[data-domain="transformation"].active { background: #d97706; }
+.filter-btn[data-domain="risques"].active { background: #0369a1; }
+.filter-btn[data-domain="leadership"].active { background: #059669; }
+
+/* --- Grille des réalisations --- */
+.realisations-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .realisations-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .realisations-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* --- Carte réalisation (condensée & complète) --- */
+.realisation-card {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(30px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.25s ease;
+}
+
+.realisation-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px 0 rgba(147, 51, 234, 0.18);
+}
+
+/* --- Tag domaine --- */
+.realisation-domain-tag {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.875rem;
+    align-self: flex-start;
+    letter-spacing: 0.02em;
+}
+
+/* --- Infos principales --- */
+.realisation-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.3rem;
+    line-height: 1.4;
+}
+
+.realisation-card-client {
+    font-size: 0.875rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+}
+
+.realisation-card-duration {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+}
+
+/* --- KPIs --- */
+.realisation-kpis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.realisation-kpi {
+    background: var(--background-gray);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* --- Résultat (version condensée index) --- */
+.realisation-card-result {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    flex: 1;
+    margin: 0;
+}
+
+/* --- CTA --- */
+.realisations-cta {
+    text-align: center;
+    padding-top: 1rem;
+}
+
+/* --- Version complète (realisations.html) --- */
+.realisation-card-full .realisation-card-title {
+    font-size: 1.0625rem;
+    margin-bottom: 0.3rem;
+}
+
+.realisation-section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    margin: 1.1rem 0 0.4rem;
+    display: block;
+}
+
+.realisation-section-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.realisation-approche-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.3rem 0 0;
+}
+
+.realisation-approche-list li {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 0.2rem 0 0.2rem 1.25rem;
+    position: relative;
+}
+
+.realisation-approche-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.realisation-approche-list h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin: 0.6rem 0 0.2rem;
+}
+
+/* --- Hero page réalisations --- */
+.realisations-page-hero {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.06) 0%, rgba(217, 119, 6, 0.04) 100%);
+    border-radius: 1.25rem;
+    padding: 2rem 2rem 1rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.realisations-page-hero h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .realisations-page-hero h1 {
+        font-size: 2.25rem;
+    }
+}
+
+.realisations-page-hero p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
