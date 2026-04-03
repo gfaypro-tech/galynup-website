@@ -91,6 +91,7 @@
                     <a href="#realisations" class="nav-link">Réalisations</a>
                     <a href="#recommandations" class="nav-link">Recommandations</a>
                     <a href="#contact" class="nav-link">Contact</a>
+                    <a href="simulateur-llm.html" class="nav-link" style="color:#D3A625;font-weight:500;">🧮 Simulateur LLM</a>
                     <!-- Boutons mobiles -->
                     <div class="nav-cta-group-mobile">
                         <a href="#contact" class="btn btn-primary-mobile">Demander un devis</a>
@@ -384,6 +385,28 @@
                         <li>Accompagnement POC</li>
                         <li>Gouvernance IA</li>
                     </ul>
+                </div>
+
+                <!-- Simulateur LLM -->
+                <div class="prestation-card">
+                    <div class="prestation-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3 class="prestation-title">Simulateur Coût LLM</h3>
+                    <p class="prestation-description">
+                        Comparez le coût mensuel et le taux d'hallucination des principaux LLM pour votre projet IA. Un outil gratuit pour aider les DSI à choisir le bon modèle.
+                    </p>
+                    <ul class="prestation-features">
+                        <li>Comparaison des LLM du marché</li>
+                        <li>Estimation du coût mensuel</li>
+                        <li>Taux d'hallucination</li>
+                        <li>Aide à la décision DSI</li>
+                    </ul>
+                    <a href="simulateur-llm.html" style="display:inline-block;margin-top:16px;color:#D3A625;font-weight:500;font-size:13px;text-decoration:none;">→ Accéder au simulateur</a>
                 </div>
 
                 <!-- Prestation 3 -->
