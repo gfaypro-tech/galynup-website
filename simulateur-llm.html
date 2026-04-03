@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
   <style>
     :root {
       --aubergine: #6D155D;
@@ -43,7 +44,7 @@
     .header-badge { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; }
 
     /* LAYOUT */
-    main { max-width: 1000px; margin: 0 auto; padding: 36px 20px 64px; }
+    main { max-width: 1000px; margin: 0 auto; padding: 170px 20px 64px; }
     .page-title { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 32px; color: var(--aubergine); line-height: 1.15; margin-bottom: 8px; }
     .page-sub { font-size: 13px; color: var(--gray-600); line-height: 1.65; max-width: 620px; margin-bottom: 30px; }
 
@@ -195,16 +196,30 @@
 </head>
 <body>
 
-<header>
-  <a href="index.php" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
-    <img src="images/galynup-logo-180.png" alt="GALYN'UP Logo" style="height:40px;width:auto;">
-    <div>
-      <div class="brand-name">Galyn<span>'</span>Up</div>
-      <div class="brand-sub">CIO Advisory</div>
-    </div>
-  </a>
-  <div class="header-badge">Outil DSI gratuit</div>
-</header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <a href="index.php"><img src="images/galynup-logo-180.png" alt="GALYN'UP Logo" class="nav-logo"></a>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <a href="index.php#about" class="nav-link">À propos</a>
+                    <a href="index.php#competences" class="nav-link">Compétences</a>
+                    <a href="index.php#prestations" class="nav-link">Prestations</a>
+                    <a href="index.php#realisations" class="nav-link">Réalisations</a>
+                    <a href="index.php#recommandations" class="nav-link">Recommandations</a>
+                    <a href="index.php#contact" class="nav-link">Contact</a>
+                    <a href="simulateur-llm.html" class="nav-link" style="color:#D3A625;font-weight:500;">🧮 Simulateur LLM</a>
+                </div>
+                <div class="nav-cta-group">
+                    <a href="index.php#contact" class="btn btn-primary">Demander un devis</a>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
 <main>
   <h1 class="page-title">Simulateur LLM — Coût & Fiabilité</h1>
@@ -366,7 +381,7 @@
       <strong>Vous intégrez un LLM dans votre SI ?</strong>
       Galyn'Up vous accompagne dans la gouvernance, le cadrage et le déploiement de vos projets IA — de l'évaluation des coûts à la mise en production sécurisée.
     </div>
-    <a class="cta-link" href="https://galynup.fr" target="_blank">Contactez Galyn'Up →</a>
+    <a class="cta-link" href="index.php#contact">Contactez Galyn'Up →</a>
   </div>
 </main>
 
