@@ -185,6 +185,14 @@
     footer { text-align: center; padding: 22px; font-size: 11px; color: var(--gray-400); border-top: 1px solid var(--gray-200); }
     footer a { color: var(--aubergine); text-decoration: none; }
 
+    /* LOADER */
+    .calc-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 400; color: var(--aubergine); opacity: 0; transition: opacity 0.15s; margin-left: 8px; text-transform: none; letter-spacing: 0; }
+    .calc-indicator.visible { opacity: 1; }
+    .calc-spinner { width: 11px; height: 11px; border: 1.5px solid rgba(109,21,93,0.2); border-top-color: var(--aubergine); border-radius: 50%; animation: spin 0.6s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .field-val.updating { animation: pulse-val 0.3s ease; }
+    @keyframes pulse-val { 0% { opacity:1; } 40% { opacity:0.3; } 100% { opacity:1; } }
+
     /* GATE */
     .gate-wrap { position: relative; }
     .gate-overlay { position: absolute; inset: 0; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); background: rgba(250,250,248,0.80); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; gap: 14px; padding: 32px 24px; text-align: center; }
@@ -239,7 +247,7 @@
 
   <!-- PANEL 1 : VOLUMES -->
   <div class="panel">
-    <div class="panel-title">Volumes de tokens</div>
+    <div class="panel-title">Volumes de tokens<span class="calc-indicator" id="calc-indicator"><span class="calc-spinner"></span>Calcul en cours…</span></div>
     <div class="input-grid">
       <div class="field">
         <label>
@@ -510,6 +518,7 @@ const LANG_NOTES = {
 };
 
 let currentSort = 'cost';
+let calcTimer = null;
 
 function fmtM(n) {
   if (n >= 1e6) return (n/1e6).toFixed(1).replace('.',',') + ' M';
@@ -561,6 +570,23 @@ function setSort(key, btn) {
 }
 
 function update() {
+  // Loader
+  const indicator = document.getElementById('calc-indicator');
+  const valIn  = document.getElementById('out-in');
+  const valOut = document.getElementById('out-out');
+  indicator.classList.add('visible');
+  valIn.classList.add('updating');
+  valOut.classList.add('updating');
+  clearTimeout(calcTimer);
+  calcTimer = setTimeout(() => {
+    indicator.classList.remove('visible');
+    valIn.classList.remove('updating');
+    valOut.classList.remove('updating');
+    doUpdate();
+  }, 350);
+}
+
+function doUpdate() {
   const tokIn   = +document.getElementById('sl-in').value;
   const tokOut  = +document.getElementById('sl-out').value;
   const langIn  = document.getElementById('lang-in').value;
