@@ -91,7 +91,13 @@
                     <a href="#realisations" class="nav-link">Réalisations</a>
                     <a href="#recommandations" class="nav-link">Recommandations</a>
                     <a href="#contact" class="nav-link">Contact</a>
-                    <a href="simulateur-llm.php" class="nav-link" style="color:#D3A625;font-weight:500;">🧮 Simulateur LLM</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle" style="color:#D3A625;font-weight:500;">🛠 Outils ▾</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="simulateur-llm.php" class="nav-dropdown-item">🧮 Simulateur LLM</a>
+                            <a href="audit-dsi.php" class="nav-dropdown-item">◈ Audit Maturité DSI</a>
+                        </div>
+                    </div>
                     <!-- Boutons mobiles -->
                     <div class="nav-cta-group-mobile">
                         <a href="#contact" class="btn btn-primary-mobile">Demander un devis</a>
