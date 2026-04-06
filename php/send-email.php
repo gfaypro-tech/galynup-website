@@ -89,20 +89,25 @@ $email_body .= "\n------------------------\n";
 $email_body .= "Date: " . date('d/m/Y H:i:s') . "\n";
 $email_body .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
 
-// Lien pour donner l'accès au Simulateur LLM (optionnel — ne bloque pas l'envoi)
-try {
-    require_once __DIR__ . '/simulateur-db.php';
+// Lien pour donner l'accès au Simulateur LLM (inline, sans dépendance)
+$configFile = __DIR__ . '/config.php';
+if (file_exists($configFile)) {
+    require_once $configFile;
     if (defined('ADMIN_SECRET') && defined('SITE_URL')) {
-        $grantLink = buildGrantLink($fullName, $email);
+        $name_b64  = base64_encode($fullName);
+        $email_b64 = base64_encode($email);
+        $sig       = hash_hmac('sha256', $name_b64 . '|' . $email_b64, ADMIN_SECRET);
+        $grantLink = SITE_URL . '/php/grant-access.php'
+            . '?name='  . urlencode($name_b64)
+            . '&email=' . urlencode($email_b64)
+            . '&sig='   . $sig;
         $email_body .= "\n========================================\n";
-        $email_body .= "DONNER L'ACCÈS AU SIMULATEUR LLM\n";
+        $email_body .= "DONNER L'ACCES AU SIMULATEUR LLM\n";
         $email_body .= "========================================\n";
-        $email_body .= "Cliquez ce lien pour générer un accès personnel et l'envoyer automatiquement à $fullName :\n";
+        $email_body .= "Cliquez ce lien pour envoyer un acces a $fullName :\n";
         $email_body .= "$grantLink\n";
         $email_body .= "========================================\n";
     }
-} catch (Exception $e) {
-    // Ne pas bloquer l'envoi du formulaire si le simulateur est mal configuré
 }
 
 // Préparer les en-têtes
