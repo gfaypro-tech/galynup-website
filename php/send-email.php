@@ -111,9 +111,10 @@ if (file_exists($configFile)) {
 }
 
 // Préparer les en-têtes
+$from_email = defined('NOTIFICATION_EMAIL') ? NOTIFICATION_EMAIL : $to_email;
 $headers = [];
-$headers[] = "From: $fullName <$email>";
-$headers[] = "Reply-To: $email";
+$headers[] = "From: Galyn'Up <$from_email>";
+$headers[] = "Reply-To: $fullName <$email>";
 $headers[] = "X-Mailer: PHP/" . phpversion();
 $headers[] = "MIME-Version: 1.0";
 $headers[] = "Content-Type: text/plain; charset=UTF-8";

@@ -17,12 +17,18 @@ $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($db->connect_error) die('Erreur DB : ' . $db->connect_error);
 $db->set_charset('utf8mb4');
 
-$sql = "ALTER TABLE simulateur_tokens ADD COLUMN IF NOT EXISTS level VARCHAR(10) NOT NULL DEFAULT 'free'";
-
-if ($db->query($sql)) {
-    echo '✅ Migration réussie — colonne <code>level</code> ajoutée.<br>';
+// Vérifier si la colonne existe déjà
+$check = $db->query("SHOW COLUMNS FROM simulateur_tokens LIKE 'level'");
+if ($check && $check->num_rows > 0) {
+    echo '✅ Colonne <code>level</code> déjà présente — rien à faire.<br>';
     echo '⚠️ <strong>Supprimez ce fichier maintenant.</strong>';
 } else {
-    echo '❌ Erreur : ' . $db->error;
+    $sql = "ALTER TABLE simulateur_tokens ADD COLUMN level VARCHAR(10) NOT NULL DEFAULT 'free'";
+    if ($db->query($sql)) {
+        echo '✅ Migration réussie — colonne <code>level</code> ajoutée.<br>';
+        echo '⚠️ <strong>Supprimez ce fichier maintenant.</strong>';
+    } else {
+        echo '❌ Erreur : ' . $db->error;
+    }
 }
 $db->close();

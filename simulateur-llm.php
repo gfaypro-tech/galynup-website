@@ -486,8 +486,15 @@ if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === 
   <div class="gate-overlay">
     <div class="gate-lock">🔒</div>
     <div class="gate-title">Accès gratuit sur demande</div>
-    <div class="gate-sub">Comparez les 26 modèles LLM sur vos volumes réels — coûts mensuels exacts et taux d'hallucination. Accès immédiat et gratuit après votre demande.</div>
-    <a class="gate-btn" href="index.php#contact" target="_blank" rel="noopener">Demander l'accès gratuit →</a>
+    <div class="gate-sub">Comparez les 26 modèles LLM sur vos volumes réels — coûts mensuels exacts et taux d'hallucination.</div>
+    <div id="gateForm" style="width:100%;max-width:320px;">
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <input type="text"  id="gateName"  placeholder="Votre nom *"       style="padding:9px 13px;border:1px solid var(--gray-200);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;box-sizing:border-box;background:#fff;">
+        <input type="email" id="gateEmail" placeholder="votre@email.fr *"  style="padding:9px 13px;border:1px solid var(--gray-200);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;box-sizing:border-box;background:#fff;">
+        <button onclick="submitGateForm()" class="gate-btn" style="border:none;cursor:pointer;">Demander l'accès gratuit →</button>
+      </div>
+      <div id="gateMsg" style="display:none;font-size:12px;margin-top:8px;text-align:center;"></div>
+    </div>
   </div>
 <?php endif; ?>
   </div>
@@ -736,6 +743,39 @@ function showBestCombo() {
 
 populateSelects();
 update();
+</script>
+<script>
+function submitGateForm() {
+  var name  = document.getElementById('gateName').value.trim();
+  var email = document.getElementById('gateEmail').value.trim();
+  var msg   = document.getElementById('gateMsg');
+  if (!name || !email) {
+    msg.style.display = 'block';
+    msg.style.color = '#b83232';
+    msg.textContent = 'Nom et email requis.';
+    return;
+  }
+  var body = new FormData();
+  body.append('name', name);
+  body.append('email', email);
+  fetch('/php/send-simulateur.php', { method: 'POST', body: body })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        document.getElementById('gateForm').innerHTML =
+          '<div style="text-align:center;color:#2d6e1f;font-size:13px;">✓ Demande envoyée !<br><small style="color:#5c5b55;">Vous recevrez votre accès très prochainement.</small></div>';
+      } else {
+        msg.style.display = 'block';
+        msg.style.color = '#b83232';
+        msg.textContent = 'Erreur lors de l\'envoi. Réessayez.';
+      }
+    })
+    .catch(function() {
+      msg.style.display = 'block';
+      msg.style.color = '#b83232';
+      msg.textContent = 'Erreur de connexion.';
+    });
+}
 </script>
 <!-- © 2026 Galyn'Up — Gaëlle FAY — galynup.fr | Outil protégé par le droit d'auteur (CPI art. L111-1). Reproduction interdite sans autorisation. -->
 </body>

@@ -34,8 +34,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 // Si c'est un POST → on génère le token et on envoie l'email
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
 
-    $level = in_array($_POST['level'] ?? '', ['free', 'premium']) ? $_POST['level'] : 'free';
-    $token = createToken($email, $name, $level);
+    $token = createToken($email, $name, 'free');
     if (!$token) {
         http_response_code(500);
         die('Erreur lors de la création du token.');
@@ -55,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
     $body .= "Cordialement,\n";
     $body .= "Gaëlle FAY\n";
     $body .= "Présidente — Galyn'Up | CIO Advisory\n";
-    $body .= "https://galynup.fr\n";
 
     $headers   = [];
     $headers[] = "From: Gaëlle FAY — Galyn'Up <gaelle.fay@galynup.fr>";
@@ -117,15 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
       <strong><?= htmlspecialchars($name) ?></strong> — <?= htmlspecialchars($email) ?>
     </p>
     <p>Un email avec son lien unique lui sera envoyé automatiquement.</p>
-    <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" style="display:flex;gap:12px;flex-wrap:wrap;">
+    <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
       <input type="hidden" name="confirm" value="1">
-      <input type="hidden" name="level" value="free" id="levelInput">
-      <button type="submit" class="btn" onclick="document.getElementById('levelInput').value='free'">
-        ✅ Accès gratuit
-      </button>
-      <button type="submit" class="btn btn-premium" onclick="document.getElementById('levelInput').value='premium'">
-        ⭐ Accès premium (avec analyse IA)
-      </button>
+      <button type="submit" class="btn">✅ Donner l'accès</button>
     </form>
     <p class="info">⚠️ Ne cliquez qu'une seule fois. Chaque clic génère un nouveau lien et désactive le précédent.</p>
   </div>
