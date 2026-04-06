@@ -14,3 +14,6 @@ define('NOTIFICATION_EMAIL', 'votre@email.fr');
 // Simulateur LLM — gestion des accès
 define('ADMIN_SECRET', 'changez-cette-clé-secrète-longue-et-aléatoire');
 define('SITE_URL', 'https://galynup.fr'); // sans slash final
+
+// Audit DSI — analyse IA premium (clé API Anthropic)
+define('ANTHROPIC_API_KEY', 'sk-ant-api...');

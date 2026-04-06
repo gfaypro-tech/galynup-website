@@ -34,7 +34,8 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 // Si c'est un POST → on génère le token et on envoie l'email
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
 
-    $token = createToken($email, $name);
+    $level = in_array($_POST['level'] ?? '', ['free', 'premium']) ? $_POST['level'] : 'free';
+    $token = createToken($email, $name, $level);
     if (!$token) {
         http_response_code(500);
         die('Erreur lors de la création du token.');
@@ -103,6 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
     .btn { display: inline-block; padding: 12px 28px; background: #6D155D; color: #fff; border: none;
            border-radius: 7px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: sans-serif; }
     .btn:hover { background: #8a1c77; }
+    .btn-premium { background: #D3A625; color: #1c1c18; }
+    .btn-premium:hover { background: #e8b82e; }
     .info { font-size: 12px; color: #5c5b55; margin-top: 14px; }
   </style>
 </head>
@@ -114,9 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
       <strong><?= htmlspecialchars($name) ?></strong> — <?= htmlspecialchars($email) ?>
     </p>
     <p>Un email avec son lien unique lui sera envoyé automatiquement.</p>
-    <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+    <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" style="display:flex;gap:12px;flex-wrap:wrap;">
       <input type="hidden" name="confirm" value="1">
-      <button type="submit" class="btn">✅ Confirmer et envoyer l'accès</button>
+      <input type="hidden" name="level" value="free" id="levelInput">
+      <button type="submit" class="btn" onclick="document.getElementById('levelInput').value='free'">
+        ✅ Accès gratuit
+      </button>
+      <button type="submit" class="btn btn-premium" onclick="document.getElementById('levelInput').value='premium'">
+        ⭐ Accès premium (avec analyse IA)
+      </button>
     </form>
     <p class="info">⚠️ Ne cliquez qu'une seule fois. Chaque clic génère un nouveau lien et désactive le précédent.</p>
   </div>

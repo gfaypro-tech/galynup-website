@@ -3,13 +3,18 @@ session_start();
 require_once 'php/simulateur-db.php';
 
 $hasAccess = false;
+$accessLevel = 'free';
 
 if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === true) {
     $hasAccess = true;
+    $accessLevel = $_SESSION['simulateur_level'] ?? 'free';
 } elseif (isset($_GET['token']) && !empty($_GET['token'])) {
-    if (validateToken($_GET['token'])) {
+    $level = validateToken($_GET['token']);
+    if ($level !== false) {
         $hasAccess = true;
+        $accessLevel = $level;
         $_SESSION['simulateur_access'] = true;
+        $_SESSION['simulateur_level'] = $level;
     }
 }
 ?>

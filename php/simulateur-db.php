@@ -15,17 +15,16 @@ function getSimulateurDb() {
 }
 
 /**
- * Valide un token et crée la session si valide.
- * Retourne true si accès accordé.
+ * Valide un token et retourne son niveau ('free'|'premium') ou false.
  */
-function validateToken(string $token): bool {
+function validateToken(string $token) {
     if (empty($token) || strlen($token) !== 64) return false;
 
     $db = getSimulateurDb();
     if (!$db) return false;
 
     $stmt = $db->prepare(
-        "SELECT id FROM simulateur_tokens
+        "SELECT id, level FROM simulateur_tokens
          WHERE token = ? AND active = 1
          LIMIT 1"
     );
@@ -53,14 +52,14 @@ function validateToken(string $token): bool {
     $upd->execute();
 
     $db->close();
-    return true;
+    return $row['level'] ?? 'free';
 }
 
 /**
  * Génère un token unique pour un prospect et l'enregistre en base.
  * Retourne le token ou null en cas d'erreur.
  */
-function createToken(string $email, string $name): ?string {
+function createToken(string $email, string $name, string $level = 'free'): ?string {
     $db = getSimulateurDb();
     if (!$db) return null;
 
@@ -75,10 +74,10 @@ function createToken(string $email, string $name): ?string {
     $token = bin2hex(random_bytes(32)); // 64 chars hex
 
     $stmt = $db->prepare(
-        "INSERT INTO simulateur_tokens (token, email, name, created_at, active)
-         VALUES (?, ?, ?, NOW(), 1)"
+        "INSERT INTO simulateur_tokens (token, email, name, created_at, active, level)
+         VALUES (?, ?, ?, NOW(), 1, ?)"
     );
-    $stmt->bind_param('sss', $token, $email, $name);
+    $stmt->bind_param('ssss', $token, $email, $name, $level);
 
     if (!$stmt->execute()) {
         $db->close();
