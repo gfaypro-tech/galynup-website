@@ -9,6 +9,19 @@ if (mobileMenuBtn && navMenu) {
     });
 }
 
+// Scroll to anchor on page load (e.g. index.php#contact opened from another page)
+window.addEventListener('load', () => {
+    if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+            const navbarHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 0;
+            setTimeout(() => {
+                window.scrollTo({ top: target.offsetTop - navbarHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    }
+});
+
 // Smooth Scroll for Navigation Links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
