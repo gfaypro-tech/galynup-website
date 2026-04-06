@@ -10,3 +10,7 @@ define('DB_USER', 'votre_utilisateur');
 define('DB_PASS', 'votre_mot_de_passe');
 
 define('NOTIFICATION_EMAIL', 'votre@email.fr');
+
+// Simulateur LLM — gestion des accès
+define('ADMIN_SECRET', 'changez-cette-clé-secrète-longue-et-aléatoire');
+define('SITE_URL', 'https://galynup.fr'); // sans slash final

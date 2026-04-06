@@ -91,7 +91,7 @@
                     <a href="#realisations" class="nav-link">Réalisations</a>
                     <a href="#recommandations" class="nav-link">Recommandations</a>
                     <a href="#contact" class="nav-link">Contact</a>
-                    <a href="simulateur-llm.html" class="nav-link" style="color:#D3A625;font-weight:500;">🧮 Simulateur LLM</a>
+                    <a href="simulateur-llm.php" class="nav-link" style="color:#D3A625;font-weight:500;">🧮 Simulateur LLM</a>
                     <!-- Boutons mobiles -->
                     <div class="nav-cta-group-mobile">
                         <a href="#contact" class="btn btn-primary-mobile">Demander un devis</a>
@@ -406,7 +406,7 @@
                         <li>Taux d'hallucination</li>
                         <li>Aide à la décision DSI</li>
                     </ul>
-                    <a href="simulateur-llm.html" style="display:inline-block;margin-top:16px;color:#D3A625;font-weight:500;font-size:13px;text-decoration:none;">→ Accéder au simulateur</a>
+                    <a href="simulateur-llm.php" style="display:inline-block;margin-top:16px;color:#D3A625;font-weight:500;font-size:13px;text-decoration:none;">→ Accéder au simulateur</a>
                 </div>
 
                 <!-- Prestation 3 -->

@@ -89,6 +89,16 @@ $email_body .= "\n------------------------\n";
 $email_body .= "Date: " . date('d/m/Y H:i:s') . "\n";
 $email_body .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
 
+// Lien pour donner l'accès au Simulateur LLM
+require_once __DIR__ . '/simulateur-db.php';
+$grantLink = buildGrantLink($fullName, $email);
+$email_body .= "\n========================================\n";
+$email_body .= "DONNER L'ACCÈS AU SIMULATEUR LLM\n";
+$email_body .= "========================================\n";
+$email_body .= "Cliquez ce lien pour générer un accès personnel et l'envoyer automatiquement à $fullName :\n";
+$email_body .= "$grantLink\n";
+$email_body .= "========================================\n";
+
 // Préparer les en-têtes
 $headers = [];
 $headers[] = "From: $fullName <$email>";
