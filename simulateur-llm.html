@@ -185,6 +185,16 @@
     footer { text-align: center; padding: 22px; font-size: 11px; color: var(--gray-400); border-top: 1px solid var(--gray-200); }
     footer a { color: var(--aubergine); text-decoration: none; }
 
+    /* GATE */
+    .gate-wrap { position: relative; }
+    .gate-overlay { position: absolute; inset: 0; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); background: rgba(250,250,248,0.80); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; gap: 14px; padding: 32px 24px; text-align: center; }
+    .gate-lock { font-size: 40px; line-height: 1; }
+    .gate-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--aubergine); }
+    .gate-sub { font-size: 13px; color: var(--gray-600); line-height: 1.65; max-width: 400px; }
+    .gate-btn { display: inline-block; padding: 12px 26px; background: var(--aubergine); color: #fff; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+    .gate-btn:hover { background: var(--aubergine-hover); }
+    .apercu-note { margin-top: 14px; font-size: 12px; color: var(--gray-600); padding: 10px 14px; background: var(--gold-pale); border: 1px solid var(--gold-border); border-radius: var(--radius-sm); line-height: 1.55; }
+
     @media (max-width: 640px) {
       header { padding: 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
       main { padding: 24px 14px 48px; }
@@ -324,7 +334,70 @@
     <div class="cost-summary" style="margin-top: 18px;" id="cost-summary"></div>
   </div>
 
+  <!-- APERÇU STATIQUE -->
+  <div class="panel">
+    <div class="panel-title">Aperçu — exemple de comparaison</div>
+    <p style="font-size:12px;color:var(--gray-600);margin-bottom:14px;">Volumes de référence : <strong>5 M tokens input + 1 M tokens output / mois</strong>, corpus en français.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Modèle</th>
+            <th>Provider</th>
+            <th>Région</th>
+            <th class="r">Input /1M</th>
+            <th class="r">Output /1M</th>
+            <th class="r">Coût mensuel</th>
+            <th>Hallucination</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="model-name">Gemini 2.0 Flash</div><div class="model-sub">Google</div></td>
+            <td><span class="tag tag-amber">US</span></td>
+            <td></td>
+            <td class="r"><span class="price-sm">$0.10</span></td>
+            <td class="r"><span class="price-sm">$0.40</span></td>
+            <td class="r"><span class="cost-big">$1.1</span></td>
+            <td><div class="halu-cell"><div class="halu-val" style="color:#2d6e1f">0.7 % <span style="font-size:9px;color:var(--gray-400)">avr. 2025</span></div><div class="halu-bar-bg"><div class="halu-bar-fill" style="width:4%;background:#2d6e1f"></div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="model-name">Mistral Small 3.1</div><div class="model-sub">Mistral AI</div></td>
+            <td><span class="tag tag-green">EU natif</span></td>
+            <td></td>
+            <td class="r"><span class="price-sm">$0.20</span></td>
+            <td class="r"><span class="price-sm">$0.60</span></td>
+            <td class="r"><span class="cost-big">$1.8</span></td>
+            <td><div class="halu-cell"><div class="halu-val" style="color:#8a5e10">4.1 % <span style="font-size:9px;color:var(--gray-400)">mars 2026</span></div><div class="halu-bar-bg"><div class="halu-bar-fill" style="width:20%;background:#8a5e10"></div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="model-name">GPT-4.1</div><div class="model-sub">OpenAI</div></td>
+            <td><span class="tag tag-amber">US</span></td>
+            <td></td>
+            <td class="r"><span class="price-sm">$2.00</span></td>
+            <td class="r"><span class="price-sm">$8.00</span></td>
+            <td class="r"><span class="cost-big">$22.5</span></td>
+            <td><div class="halu-cell"><div class="halu-val" style="color:#2d6e1f">1.8 % <span style="font-size:9px;color:var(--gray-400)">mars 2026</span></div><div class="halu-bar-bg"><div class="halu-bar-fill" style="width:9%;background:#2d6e1f"></div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="model-name">o3</div><div class="model-sub">OpenAI</div></td>
+            <td><span class="tag tag-amber">US</span></td>
+            <td></td>
+            <td class="r"><span class="price-sm">$10.00</span></td>
+            <td class="r"><span class="price-sm">$40.00</span></td>
+            <td class="r"><span class="cost-big">$113</span></td>
+            <td><div class="halu-cell"><div class="halu-val" style="color:#2d6e1f">0.8 % <span style="font-size:9px;color:var(--gray-400)">mars 2026</span></div><div class="halu-bar-bg"><div class="halu-bar-fill" style="width:4%;background:#2d6e1f"></div></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="apercu-note">
+      Cet aperçu présente 4 modèles sur 26 disponibles. Le simulateur complet vous permet d'ajuster les volumes, la langue, et d'obtenir le comparatif intégral avec la recommandation "Meilleure proposition".
+    </div>
+  </div>
+
   <!-- PANEL 3 : TABLEAU -->
+  <div class="gate-wrap">
   <div class="panel">
     <div class="panel-title">Comparatif — tous les modèles</div>
     <div class="sort-bar">
@@ -374,6 +447,13 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="gate-overlay">
+    <div class="gate-lock">🔒</div>
+    <div class="gate-title">Accès gratuit sur demande</div>
+    <div class="gate-sub">Comparez les 26 modèles LLM sur vos volumes réels — coûts mensuels exacts et taux d'hallucination. Accès immédiat et gratuit après votre demande.</div>
+    <a class="gate-btn" href="index.php#contact">Demander l'accès gratuit →</a>
+  </div>
   </div>
 
   <div class="cta-bar">
