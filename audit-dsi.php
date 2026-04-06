@@ -115,13 +115,5 @@ if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === 
   </footer>
 
 <script src="js/script.js"></script>
-<style>
-  /* Dropdown navbar */
-  .nav-dropdown { position: relative; }
-  .nav-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #dddcd7; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); min-width: 220px; z-index: 100; padding: 6px 0; }
-  .nav-dropdown:hover .nav-dropdown-menu { display: block; }
-  .nav-dropdown-item { display: block; padding: 9px 16px; font-size: 13px; color: #1c1c18; text-decoration: none; white-space: nowrap; }
-  .nav-dropdown-item:hover, .nav-dropdown-item.active { color: #6D155D; background: #f7eef5; }
-</style>
 </body>
 </html>
