@@ -1,3 +1,19 @@
+// Dropdown Outils — ouverture au clic
+document.querySelectorAll('.nav-dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        const dropdown = this.closest('.nav-dropdown');
+        const isOpen = dropdown.classList.contains('open');
+        document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+        if (!isOpen) dropdown.classList.add('open');
+    });
+});
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-dropdown')) {
+        document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+});
+
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navMenu = document.getElementById('navMenu');

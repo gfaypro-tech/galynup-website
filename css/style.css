@@ -3458,8 +3458,8 @@ h3 {
 /* ── Menu dropdown Outils ── */
 .nav-dropdown { position: relative; display: inline-block; }
 .nav-dropdown-toggle { cursor: pointer; }
-.nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #dddcd7; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 230px; z-index: 200; padding: 6px 0; }
-.nav-dropdown:hover .nav-dropdown-menu { display: block; }
+.nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #dddcd7; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 230px; z-index: 200; padding: 6px 0; }
+.nav-dropdown.open .nav-dropdown-menu { display: block; }
 .nav-dropdown-item { display: block; padding: 10px 18px; font-size: 13px; color: #1c1c18; text-decoration: none; white-space: nowrap; transition: background 0.1s; }
 .nav-dropdown-item:hover { color: #6D155D; background: #f7eef5; }
 .nav-dropdown-item.active { color: #6D155D; font-weight: 500; }
