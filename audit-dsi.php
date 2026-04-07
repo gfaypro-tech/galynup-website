@@ -1,19 +1,46 @@
 <?php
-session_start();
-require_once 'php/simulateur-db.php';
+/*
+ * ============================================================
+ * AUDIT MATURITÉ DSI — Galyn'Up
+ * ============================================================
+ *
+ * CHOIX ACTUEL : accès libre, niveau fixé à 'free'.
+ * L'outil envoie les résultats via send-audit.php et le
+ * consultant réalise l'analyse manuellement (avec IA).
+ *
+ * ── SYSTÈME DE NIVEAUX (EN VEILLE) ─────────────────────────
+ * Un système free/premium était en place et peut être réactivé
+ * si besoin. Pour cela :
+ *
+ *   1. Décommenter le bloc ci-dessous (session + token)
+ *   2. S'assurer que php/config.php est présent (DB_HOST etc.)
+ *   3. S'assurer que la table simulateur_tokens existe en MySQL
+ *      (voir php/init-simulateur.php ou php/migrate-simulateur.php)
+ *
+ * En niveau 'premium', l'application React injecte l'analyse
+ * via php/claude-proxy.php → API Anthropic (ANTHROPIC_API_KEY
+ * dans config.php). En niveau 'free', seuls scores + radar +
+ * mini formulaire sont affichés.
+ *
+ * Bloc à décommenter pour réactiver :
+ * -----------------------------------------------------------
+ * session_start();
+ * require_once 'php/simulateur-db.php';
+ * if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === true) {
+ *     $accessLevel = $_SESSION['simulateur_level'] ?? 'free';
+ * } elseif (isset($_GET['token']) && !empty($_GET['token'])) {
+ *     $level = validateToken($_GET['token']);
+ *     if ($level !== false) {
+ *         $accessLevel = $level;
+ *         $_SESSION['simulateur_access'] = true;
+ *         $_SESSION['simulateur_level'] = $level;
+ *     }
+ * }
+ * -----------------------------------------------------------
+ * ============================================================
+ */
 
 $accessLevel = 'free';
-
-if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === true) {
-    $accessLevel = $_SESSION['simulateur_level'] ?? 'free';
-} elseif (isset($_GET['token']) && !empty($_GET['token'])) {
-    $level = validateToken($_GET['token']);
-    if ($level !== false) {
-        $accessLevel = $level;
-        $_SESSION['simulateur_access'] = true;
-        $_SESSION['simulateur_level'] = $level;
-    }
-}
 
 $jsFiles = glob(__DIR__ . '/audit-dsi/assets/*.js');
 $jsFile  = $jsFiles ? basename($jsFiles[0]) : '';
