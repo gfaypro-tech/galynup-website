@@ -252,6 +252,8 @@ if (isset($_SESSION['simulateur_access']) && $_SESSION['simulateur_access'] === 
                         <div class="nav-dropdown-menu">
                             <a href="simulateur-llm.php" class="nav-dropdown-item active">🧮 Simulateur LLM</a>
                             <a href="audit-dsi.php" class="nav-dropdown-item">◈ Audit Maturité DSI</a>
+                            <a href="diag-cyber.php" class="nav-dropdown-item">🔒 Diag Cybersécurité</a>
+                            <a href="diag-infra.php" class="nav-dropdown-item">🖥️ Diag Infrastructure</a>
                         </div>
                     </div>
                 </div>
