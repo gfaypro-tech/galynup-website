@@ -84,7 +84,9 @@ Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
   ]
 }
 
-Génère entre 3 et 5 questions.
+Génère EXACTEMENT 3 questions — pas plus, pas moins.
+Choisis les 3 questions les plus stratégiques pour mettre en évidence les compétences
+attendues par le recruteur au travers des expériences concrètes du candidat.
 Pour chaque question, rédige une reponse_suggeree en PREMIÈRE PERSONNE (je, j'ai, mon, ma...)
 basée sur les informations déjà disponibles dans le profil du candidat.
 La reponse_suggeree doit être une ébauche concrète et directement utilisable que le candidat
