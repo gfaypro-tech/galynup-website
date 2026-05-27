@@ -81,10 +81,16 @@ switch ($step) {
 
     // ── Step 5 : CV reçu → extraire HTML + passer step 6 + capitaliser le dialogue
     case 5:
-        // Extraire le HTML entre <section id="cv"> et </section>
+        // Extraire <section id="cv">…</section> — strrpos pour gérer les sections imbriquées
         $cvHtml = $content;
-        if (preg_match('/<section[^>]*id=["\']cv["\'][^>]*>([\s\S]*?)<\/section>/i', $content, $m)) {
-            $cvHtml = '<section id="cv">' . $m[1] . '</section>';
+        if (preg_match('/<section[^>]*id=["\']cv["\'][^>]*>/i', $content, $openMatch, PREG_OFFSET_CAPTURE)) {
+            $openTag  = $openMatch[0][0];
+            $openPos  = $openMatch[0][1];
+            $afterOpen = $openPos + strlen($openTag);
+            $closePos = strrpos($content, '</section>');
+            if ($closePos !== false && $closePos > $afterOpen) {
+                $cvHtml = $openTag . substr($content, $afterOpen, $closePos - $afterOpen) . '</section>';
+            }
         }
         $db->prepare("UPDATE cv_applications SET cv_content = ?, step_current = 6, status = 'completed', updated_at = NOW() WHERE id = ?")
            ->execute([$cvHtml, $id]);

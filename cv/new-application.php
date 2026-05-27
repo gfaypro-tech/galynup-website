@@ -199,17 +199,30 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
 </section>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RÈGLES IMPÉRATIVES
+RÈGLES IMPÉRATIVES — STRUCTURE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Commence DIRECTEMENT par <section id="cv">, sans aucun texte avant ni après
-- N'inclus AUCUN CSS, AUCUN <style>, AUCUN attribut style=""
-- Les sections CERTIFICATIONS, FORMATION, CONTACT, LANGUES sont FIXES — utilise exactement ces contenus
-- Le cv-subtitle DOIT être adapté au poste ciblé (ex. "Directrice de Programme SI" ou "DSI de Transition")
-- Les COMPÉTENCES CLÉS : choisir 6 à 8 compétences — inclure obligatoirement les mots-clés de la fiche de poste
-- Chaque cv-job-bullets commence TOUJOURS par <strong>Mot-clé :</strong> suivi de la réalisation
+- Termine OBLIGATOIREMENT par </section> (fermeture de <section id="cv">)
+- N'inclus AUCUN CSS, AUCUN <style>, AUCUN attribut style="" sur aucune balise
+- N'utilise QUE les balises et classes du template ci-dessus — aucune balise supplémentaire
+
+RÈGLES IMPÉRATIVES — CONTENU FIGÉ (copie mot pour mot, sans aucune modification)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- La section CERTIFICATIONS : les 6 <li> sont du TEXTE BRUT, AUCUNE balise à l'intérieur des <li>
+- La section FORMATION : texte fixe, Master 2 IAE Sorbonne 2008
+- Le contact (cv-contact) : +33 6 10 74 55 84 · gaelle.fay@outlook.fr · Noisy-le-Grand (93) · linkedin.com/in/gaellefay
+- La section LANGUES : texte fixe
+
+RÈGLES IMPÉRATIVES — FORMATAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- cv-list-2col (CERTIFICATIONS et COMPÉTENCES) : les <li> contiennent UNIQUEMENT du texte brut — ZÉRO balise HTML à l'intérieur
+- cv-job-bullets : chaque <li> commence OBLIGATOIREMENT par <strong>Mot-clé :</strong> puis texte brut
+- cv-job-context : contenu en texte brut dans <em>…</em>, aucune autre balise
+- Le cv-subtitle DOIT être adapté au poste ciblé (pas générique)
+- Les COMPÉTENCES CLÉS : 6 à 8 items texte brut — inclure les mots-clés exacts de la fiche de poste
 - Expériences récentes (< 5 ans) : 4 à 5 puces | expériences > 10 ans : 2 puces max
-- Intégrer toutes les réalisations concrètes mentionnées dans le dialogue et les expériences complémentaires
-- Ne jamais inventer ni exagérer une expérience — respecter strictement la réalité du parcours
+- Intégrer toutes les réalisations mentionnées dans le dialogue et les expériences complémentaires
+- Ne jamais inventer ni exagérer — respecter strictement la réalité du parcours
 - Longueur totale : 1 à 2 pages imprimées
 
 ---
@@ -538,10 +551,27 @@ elseif ($step === 5):
     <textarea id="cv-response" class="form-control" rows="14"
               placeholder="Colle ici la réponse complète de Claude (le HTML du CV)..."></textarea>
     <div class="flex flex-gap mt-16">
-      <button class="btn btn-primary" onclick="saveStep(5)">Enregistrer le CV →</button>
+      <button class="btn btn-primary" onclick="previewCV()">Prévisualiser le CV →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
     </div>
     <div id="step5-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- Zone de prévisualisation (masquée par défaut) -->
+  <div id="cv-preview-wrap" style="display:none; margin-top:28px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+      <div style="font-size:14px; font-weight:700; color:#333;">Aperçu du CV</div>
+      <div class="flex flex-gap">
+        <button class="btn btn-ghost btn-sm" onclick="resetPreview()">← Modifier la réponse</button>
+        <button class="btn btn-primary" onclick="confirmCV()">Confirmer et enregistrer →</button>
+      </div>
+    </div>
+    <div id="cv-preview-area" class="cv-preview"></div>
+    <div class="flex flex-gap" style="margin-top:16px; justify-content:flex-end;">
+      <button class="btn btn-ghost btn-sm" onclick="resetPreview()">← Modifier la réponse</button>
+      <button class="btn btn-primary" onclick="confirmCV()">Confirmer et enregistrer →</button>
+    </div>
+    <div id="step5-confirm-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
 </div>
 
@@ -783,6 +813,45 @@ function addDialogueToKnowledge() {
   .then(d => {
     const type = d.success ? 'success' : 'error';
     showMsg(msgEl, d.success ? 'Réponses ajoutées à la base de connaissance.' : (d.error || 'Erreur.'), type);
+  });
+}
+
+// ── Step 5 — Prévisualiser / confirmer le CV ───────
+function previewCV() {
+  const raw   = document.getElementById('cv-response')?.value?.trim();
+  const msgEl = document.getElementById('step5-msg');
+  if (!raw) { showMsg(msgEl, 'Colle la réponse de Claude avant de prévisualiser.', 'error'); return; }
+
+  // Extraire <section id="cv"> via DOMParser (gère correctement les sections imbriquées)
+  const parser  = new DOMParser();
+  const doc     = parser.parseFromString(raw, 'text/html');
+  const cvEl    = doc.getElementById('cv');
+
+  const previewArea = document.getElementById('cv-preview-area');
+  previewArea.innerHTML = cvEl ? cvEl.outerHTML : raw;
+
+  document.getElementById('cv-preview-wrap').style.display = 'block';
+  document.getElementById('cv-preview-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetPreview() {
+  document.getElementById('cv-preview-wrap').style.display = 'none';
+  document.getElementById('cv-preview-area').innerHTML = '';
+}
+
+function confirmCV() {
+  const raw   = document.getElementById('cv-response')?.value?.trim();
+  const msgEl = document.getElementById('step5-confirm-msg');
+  if (!raw) return;
+  fetch('php/save-step.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, step: 5, content: raw })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location = 'new-application.php?id=' + appId;
+    else showMsg(msgEl, d.error || 'Erreur lors de l\'enregistrement.', 'error');
   });
 }
 
