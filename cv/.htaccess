@@ -1,0 +1,20 @@
+# CV Builder — Protection des fichiers sensibles
+Options -Indexes
+
+# Protéger le fichier de configuration
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Protéger le dossier sql
+<FilesMatch "\.(sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protéger les includes (non accessibles directement)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^includes/ - [F,L]
+</IfModule>

@@ -1,0 +1,587 @@
+<?php
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/db.php';
+requireLogin();
+
+$db  = getDB();
+$app = null;
+$id  = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($id > 0) {
+    $stmt = $db->prepare("SELECT * FROM cv_applications WHERE id = ?");
+    $stmt->execute([$id]);
+    $app = $stmt->fetch();
+    if (!$app) { header('Location: dashboard.php'); exit; }
+}
+
+$step = $app ? (int)$app['step_current'] : 1;
+
+// ── Construire le bloc "Base de connaissance" pour les prompts ─────────
+function buildKnowledgeBlock(PDO $db): string {
+    $entries = $db->query("SELECT type, title, content, meta_json FROM cv_knowledge WHERE is_active = 1 ORDER BY type, created_at")->fetchAll();
+    if (empty($entries)) return "(Base de connaissance vide — ajoute des entrées dans la section 'Base de connaissance')";
+    $text = '';
+    foreach ($entries as $e) {
+        $meta = $e['meta_json'] ? json_decode($e['meta_json'], true) : [];
+        $header = strtoupper($e['type']);
+        if (!empty($e['title']))   $header .= ' — ' . $e['title'];
+        if (!empty($meta['company'])) $header .= ' | ' . $meta['company'];
+        if (!empty($meta['role']))    $header .= ' · ' . $meta['role'];
+        if (!empty($meta['period']))  $header .= ' (' . $meta['period'] . ')';
+        $text .= "[$header]\n" . $e['content'] . "\n\n";
+    }
+    return trim($text);
+}
+
+// ── Prompts ────────────────────────────────────────────────────────────
+function buildAnalysisPrompt(string $jobPosting): string {
+    return <<<PROMPT
+Analyse cette fiche de poste et retourne UNIQUEMENT un JSON valide avec exactement cette structure :
+
+{
+  "entreprise": "nom de l'entreprise si mentionné",
+  "poste": "intitulé du poste",
+  "competences_cles": ["compétence absolument requise 1", "compétence 2"],
+  "experience_requise": ["exigence d'expérience 1", "exigence 2"],
+  "mots_cles_sectoriels": ["mot-clé 1", "mot-clé 2"],
+  "profil_type": "description du profil idéal en 2-3 phrases",
+  "dealbreakers": ["condition sine qua non 1", "condition 2"],
+  "points_valorises": ["ce que le recruteur valorise particulièrement 1", "point 2"]
+}
+
+Ne retourne que le JSON, sans explication ni texte avant ou après.
+
+FICHE DE POSTE :
+$jobPosting
+PROMPT;
+}
+
+function buildMatchingPrompt(string $knowledge, string $analysisJson, string $jobPosting): string {
+    return <<<PROMPT
+Tu es expert en recrutement. Compare le profil d'un candidat avec une fiche de poste analysée.
+
+Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
+
+{
+  "resume_matching": "évaluation globale en 2-3 phrases",
+  "correspondances": [
+    {
+      "competence": "compétence requise par le poste",
+      "trouve_dans_profil": "ce qui correspond dans le profil du candidat (ou 'Non trouvé')",
+      "force": "fort|moyen|faible|absent"
+    }
+  ],
+  "points_forts": ["point fort 1 du candidat pour ce poste", "point fort 2"],
+  "lacunes": ["lacune ou point à renforcer 1", "lacune 2"],
+  "questions": [
+    {
+      "id": 1,
+      "question": "Question précise sur une expérience ou réalisation concrète ?",
+      "pourquoi": "En quoi la réponse renforcera la candidature pour ce poste"
+    },
+    {
+      "id": 2,
+      "question": "Deuxième question ?",
+      "pourquoi": "Raison"
+    }
+  ]
+}
+
+Génère entre 3 et 5 questions. Focalise sur ce qui permettra de construire un CV convaincant.
+Ne retourne que le JSON, sans texte avant ou après.
+
+---
+PROFIL DU CANDIDAT :
+$knowledge
+
+---
+ANALYSE DU POSTE (JSON) :
+$analysisJson
+
+---
+FICHE DE POSTE ORIGINALE :
+$jobPosting
+PROMPT;
+}
+
+function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, array $dialogue, string $jobPosting): string {
+    $qa = '';
+    foreach ($dialogue as $d) {
+        if ($d['answer']) {
+            $qa .= "Q : " . $d['question'] . "\nR : " . $d['answer'] . "\n\n";
+        }
+    }
+    return <<<PROMPT
+Tu es expert en rédaction de CV pour des cadres dirigeants français. Génère un CV sur-mesure en français.
+
+INSTRUCTIONS IMPÉRATIVES :
+- Longueur : 1 à 2 pages maximum
+- Ne mentir sur aucune expérience — respecter strictement la réalité du parcours
+- Intégrer les réalisations concrètes mentionnées dans les réponses au dialogue
+- Utiliser les mots-clés et la terminologie de la fiche de poste
+- Mettre en avant les points forts identifiés lors du matching
+- Structurer le CV pour répondre aux priorités du recruteur
+- Retourner le CV en HTML entre les balises <section id="cv"> et </section>
+- Utiliser des balises h1 (nom), h2 (sections), strong (titres de postes), ul/li (réalisations)
+- Ne pas inclure de CSS dans le HTML
+- Commencer directement par <section id="cv">, sans explication
+
+---
+PROFIL DU CANDIDAT :
+$knowledge
+
+---
+ANALYSE DU POSTE :
+$analysisJson
+
+---
+MATCHING ET QUESTIONS IDENTIFIÉES :
+$matchingJson
+
+---
+INFORMATIONS COMPLÉMENTAIRES (réponses au dialogue) :
+$qa
+---
+FICHE DE POSTE :
+$jobPosting
+PROMPT;
+}
+
+// ── Données pour les étapes actives ───────────────────────────────────
+$knowledge     = buildKnowledgeBlock($db);
+$analysisJson  = $app['analysis_result'] ?? '';
+$matchingJson  = $app['matching_result'] ?? '';
+$cvContent     = $app['cv_content'] ?? '';
+
+$dialogue = [];
+if ($app && $step >= 4) {
+    $stmt = $db->prepare("SELECT * FROM cv_dialogue WHERE application_id = ? ORDER BY question_order");
+    $stmt->execute([$app['id']]);
+    $dialogue = $stmt->fetchAll();
+}
+
+$currentQuestion = null;
+$allAnswered     = true;
+if ($step === 4 && !empty($dialogue)) {
+    foreach ($dialogue as $q) {
+        if (empty($q['answer'])) {
+            $currentQuestion = $q;
+            $allAnswered = false;
+            break;
+        }
+    }
+}
+
+$stepLabels = ['Fiche de poste', 'Analyse', 'Matching', 'Dialogue', 'Génération CV', 'Export'];
+
+$pageTitle  = $app ? 'Candidature — ' . htmlspecialchars($app['company']) : 'Nouvelle candidature';
+$activePage = 'new';
+require_once __DIR__ . '/includes/header.php';
+?>
+
+<!-- Barre de progression -->
+<div class="steps-bar">
+  <?php for ($i = 1; $i <= 6; $i++): ?>
+    <div class="step <?= $i < $step ? 'done' : ($i === $step ? 'active' : '') ?>">
+      <div class="step-circle"><?= $i < $step ? '✓' : $i ?></div>
+      <span class="step-label"><?= $stepLabels[$i-1] ?></span>
+    </div>
+  <?php endfor; ?>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 1 — Infos + Fiche de poste
+   ═══════════════════════════════════════════════════ */
+if ($step === 1): ?>
+<div class="card">
+  <div class="card-title">📋 Fiche de poste</div>
+
+  <?php if (empty(trim($knowledge)) || strpos($knowledge, 'vide') !== false): ?>
+    <div class="alert alert-warning">
+      ⚠ Ta base de connaissance est vide. <a href="knowledge-base.php">Ajoute des entrées</a> avant de candidater.
+    </div>
+  <?php endif; ?>
+
+  <form id="form-step1">
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Entreprise</label>
+        <input type="text" name="company" class="form-control" required
+               value="<?= htmlspecialchars($app['company'] ?? '') ?>"
+               placeholder="Nom de l'entreprise">
+      </div>
+      <div class="form-group">
+        <label>Poste visé</label>
+        <input type="text" name="position" class="form-control" required
+               value="<?= htmlspecialchars($app['position'] ?? '') ?>"
+               placeholder="Intitulé du poste">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Fiche de poste complète</label>
+      <textarea name="job_posting" class="form-control" rows="16" required
+                placeholder="Colle ici la fiche de poste intégrale..."><?= htmlspecialchars($app['job_posting'] ?? '') ?></textarea>
+    </div>
+    <div class="flex flex-gap items-center">
+      <button type="submit" class="btn btn-primary btn-lg">Générer le prompt d'analyse →</button>
+      <span id="step1-status" class="text-muted hidden"></span>
+    </div>
+    <?php if ($id > 0): ?><input type="hidden" name="id" value="<?= $id ?>"><?php endif; ?>
+  </form>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 2 — Analyse
+   ═══════════════════════════════════════════════════ */
+elseif ($step === 2):
+    $prompt = buildAnalysisPrompt($app['job_posting']);
+?>
+<div class="card">
+  <div class="card-title">🔍 Étape 2 — Analyse de la fiche de poste</div>
+
+  <div class="alert alert-info">
+    Copie le prompt ci-dessous, colle-le dans Claude.ai, puis colle la réponse dans la zone verte.
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-block-header">
+      <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+      <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-analysis')">📋 Copier</button>
+    </div>
+    <div class="prompt-text" id="prompt-analysis"><?= htmlspecialchars($prompt) ?></div>
+  </div>
+
+  <div class="response-block">
+    <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
+    <textarea id="analysis-response" class="form-control" rows="10"
+              placeholder='Colle ici le JSON retourné par Claude...&#10;&#10;Exemple :&#10;{&#10;  "entreprise": "Estreem",&#10;  "poste": "Directeur de Programme",&#10;  ...&#10;}'></textarea>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary" onclick="saveStep(2)">Enregistrer et continuer →</button>
+      <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+    </div>
+    <div id="step2-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 3 — Matching
+   ═══════════════════════════════════════════════════ */
+elseif ($step === 3):
+    $prompt = buildMatchingPrompt($knowledge, $analysisJson, $app['job_posting']);
+?>
+<div class="card">
+  <div class="card-title">🎯 Étape 3 — Matching avec ta base de connaissance</div>
+
+  <div class="alert alert-info">
+    Ce prompt inclut l'intégralité de ta base de connaissance. Claude va identifier ce qui matche
+    et générer des questions ciblées pour enrichir le CV.
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-block-header">
+      <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+      <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-matching')">📋 Copier</button>
+    </div>
+    <div class="prompt-text" id="prompt-matching"><?= htmlspecialchars($prompt) ?></div>
+  </div>
+
+  <div class="response-block">
+    <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
+    <textarea id="matching-response" class="form-control" rows="10"
+              placeholder='Colle ici le JSON retourné par Claude...'></textarea>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary" onclick="saveStep(3)">Enregistrer et continuer →</button>
+      <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+    </div>
+    <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 4 — Dialogue Q&A
+   ═══════════════════════════════════════════════════ */
+elseif ($step === 4): ?>
+<div class="card">
+  <div class="card-title">💬 Étape 4 — Dialogue</div>
+
+  <?php if (empty($dialogue)): ?>
+    <div class="alert alert-warning">
+      Aucune question trouvée. <a href="php/reparse-questions.php?id=<?= $id ?>">Réanalyser le matching</a>
+      ou <a href="#" onclick="addManualQuestion()">ajouter une question manuellement</a>.
+    </div>
+  <?php elseif ($allAnswered): ?>
+    <div class="alert alert-success">
+      ✓ Toutes les questions ont été répondues. Tu peux passer à la génération du CV.
+    </div>
+    <div class="mt-16">
+      <h3 style="font-size:15px; font-weight:600; margin-bottom:12px;">Récapitulatif du dialogue</h3>
+      <?php foreach ($dialogue as $i => $q): ?>
+        <div style="margin-bottom:16px; padding:14px; background:#f9f9f7; border-radius:8px; border:1px solid #e4e0db;">
+          <div style="font-weight:600; font-size:13px; color:#6D155D; margin-bottom:4px;">Question <?= $i+1 ?></div>
+          <div style="font-size:14px; margin-bottom:8px;"><?= htmlspecialchars($q['question']) ?></div>
+          <div style="font-size:13px; color:#444; border-left:3px solid #D3A625; padding-left:10px;"><?= nl2br(htmlspecialchars($q['answer'])) ?></div>
+        </div>
+      <?php endforeach; ?>
+      <button class="btn btn-primary btn-lg" onclick="goToStep5()">Générer le CV →</button>
+    </div>
+  <?php else: ?>
+    <?php
+    $answered = array_filter($dialogue, fn($q) => !empty($q['answer']));
+    $total    = count($dialogue);
+    $done     = count($answered);
+    ?>
+    <div class="alert alert-info">
+      Question <?= $done + 1 ?> sur <?= $total ?>. Réponds directement ici, dans l'application.
+    </div>
+
+    <div class="question-card">
+      <div class="question-number">Question <?= $done + 1 ?> / <?= $total ?></div>
+      <div class="question-text"><?= htmlspecialchars($currentQuestion['question']) ?></div>
+      <?php
+        $matchingData = json_decode($matchingJson, true);
+        $pourquoi = '';
+        if ($matchingData && isset($matchingData['questions'])) {
+            foreach ($matchingData['questions'] as $mq) {
+                if ((int)$mq['id'] === (int)$currentQuestion['question_order']) {
+                    $pourquoi = $mq['pourquoi'] ?? '';
+                    break;
+                }
+            }
+        }
+      ?>
+      <?php if ($pourquoi): ?>
+        <div class="question-why">Pourquoi cette question : <?= htmlspecialchars($pourquoi) ?></div>
+      <?php endif; ?>
+
+      <textarea id="answer-text" class="form-control" rows="5"
+                placeholder="Décris ton expérience concrète sur ce sujet. Inclus des exemples précis, des chiffres si possible, des projets nommés..."></textarea>
+
+      <div class="flex flex-gap mt-16">
+        <button class="btn btn-primary" onclick="saveAnswer(<?= $currentQuestion['id'] ?>)">
+          Répondre →
+        </button>
+        <button class="btn btn-ghost" onclick="skipQuestion(<?= $currentQuestion['id'] ?>)">
+          Passer cette question
+        </button>
+      </div>
+      <div id="answer-msg" class="hidden alert" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Questions précédentes -->
+    <?php if ($done > 0): ?>
+      <div style="margin-top:20px;">
+        <div style="font-size:13px; font-weight:600; color:#6b6b65; margin-bottom:10px;">Réponses précédentes :</div>
+        <?php foreach ($answered as $q): ?>
+          <div style="margin-bottom:10px; padding:12px; background:#f9f9f7; border-radius:8px; border:1px solid #e4e0db; font-size:13px;">
+            <strong><?= htmlspecialchars($q['question']) ?></strong><br>
+            <span style="color:#444;"><?= nl2br(htmlspecialchars($q['answer'])) ?></span>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 5 — Génération du CV
+   ═══════════════════════════════════════════════════ */
+elseif ($step === 5):
+    $prompt = buildCVPrompt($knowledge, $analysisJson, $matchingJson, $dialogue, $app['job_posting']);
+?>
+<div class="card">
+  <div class="card-title">✍ Étape 5 — Génération du CV</div>
+
+  <div class="alert alert-info">
+    Ce prompt contient l'ensemble des informations collectées. Claude va générer ton CV sur-mesure.
+    Colle le résultat ci-dessous — l'app extraira automatiquement le HTML du CV.
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-block-header">
+      <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+      <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-cv')">📋 Copier</button>
+    </div>
+    <div class="prompt-text" id="prompt-cv"><?= htmlspecialchars($prompt) ?></div>
+  </div>
+
+  <div class="response-block">
+    <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
+    <textarea id="cv-response" class="form-control" rows="14"
+              placeholder="Colle ici la réponse complète de Claude (le HTML du CV)..."></textarea>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary" onclick="saveStep(5)">Enregistrer le CV →</button>
+      <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+    </div>
+    <div id="step5-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<?php /* ═══════════════════════════════════════════════════
+   STEP 6 — Export
+   ═══════════════════════════════════════════════════ */
+elseif ($step === 6): ?>
+<div class="alert alert-success">
+  ✓ CV généré avec succès pour <strong><?= htmlspecialchars($app['company']) ?></strong> — <?= htmlspecialchars($app['position']) ?>
+</div>
+
+<div class="flex flex-gap mb-16">
+  <a href="php/export-word.php?id=<?= $id ?>" class="btn btn-primary btn-lg">⬇ Télécharger Word (.doc)</a>
+  <button onclick="window.print()" class="btn btn-outline btn-lg">🖨 Imprimer / PDF</button>
+  <a href="new-application.php" class="btn btn-gold">+ Nouvelle candidature</a>
+</div>
+
+<div class="cv-preview" id="cv-output">
+  <?= $cvContent ?>
+</div>
+
+<div class="card mt-24" style="margin-top:24px;">
+  <div class="card-title" style="font-size:15px;">Ajouter des éléments à la base de connaissance</div>
+  <p class="text-muted" style="font-size:13px; margin-bottom:12px;">
+    Les réalisations mentionnées dans ce dialogue peuvent enrichir ta base de connaissance pour les prochaines candidatures.
+  </p>
+  <button class="btn btn-outline btn-sm" onclick="addDialogueToKnowledge()">
+    Enregistrer les réponses dans la base de connaissance
+  </button>
+  <div id="knowledge-save-msg" class="hidden alert" style="margin-top:10px;"></div>
+</div>
+
+<?php endif; ?>
+
+<script>
+const appId = <?= $id > 0 ? $id : 'null' ?>;
+
+// ── Copier un prompt ──────────────────────────────
+function copyPrompt(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copié !';
+    btn.style.background = '#2a7d4b';
+    btn.style.color = 'white';
+    setTimeout(() => { btn.textContent = '📋 Copier'; btn.style = ''; }, 2000);
+  });
+}
+
+// ── Step 1 — Créer / mettre à jour la candidature ─
+const form1 = document.getElementById('form-step1');
+if (form1) {
+  form1.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(this));
+    const btn  = this.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement...';
+
+    fetch('php/save-application.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        window.location = 'new-application.php?id=' + d.id;
+      } else {
+        alert(d.error || 'Erreur lors de l\'enregistrement.');
+        btn.disabled = false;
+        btn.textContent = 'Générer le prompt d\'analyse →';
+      }
+    });
+  });
+}
+
+// ── Steps 2, 3, 5 — Enregistrer la réponse collée ─
+function saveStep(stepNum) {
+  const fieldMap = { 2: 'analysis-response', 3: 'matching-response', 5: 'cv-response' };
+  const msgMap   = { 2: 'step2-msg', 3: 'step3-msg', 5: 'step5-msg' };
+  const value    = document.getElementById(fieldMap[stepNum])?.value?.trim();
+  const msgEl    = document.getElementById(msgMap[stepNum]);
+
+  if (!value) {
+    showMsg(msgEl, 'Colle la réponse de Claude avant de continuer.', 'error');
+    return;
+  }
+
+  fetch('php/save-step.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, step: stepNum, content: value })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      window.location = 'new-application.php?id=' + appId;
+    } else {
+      showMsg(msgEl, d.error || 'Erreur lors de l\'enregistrement.', 'error');
+    }
+  });
+}
+
+// ── Step 4 — Enregistrer une réponse au dialogue ──
+function saveAnswer(questionId) {
+  const answer = document.getElementById('answer-text')?.value?.trim();
+  const msgEl  = document.getElementById('answer-msg');
+  if (!answer) {
+    showMsg(msgEl, 'Saisis ta réponse avant de continuer.', 'error');
+    return;
+  }
+  fetch('php/save-answer.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, question_id: questionId, answer })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location.reload();
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
+  });
+}
+
+function skipQuestion(questionId) {
+  if (!confirm('Passer cette question sans répondre ?')) return;
+  fetch('php/save-answer.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, question_id: questionId, answer: '' })
+  })
+  .then(r => r.json())
+  .then(d => { if (d.success) window.location.reload(); });
+}
+
+function goToStep5() {
+  fetch('php/save-step.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, step: 4, content: '__dialogue_complete__' })
+  })
+  .then(r => r.json())
+  .then(d => { if (d.success) window.location = 'new-application.php?id=' + appId; });
+}
+
+// ── Step 6 — Ajouter dialogue à la base ───────────
+function addDialogueToKnowledge() {
+  const msgEl = document.getElementById('knowledge-save-msg');
+  fetch('php/add-to-knowledge.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId })
+  })
+  .then(r => r.json())
+  .then(d => {
+    const type = d.success ? 'success' : 'error';
+    showMsg(msgEl, d.success ? 'Réponses ajoutées à la base de connaissance.' : (d.error || 'Erreur.'), type);
+  });
+}
+
+// ── Utilitaires ────────────────────────────────────
+function showMsg(el, text, type) {
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'alert alert-' + type;
+  el.classList.remove('hidden');
+  if (type === 'success') setTimeout(() => el.classList.add('hidden'), 3000);
+}
+</script>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
