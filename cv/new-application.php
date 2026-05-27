@@ -595,15 +595,8 @@ elseif ($step === 6): ?>
   <?= $cvContent ?>
 </div>
 
-<div class="card mt-24" style="margin-top:24px;">
-  <div class="card-title" style="font-size:15px;">Ajouter des éléments à la base de connaissance</div>
-  <p class="text-muted" style="font-size:13px; margin-bottom:12px;">
-    Les réalisations mentionnées dans ce dialogue peuvent enrichir ta base de connaissance pour les prochaines candidatures.
-  </p>
-  <button class="btn btn-outline btn-sm" onclick="addDialogueToKnowledge()">
-    Enregistrer les réponses dans la base de connaissance
-  </button>
-  <div id="knowledge-save-msg" class="hidden alert" style="margin-top:10px;"></div>
+<div style="margin-top:16px; font-size:12px; color:#888;">
+  ✓ Les réponses du dialogue ont été automatiquement intégrées à ta base de connaissance.
 </div>
 
 <?php endif; ?>
