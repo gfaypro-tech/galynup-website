@@ -79,7 +79,7 @@ switch ($step) {
            ->execute([$id]);
         break;
 
-    // ── Step 5 : CV reçu → extraire HTML + passer step 6
+    // ── Step 5 : CV reçu → extraire HTML + passer step 6 + capitaliser le dialogue
     case 5:
         // Extraire le HTML entre <section id="cv"> et </section>
         $cvHtml = $content;
@@ -88,6 +88,25 @@ switch ($step) {
         }
         $db->prepare("UPDATE cv_applications SET cv_content = ?, step_current = 6, status = 'completed', updated_at = NOW() WHERE id = ?")
            ->execute([$cvHtml, $id]);
+
+        // Enregistrer les réponses validées dans la base de connaissance (première génération seulement)
+        if ((int)$app['step_current'] === 5) {
+            $dStmt = $db->prepare(
+                "SELECT question, answer FROM cv_dialogue
+                 WHERE application_id = ? AND question_order >= 1 AND answer IS NOT NULL AND answer != ''"
+            );
+            $dStmt->execute([$id]);
+            $dialogueAnswers = $dStmt->fetchAll();
+
+            if (!empty($dialogueAnswers)) {
+                $kStmt = $db->prepare("INSERT INTO cv_knowledge (type, title, content) VALUES ('experience', ?, ?)");
+                foreach ($dialogueAnswers as $d) {
+                    $title = $app['company'] . ' — ' . mb_substr($d['question'], 0, 100);
+                    if (mb_strlen($d['question']) > 100) $title .= '…';
+                    $kStmt->execute([$title, $d['answer']]);
+                }
+            }
+        }
         break;
 
     default:

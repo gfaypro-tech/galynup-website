@@ -78,17 +78,19 @@ Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
     {
       "id": 1,
       "question": "Question précise sur une expérience ou réalisation concrète ?",
-      "pourquoi": "En quoi la réponse renforcera la candidature pour ce poste"
-    },
-    {
-      "id": 2,
-      "question": "Deuxième question ?",
-      "pourquoi": "Raison"
+      "pourquoi": "En quoi la réponse renforcera la candidature pour ce poste",
+      "reponse_suggeree": "Réponse rédigée en première personne, basée sur les éléments trouvés dans le profil — ex : J'ai piloté..."
     }
   ]
 }
 
-Génère entre 3 et 5 questions. Focalise sur ce qui permettra de construire un CV convaincant.
+Génère entre 3 et 5 questions.
+Pour chaque question, rédige une reponse_suggeree en PREMIÈRE PERSONNE (je, j'ai, mon, ma...)
+basée sur les informations déjà disponibles dans le profil du candidat.
+La reponse_suggeree doit être une ébauche concrète et directement utilisable que le candidat
+pourra compléter ou corriger — pas une invitation à répondre, mais une réponse rédigée.
+Si le profil ne contient pas d'éléments pertinents pour cette question, écris une trame vide
+avec les points clés à renseigner entre [crochets].
 Ne retourne que le JSON, sans texte avant ou après.
 
 ---
@@ -229,48 +231,6 @@ $qa
 FICHE DE POSTE :
 $jobPosting
 PROMPT;
-}
-
-// ── Suggestion de réponse depuis la base de connaissance ──────────────
-function findSuggestedAnswer(PDO $db, string $question): string {
-    static $stopWords = [
-        'cette', 'votre', 'avez', 'vous', 'dans', 'avec', 'pour', 'quels', 'quelles',
-        'pouvez', 'décris', 'décrivez', 'exemples', 'quand', 'comment', 'quelle', 'quel',
-        'avoir', 'être', 'faire', 'plus', 'comme', 'mais', 'dont', 'aussi', 'entre',
-        'leurs', 'après', 'avant', 'depuis', 'pendant', 'travail', 'lors', 'quand',
-        'selon', 'suite', 'laquelle', 'lequel', 'parle', 'parlez', 'décrivez',
-    ];
-
-    $words    = preg_split('/[\s\W]+/u', mb_strtolower($question));
-    $keywords = array_values(array_filter($words, fn($w) => mb_strlen($w) > 4 && !in_array($w, $stopWords)));
-    $keywords = array_slice($keywords, 0, 5);
-
-    if (empty($keywords)) return '';
-
-    $conditions = [];
-    $params     = [];
-    foreach ($keywords as $kw) {
-        $conditions[] = "(title LIKE ? OR content LIKE ?)";
-        $params[]     = "%$kw%";
-        $params[]     = "%$kw%";
-    }
-    $params[] = 1; // is_active
-
-    $stmt = $db->prepare(
-        "SELECT title, content FROM cv_knowledge
-         WHERE (" . implode(' OR ', $conditions) . ") AND is_active = ?
-         ORDER BY type = 'experience' DESC, created_at DESC LIMIT 2"
-    );
-    $stmt->execute($params);
-    $entries = $stmt->fetchAll();
-
-    if (empty($entries)) return '';
-
-    $parts = [];
-    foreach ($entries as $e) {
-        $parts[] = ($e['title'] ? "[" . $e['title'] . "]\n" : '') . trim($e['content']);
-    }
-    return implode("\n\n---\n\n", $parts);
 }
 
 // ── Données pour les étapes actives ───────────────────────────────────
@@ -498,11 +458,13 @@ elseif ($step === 4):
       <div class="question-text"><?= htmlspecialchars($currentQuestion['question']) ?></div>
       <?php
         $matchingData = json_decode($matchingJson, true);
-        $pourquoi = '';
+        $pourquoi     = '';
+        $suggestion   = '';
         if ($matchingData && isset($matchingData['questions'])) {
             foreach ($matchingData['questions'] as $mq) {
                 if ((int)$mq['id'] === (int)$currentQuestion['question_order']) {
-                    $pourquoi = $mq['pourquoi'] ?? '';
+                    $pourquoi   = $mq['pourquoi'] ?? '';
+                    $suggestion = $mq['reponse_suggeree'] ?? '';
                     break;
                 }
             }
@@ -512,19 +474,16 @@ elseif ($step === 4):
         <div class="question-why">Pourquoi cette question : <?= htmlspecialchars($pourquoi) ?></div>
       <?php endif; ?>
 
-      <?php $suggestion = findSuggestedAnswer($db, $currentQuestion['question']); ?>
       <?php if ($suggestion): ?>
         <div style="font-size:12px; color:#1565c0; background:#e8f4fd; border:1px solid #b3d4f0; border-radius:6px; padding:8px 12px; margin-bottom:8px;">
-          💡 Suggestion issue de ta base de connaissance — à compléter ou corriger :
+          💡 Suggestion de Claude basée sur ton profil — à compléter ou corriger :
         </div>
       <?php endif; ?>
       <textarea id="answer-text" class="form-control" rows="7"
-                placeholder="Décris ton expérience concrète sur ce sujet. Inclus des exemples précis, des chiffres si possible, des projets nommés..."><?= htmlspecialchars($suggestion) ?></textarea>
-
-      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#555; margin-top:10px; cursor:pointer; user-select:none;">
-        <input type="checkbox" id="save-to-knowledge" <?= $suggestion ? '' : 'checked' ?>>
-        Enregistrer cette réponse dans ma base de connaissance
-      </label>
+                placeholder="Décris ton expérience concrète sur ce sujet..."><?= htmlspecialchars($suggestion) ?></textarea>
+      <div style="font-size:11px; color:#888; margin-top:6px;">
+        Les réponses validées seront automatiquement enregistrées dans ta base de connaissance à la fin du processus.
+      </div>
 
       <div class="flex flex-gap mt-16">
         <button class="btn btn-primary" onclick="saveAnswer(<?= $currentQuestion['id'] ?>)">
@@ -773,9 +732,8 @@ function parseMatchingResponse() {
 
 // ── Step 4 — Enregistrer une réponse au dialogue ──
 function saveAnswer(questionId) {
-  const answer          = document.getElementById('answer-text')?.value?.trim();
-  const msgEl           = document.getElementById('answer-msg');
-  const saveToKnowledge = document.getElementById('save-to-knowledge')?.checked ?? false;
+  const answer = document.getElementById('answer-text')?.value?.trim();
+  const msgEl  = document.getElementById('answer-msg');
   if (!answer) {
     showMsg(msgEl, 'Saisis ta réponse avant de continuer.', 'error');
     return;
@@ -783,7 +741,7 @@ function saveAnswer(questionId) {
   fetch('php/save-answer.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, question_id: questionId, answer, save_to_knowledge: saveToKnowledge })
+    body: JSON.stringify({ id: appId, question_id: questionId, answer })
   })
   .then(r => r.json())
   .then(d => {
