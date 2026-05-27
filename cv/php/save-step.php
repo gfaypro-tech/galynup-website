@@ -51,14 +51,21 @@ switch ($step) {
         // Supprimer les anciennes questions si on recommence
         $db->prepare("DELETE FROM cv_dialogue WHERE application_id = ?")->execute([$id]);
 
-        // Insérer les questions extraites
+        // Sauvegarder les expériences complémentaires non listées (question_order = 0)
+        $extraExperiences = trim($data['extra_experiences'] ?? '');
+        if ($extraExperiences !== '') {
+            $db->prepare("INSERT INTO cv_dialogue (application_id, question_order, question, answer) VALUES (?, 0, ?, ?)")
+               ->execute([$id, 'Expériences complémentaires non listées dans la base de connaissance', $extraExperiences]);
+        }
+
+        // Insérer les questions extraites (question_order >= 1)
         $questions = $parsed['questions'] ?? [];
         if (!empty($questions)) {
             $qStmt = $db->prepare("INSERT INTO cv_dialogue (application_id, question_order, question) VALUES (?, ?, ?)");
             foreach ($questions as $q) {
                 $qText = trim($q['question'] ?? '');
                 $qId   = (int)($q['id'] ?? 0);
-                if ($qText) $qStmt->execute([$id, $qId, $qText]);
+                if ($qText && $qId >= 1) $qStmt->execute([$id, $qId, $qText]);
             }
         }
 

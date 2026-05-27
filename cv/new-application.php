@@ -108,24 +108,107 @@ PROMPT;
 function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, array $dialogue, string $jobPosting): string {
     $qa = '';
     foreach ($dialogue as $d) {
-        if ($d['answer']) {
-            $qa .= "Q : " . $d['question'] . "\nR : " . $d['answer'] . "\n\n";
+        if (!empty($d['answer'])) {
+            if ((int)$d['question_order'] === 0) {
+                $qa .= "EXPÉRIENCES COMPLÉMENTAIRES HORS BASE :\n" . $d['answer'] . "\n\n";
+            } else {
+                $qa .= "Q : " . $d['question'] . "\nR : " . $d['answer'] . "\n\n";
+            }
         }
     }
     return <<<PROMPT
 Tu es expert en rédaction de CV pour des cadres dirigeants français. Génère un CV sur-mesure en français.
 
-INSTRUCTIONS IMPÉRATIVES :
-- Longueur : 1 à 2 pages maximum
-- Ne mentir sur aucune expérience — respecter strictement la réalité du parcours
-- Intégrer les réalisations concrètes mentionnées dans les réponses au dialogue
-- Utiliser les mots-clés et la terminologie de la fiche de poste
-- Mettre en avant les points forts identifiés lors du matching
-- Structurer le CV pour répondre aux priorités du recruteur
-- Retourner le CV en HTML entre les balises <section id="cv"> et </section>
-- Utiliser des balises h1 (nom), h2 (sections), strong (titres de postes), ul/li (réalisations)
-- Ne pas inclure de CSS dans le HTML
-- Commencer directement par <section id="cv">, sans explication
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<section id="cv">
+
+  <header class="cv-header">
+    <h1>GAËLLE FAY</h1>
+    <p class="cv-subtitle">[Titre adapté au poste ciblé — pas générique]</p>
+    <p class="cv-tagline">[Domaine 1] · [Domaine 2] · [Domaine 3] | 25 ans d'expérience | [Secteur 1] · [Secteur 2]</p>
+    <p class="cv-contact">+33 6 10 74 55 84 · gaelle.fay@outlook.fr · Noisy-le-Grand (93) · linkedin.com/in/gaellefay</p>
+  </header>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">PROFIL</h3>
+    <p>[Paragraphe 1 : synthèse du profil en lien direct avec ce poste précis — 2-3 phrases percutantes]</p>
+    <p>[Paragraphe 2 optionnel : angle complémentaire, spécialité technique, certifications clés]</p>
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">CERTIFICATIONS PROFESSIONNELLES</h3>
+    <ul class="cv-list-2col">
+      <li>PMP, Project Management Professional, PMI</li>
+      <li>ITIL 4 Foundation, Axelos</li>
+      <li>PMI-ACP, Agile Certified Practitioner, PMI</li>
+      <li>Stratégie@HEC, HEC Paris</li>
+      <li>TOGAF 10 Foundation, The Open Group</li>
+      <li>Agile Scrum Foundation (ASF), EXIN</li>
+    </ul>
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">COMPÉTENCES CLÉS</h3>
+    <ul class="cv-list-2col">
+      <li>[6 à 8 compétences — prioriser les mots-clés exacts de la fiche de poste]</li>
+    </ul>
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">EXPÉRIENCE PROFESSIONNELLE</h3>
+
+    <div class="cv-job">
+      <div class="cv-job-header">
+        <span class="cv-job-title"><strong>[Intitulé du Poste]</strong> · [Nom Entreprise]</span>
+        <span class="cv-job-date">[Mois AAAA – Mois AAAA]</span>
+      </div>
+      <p class="cv-job-context"><em>[Contexte : taille équipe, périmètre, programme, type de structure]</em></p>
+      <ul class="cv-job-bullets">
+        <li><strong>[Mot-clé] :</strong> [Réalisation concrète, chiffrée si possible]</li>
+        <li><strong>[Mot-clé] :</strong> [Réalisation]</li>
+      </ul>
+      <!-- Si note contextuelle (fin de mission, raison de départ) : -->
+      <!-- <p class="cv-job-note"><em>[Note]</em></p> -->
+    </div>
+
+    [Répéter div.cv-job pour chaque poste, du plus récent au plus ancien]
+
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">FORMATION</h3>
+    <p><strong>Master 2 Management des Systèmes d'Information et de la Connaissance</strong></p>
+    <p>IAE Sorbonne (Paris), 2008. Stratégie SI, architecture d'entreprise, transformation numérique.</p>
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">LEADERSHIP & RAYONNEMENT PROFESSIONNEL</h3>
+    <p>[Activités de leadership, publications, interventions, bénévolat professionnel — extraits du profil]</p>
+  </section>
+
+  <section class="cv-section">
+    <h3 class="cv-section-title">LANGUES</h3>
+    <p>Français langue maternelle · Anglais C1 courant · Espagnol notions · Recommandations sur galynup.fr</p>
+  </section>
+
+</section>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RÈGLES IMPÉRATIVES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Commence DIRECTEMENT par <section id="cv">, sans aucun texte avant ni après
+- N'inclus AUCUN CSS, AUCUN <style>, AUCUN attribut style=""
+- Les sections CERTIFICATIONS, FORMATION, CONTACT, LANGUES sont FIXES — utilise exactement ces contenus
+- Le cv-subtitle DOIT être adapté au poste ciblé (ex. "Directrice de Programme SI" ou "DSI de Transition")
+- Les COMPÉTENCES CLÉS : choisir 6 à 8 compétences — inclure obligatoirement les mots-clés de la fiche de poste
+- Chaque cv-job-bullets commence TOUJOURS par <strong>Mot-clé :</strong> suivi de la réalisation
+- Expériences récentes (< 5 ans) : 4 à 5 puces | expériences > 10 ans : 2 puces max
+- Intégrer toutes les réalisations concrètes mentionnées dans le dialogue et les expériences complémentaires
+- Ne jamais inventer ni exagérer une expérience — respecter strictement la réalité du parcours
+- Longueur totale : 1 à 2 pages imprimées
 
 ---
 PROFIL DU CANDIDAT :
@@ -136,11 +219,11 @@ ANALYSE DU POSTE :
 $analysisJson
 
 ---
-MATCHING ET QUESTIONS IDENTIFIÉES :
+MATCHING ET STRATÉGIE :
 $matchingJson
 
 ---
-INFORMATIONS COMPLÉMENTAIRES (réponses au dialogue) :
+INFORMATIONS COMPLÉMENTAIRES (dialogue + expériences hors base) :
 $qa
 ---
 FICHE DE POSTE :
@@ -286,26 +369,64 @@ elseif ($step === 3):
     <div class="prompt-text" id="prompt-matching"><?= htmlspecialchars($prompt) ?></div>
   </div>
 
-  <div class="response-block">
+  <div class="response-block" id="phase-paste">
     <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
     <textarea id="matching-response" class="form-control" rows="10"
               placeholder='Colle ici le JSON retourné par Claude...'></textarea>
     <div class="flex flex-gap mt-16">
-      <button class="btn btn-primary" onclick="saveStep(3)">Enregistrer et continuer →</button>
+      <button class="btn btn-primary" id="btn-parse-matching" onclick="parseMatchingResponse()">Analyser le matching →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
     </div>
-    <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
+    <div id="step3-parse-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+
+  <div id="phase-review" style="display:none;">
+    <div id="matching-display" style="margin-top:24px;"></div>
+
+    <div class="response-block" style="margin-top:24px;">
+      <div class="response-block-title">As-tu des expériences non listées dans ta base de connaissance ?</div>
+      <p style="font-size:13px; color:#6b6b65; margin:8px 0 10px;">
+        Regarde les lacunes identifiées ci-dessus. Si tu as des projets ou réalisations non encore documentés dans ta base, décris-les ici — ils seront intégrés comme contexte supplémentaire pour la génération du CV.
+      </p>
+      <textarea id="extra-experiences" class="form-control" rows="4"
+                placeholder="Ex : Lors de mon passage chez X en 2022, j'ai aussi piloté une migration SI — non encore documentée dans ma base..."></textarea>
+      <div class="flex flex-gap mt-16">
+        <button class="btn btn-primary btn-lg" onclick="saveStep(3)">Enregistrer et continuer →</button>
+      </div>
+      <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
+    </div>
   </div>
 </div>
 
 <?php /* ═══════════════════════════════════════════════════
    STEP 4 — Dialogue Q&A
    ═══════════════════════════════════════════════════ */
-elseif ($step === 4): ?>
+elseif ($step === 4):
+    // Séparer l'entrée "expériences complémentaires" (question_order=0) des vraies questions
+    $gapEntry       = null;
+    $actualDialogue = [];
+    foreach ($dialogue as $q) {
+        if ((int)$q['question_order'] === 0) {
+            $gapEntry = $q;
+        } else {
+            $actualDialogue[] = $q;
+        }
+    }
+    $answered = array_filter($actualDialogue, fn($q) => !empty($q['answer']));
+    $total    = count($actualDialogue);
+    $done     = count($answered);
+?>
 <div class="card">
   <div class="card-title">💬 Étape 4 — Dialogue</div>
 
-  <?php if (empty($dialogue)): ?>
+  <?php if ($gapEntry && !empty($gapEntry['answer'])): ?>
+    <div style="margin-bottom:20px; padding:14px 16px; background:#f8f4fc; border-left:4px solid #6D155D; border-radius:6px;">
+      <div style="font-size:11px; font-weight:700; color:#6D155D; text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px;">Expériences complémentaires (hors base de connaissance)</div>
+      <div style="font-size:13px; color:#333; white-space:pre-wrap;"><?= htmlspecialchars($gapEntry['answer']) ?></div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (empty($actualDialogue)): ?>
     <div class="alert alert-warning">
       Aucune question trouvée. <a href="php/reparse-questions.php?id=<?= $id ?>">Réanalyser le matching</a>
       ou <a href="#" onclick="addManualQuestion()">ajouter une question manuellement</a>.
@@ -316,7 +437,7 @@ elseif ($step === 4): ?>
     </div>
     <div class="mt-16">
       <h3 style="font-size:15px; font-weight:600; margin-bottom:12px;">Récapitulatif du dialogue</h3>
-      <?php foreach ($dialogue as $i => $q): ?>
+      <?php foreach ($actualDialogue as $i => $q): ?>
         <div style="margin-bottom:16px; padding:14px; background:#f9f9f7; border-radius:8px; border:1px solid #e4e0db;">
           <div style="font-weight:600; font-size:13px; color:#6D155D; margin-bottom:4px;">Question <?= $i+1 ?></div>
           <div style="font-size:14px; margin-bottom:8px;"><?= htmlspecialchars($q['question']) ?></div>
@@ -326,11 +447,6 @@ elseif ($step === 4): ?>
       <button class="btn btn-primary btn-lg" onclick="goToStep5()">Générer le CV →</button>
     </div>
   <?php else: ?>
-    <?php
-    $answered = array_filter($dialogue, fn($q) => !empty($q['answer']));
-    $total    = count($dialogue);
-    $done     = count($answered);
-    ?>
     <div class="alert alert-info">
       Question <?= $done + 1 ?> sur <?= $total ?>. Réponds directement ici, dans l'application.
     </div>
@@ -503,10 +619,17 @@ function saveStep(stepNum) {
     return;
   }
 
+  const payload = { id: appId, step: stepNum, content: value };
+
+  if (stepNum === 3) {
+    const extra = document.getElementById('extra-experiences')?.value?.trim();
+    if (extra) payload.extra_experiences = extra;
+  }
+
   fetch('php/save-step.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, step: stepNum, content: value })
+    body: JSON.stringify(payload)
   })
   .then(r => r.json())
   .then(d => {
@@ -516,6 +639,83 @@ function saveStep(stepNum) {
       showMsg(msgEl, d.error || 'Erreur lors de l\'enregistrement.', 'error');
     }
   });
+}
+
+// ── Step 3 — Parser et afficher le matching ────────
+function parseMatchingResponse() {
+  const raw   = document.getElementById('matching-response')?.value?.trim();
+  const msgEl = document.getElementById('step3-parse-msg');
+
+  if (!raw) {
+    showMsg(msgEl, 'Colle la réponse de Claude avant de continuer.', 'error');
+    return;
+  }
+
+  let parsed = null;
+  try { parsed = JSON.parse(raw); } catch(e) {}
+  if (!parsed) {
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch(e) {} }
+  }
+  if (!parsed) {
+    showMsg(msgEl, 'Le JSON semble invalide. Vérifie ce que Claude a retourné.', 'error');
+    return;
+  }
+
+  const forceStyle = {
+    'fort':   { bg: '#d4edda', color: '#155724', label: '● Fort' },
+    'moyen':  { bg: '#fff3cd', color: '#856404', label: '◑ Moyen' },
+    'faible': { bg: '#ffe5d0', color: '#7a3f00', label: '◔ Faible' },
+    'absent': { bg: '#f8d7da', color: '#721c24', label: '○ Absent' }
+  };
+
+  let html = '';
+
+  if (parsed.resume_matching) {
+    html += `<div style="background:#f0eaf8;border-left:4px solid #6D155D;padding:14px 16px;border-radius:6px;font-size:14px;color:#333;margin-bottom:20px;">${parsed.resume_matching}</div>`;
+  }
+
+  if (parsed.points_forts?.length) {
+    html += '<h3 style="font-size:13px;font-weight:700;color:#2a7d4b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">Points forts</h3><ul style="list-style:none;padding:0;margin-bottom:20px;">';
+    parsed.points_forts.forEach(p => {
+      html += `<li style="font-size:13px;padding:8px 12px;margin-bottom:5px;background:#f0faf4;border-radius:6px;border-left:3px solid #2a7d4b;color:#333;">✓ ${p}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  if (parsed.lacunes?.length) {
+    html += '<h3 style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">Lacunes / points à renforcer</h3><ul style="list-style:none;padding:0;margin-bottom:20px;">';
+    parsed.lacunes.forEach(l => {
+      html += `<li style="font-size:13px;padding:8px 12px;margin-bottom:5px;background:#fdf2f2;border-radius:6px;border-left:3px solid #c0392b;color:#333;">⚠ ${l}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  if (parsed.correspondances?.length) {
+    html += '<h3 style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;">Correspondances détaillées</h3>';
+    html += '<div style="border:1px solid #e4e0db;border-radius:8px;overflow:hidden;margin-bottom:20px;">';
+    parsed.correspondances.forEach((c, i) => {
+      const f  = forceStyle[c.force] || forceStyle['absent'];
+      const bg = i % 2 === 0 ? '#fff' : '#fafaf8';
+      html += `<div style="display:grid;grid-template-columns:1fr 2fr auto;gap:12px;padding:11px 14px;background:${bg};border-bottom:1px solid #e4e0db;align-items:start;">
+        <div style="font-size:13px;font-weight:600;color:#333;">${c.competence}</div>
+        <div style="font-size:13px;color:#555;">${c.trouve_dans_profil}</div>
+        <div style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:${f.bg};color:${f.color};white-space:nowrap;">${f.label}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (parsed.questions?.length) {
+    html += `<div style="font-size:13px;color:#6b6b65;padding:10px 14px;background:#f9f9f7;border-radius:6px;border:1px solid #e4e0db;">
+      💬 <strong>${parsed.questions.length} question(s)</strong> générées pour approfondir ton profil lors de l'étape de dialogue.
+    </div>`;
+  }
+
+  document.getElementById('matching-display').innerHTML = html;
+  document.getElementById('phase-review').style.display = 'block';
+  document.getElementById('btn-parse-matching').style.display = 'none';
+  document.getElementById('matching-display').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── Step 4 — Enregistrer une réponse au dialogue ──

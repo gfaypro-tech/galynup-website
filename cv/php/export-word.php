@@ -19,16 +19,40 @@ $filename = "CV_{$company}_{$position}_" . date('Y-m-d') . ".doc";
 
 // Génération Word (format HTML ouvert par Word)
 $wordStyles = '
-body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; margin: 2cm; line-height: 1.4; color: #1c1c18; }
-h1 { font-size: 20pt; color: #6D155D; margin-bottom: 4px; font-family: Georgia, serif; }
-h2 { font-size: 12pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #4a0d3e; border-bottom: 1.5pt solid #D3A625; padding-bottom: 2px; margin-top: 16pt; margin-bottom: 6pt; }
-h3 { font-size: 11pt; font-weight: bold; margin-bottom: 2px; }
-p { margin: 4pt 0; }
-ul { margin: 4pt 0 8pt 14pt; }
-li { margin-bottom: 2pt; }
+body        { font-family: Calibri, Arial, sans-serif; font-size: 10pt; margin: 1.8cm 2cm; line-height: 1.45; color: #1c1c18; }
+
+/* Header */
+.cv-header  { text-align: center; margin-bottom: 14pt; }
+h1          { font-family: Georgia, "Times New Roman", serif; font-size: 20pt; font-weight: bold; letter-spacing: 2pt; color: #1c1c18; text-transform: uppercase; margin: 0 0 5pt; }
+.cv-subtitle{ font-size: 12pt; font-weight: bold; color: #6D155D; margin: 0 0 4pt; }
+.cv-tagline { font-size: 9pt; color: #555; margin: 0 0 3pt; }
+.cv-contact { font-size: 9pt; color: #666; margin: 0; }
+
+/* Sections */
+.cv-section      { margin-bottom: 12pt; }
+.cv-section-title{
+  font-size: 8.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1pt;
+  color: #6D155D; border-bottom: 0.75pt solid #6D155D; padding-bottom: 2pt; margin: 0 0 7pt;
+}
+p { margin: 0 0 4pt; font-size: 10pt; }
+
+/* Listes 2 colonnes (Certifications / Compétences) — colonnes CSS supportées par Word */
+.cv-list-2col { list-style: none; padding: 0; margin: 0; -mso-columns: 2; columns: 2; column-gap: 20pt; font-size: 9.5pt; }
+.cv-list-2col li { margin-bottom: 2pt; }
+.cv-list-2col li::before { content: "\25B8  "; color: #6D155D; }
+
+/* Expériences */
+.cv-job        { margin-bottom: 10pt; }
+.cv-job-header { display: flex; justify-content: space-between; }
+.cv-job-title  { font-size: 10pt; font-weight: bold; }
+.cv-job-date   { font-size: 9pt; color: #555; }
+.cv-job-context{ font-size: 9pt; color: #555; font-style: italic; margin: 1pt 0 4pt; }
+.cv-job-bullets{ list-style: none; padding: 0; margin: 0; }
+.cv-job-bullets li { font-size: 9.5pt; margin-bottom: 2pt; padding-left: 12pt; }
+.cv-job-bullets li::before { content: "\25B8  "; color: #6D155D; }
+.cv-job-note   { font-size: 9pt; color: #777; font-style: italic; margin-top: 2pt; }
 strong { font-weight: bold; }
-em { font-style: italic; }
-section { max-width: 18cm; }
+em     { font-style: italic; }
 ';
 
 header('Content-Type: application/msword; charset=utf-8');

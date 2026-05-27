@@ -151,13 +151,14 @@ require_once __DIR__ . '/includes/header.php';
           </div>
           <div class="knowledge-actions">
             <button class="btn btn-ghost btn-sm" onclick="expandEntry(<?= $entry['id'] ?>)">Voir</button>
+            <button class="btn btn-outline btn-sm" onclick="editEntry(<?= $entry['id'] ?>)">Modifier</button>
             <button class="btn btn-danger btn-sm" onclick="deleteEntry(<?= $entry['id'] ?>)">✕</button>
           </div>
         </div>
 
-        <!-- Contenu complet (masqué) -->
-        <div id="expand-<?= $entry['id'] ?>" class="hidden card" style="border-top:none; border-radius:0 0 8px 8px; padding:16px 20px; background:#fafaf8;">
-          <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.6;"><?= htmlspecialchars($entry['content']) ?></pre>
+        <!-- Contenu complet / formulaire d'édition (masqué par défaut) -->
+        <div id="expand-<?= $entry['id'] ?>" class="hidden card" style="border-top:none; border-radius:0 0 8px 8px; padding:0; background:#fafaf8;">
+          <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.6; padding:16px 20px; margin:0;"><?= htmlspecialchars($entry['content']) ?></pre>
         </div>
       <?php endforeach; ?>
     </div>
@@ -165,6 +166,21 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <script>
+// Données des entrées (pour l'édition inline)
+const knowledgeData = {
+<?php foreach ($entries as $e):
+    $meta = $e['meta_json'] ? json_decode($e['meta_json'], true) : []; ?>
+  <?= (int)$e['id'] ?>: {
+    type:    <?= json_encode($e['type']) ?>,
+    title:   <?= json_encode($e['title'] ?? '') ?>,
+    content: <?= json_encode($e['content']) ?>,
+    company: <?= json_encode($meta['company'] ?? '') ?>,
+    role:    <?= json_encode($meta['role'] ?? '') ?>,
+    period:  <?= json_encode($meta['period'] ?? '') ?>,
+  },
+<?php endforeach; ?>
+};
+
 // Tabs
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => {
@@ -180,10 +196,128 @@ document.getElementById('knowledge-type').addEventListener('change', function() 
   document.getElementById('experience-fields').classList.toggle('hidden', this.value !== 'experience');
 });
 
-// Expand entry
+// Échapper les caractères HTML
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Messages inline
+function showMsg(el, text, type) {
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'alert alert-' + type;
+  el.classList.remove('hidden');
+  if (type === 'success') setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// Expand entry (mode lecture)
 function expandEntry(id) {
   const el = document.getElementById('expand-' + id);
-  el.classList.toggle('hidden');
+  // Si on est en mode édition, revenir d'abord en lecture
+  if (el.querySelector('select, textarea')) cancelEdit(id);
+  else el.classList.toggle('hidden');
+}
+
+// Ouvrir le formulaire d'édition inline
+function editEntry(id) {
+  const d = knowledgeData[id];
+  if (!d) return;
+  const isExp = d.type === 'experience';
+  const expEl = document.getElementById('expand-' + id);
+  expEl.innerHTML = `
+    <div style="padding:16px 20px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Type</label>
+          <select id="edit-type-${id}" class="form-control" style="height:36px;" onchange="toggleEditExpFields(${id})">
+            <option value="experience" ${d.type==='experience'?'selected':''}>Expérience</option>
+            <option value="competence" ${d.type==='competence'?'selected':''}>Compétence</option>
+            <option value="formation"  ${d.type==='formation' ?'selected':''}>Formation</option>
+            <option value="import"     ${d.type==='import'    ?'selected':''}>Import libre</option>
+            <option value="autre"      ${d.type==='autre'     ?'selected':''}>Autre</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Titre</label>
+          <input type="text" id="edit-title-${id}" class="form-control" value="${esc(d.title)}" style="height:36px;">
+        </div>
+      </div>
+      <div id="edit-expfields-${id}" style="${isExp?'':'display:none;'}margin-bottom:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Entreprise</label>
+            <input type="text" id="edit-company-${id}" class="form-control" value="${esc(d.company)}" style="height:36px;" placeholder="Entreprise">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Poste</label>
+            <input type="text" id="edit-role-${id}" class="form-control" value="${esc(d.role)}" style="height:36px;" placeholder="Poste">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Période</label>
+            <input type="text" id="edit-period-${id}" class="form-control" value="${esc(d.period)}" style="height:36px;" placeholder="2022–2024">
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#6b6b65;display:block;margin-bottom:4px;">Contenu</label>
+        <textarea id="edit-content-${id}" class="form-control" rows="8">${esc(d.content)}</textarea>
+      </div>
+      <div class="flex flex-gap" style="margin-top:12px;">
+        <button class="btn btn-primary btn-sm" onclick="saveEntry(${id})">Enregistrer</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelEdit(${id})">Annuler</button>
+      </div>
+      <div id="edit-msg-${id}" class="hidden alert" style="margin-top:8px;font-size:13px;"></div>
+    </div>`;
+  expEl.classList.remove('hidden');
+}
+
+// Annuler l'édition → revenir en mode lecture
+function cancelEdit(id) {
+  const d = knowledgeData[id];
+  const expEl = document.getElementById('expand-' + id);
+  expEl.innerHTML = `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;padding:16px 20px;margin:0;">${esc(d.content)}</pre>`;
+  expEl.classList.add('hidden');
+}
+
+// Afficher/masquer les champs expérience dans le formulaire d'édition
+function toggleEditExpFields(id) {
+  const type    = document.getElementById('edit-type-' + id)?.value;
+  const fieldsEl = document.getElementById('edit-expfields-' + id);
+  if (fieldsEl) fieldsEl.style.display = type === 'experience' ? '' : 'none';
+}
+
+// Enregistrer les modifications
+function saveEntry(id) {
+  const type    = document.getElementById('edit-type-' + id)?.value;
+  const title   = document.getElementById('edit-title-' + id)?.value?.trim() ?? '';
+  const content = document.getElementById('edit-content-' + id)?.value?.trim() ?? '';
+  const company = document.getElementById('edit-company-' + id)?.value?.trim() ?? '';
+  const role    = document.getElementById('edit-role-' + id)?.value?.trim() ?? '';
+  const period  = document.getElementById('edit-period-' + id)?.value?.trim() ?? '';
+  const msgEl   = document.getElementById('edit-msg-' + id);
+
+  if (!content) { showMsg(msgEl, 'Le contenu est obligatoire.', 'error'); return; }
+
+  fetch('php/update-knowledge.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id, type, title, content, company, role, period })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      knowledgeData[id] = { type, title, content, company, role, period };
+      cancelEdit(id);
+      const entryEl = document.getElementById('entry-' + id);
+      if (entryEl) {
+        entryEl.style.transition = 'background .3s';
+        entryEl.style.background = '#f0faf4';
+        setTimeout(() => entryEl.style.background = '', 1800);
+      }
+    } else {
+      showMsg(msgEl, d.error || 'Erreur lors de la sauvegarde.', 'error');
+    }
+  });
 }
 
 // Supprimer entrée
