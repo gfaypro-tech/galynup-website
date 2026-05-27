@@ -231,6 +231,48 @@ $jobPosting
 PROMPT;
 }
 
+// ── Suggestion de réponse depuis la base de connaissance ──────────────
+function findSuggestedAnswer(PDO $db, string $question): string {
+    static $stopWords = [
+        'cette', 'votre', 'avez', 'vous', 'dans', 'avec', 'pour', 'quels', 'quelles',
+        'pouvez', 'décris', 'décrivez', 'exemples', 'quand', 'comment', 'quelle', 'quel',
+        'avoir', 'être', 'faire', 'plus', 'comme', 'mais', 'dont', 'aussi', 'entre',
+        'leurs', 'après', 'avant', 'depuis', 'pendant', 'travail', 'lors', 'quand',
+        'selon', 'suite', 'laquelle', 'lequel', 'parle', 'parlez', 'décrivez',
+    ];
+
+    $words    = preg_split('/[\s\W]+/u', mb_strtolower($question));
+    $keywords = array_values(array_filter($words, fn($w) => mb_strlen($w) > 4 && !in_array($w, $stopWords)));
+    $keywords = array_slice($keywords, 0, 5);
+
+    if (empty($keywords)) return '';
+
+    $conditions = [];
+    $params     = [];
+    foreach ($keywords as $kw) {
+        $conditions[] = "(title LIKE ? OR content LIKE ?)";
+        $params[]     = "%$kw%";
+        $params[]     = "%$kw%";
+    }
+    $params[] = 1; // is_active
+
+    $stmt = $db->prepare(
+        "SELECT title, content FROM cv_knowledge
+         WHERE (" . implode(' OR ', $conditions) . ") AND is_active = ?
+         ORDER BY type = 'experience' DESC, created_at DESC LIMIT 2"
+    );
+    $stmt->execute($params);
+    $entries = $stmt->fetchAll();
+
+    if (empty($entries)) return '';
+
+    $parts = [];
+    foreach ($entries as $e) {
+        $parts[] = ($e['title'] ? "[" . $e['title'] . "]\n" : '') . trim($e['content']);
+    }
+    return implode("\n\n---\n\n", $parts);
+}
+
 // ── Données pour les étapes actives ───────────────────────────────────
 $knowledge     = buildKnowledgeBlock($db);
 $analysisJson  = $app['analysis_result'] ?? '';
@@ -470,8 +512,19 @@ elseif ($step === 4):
         <div class="question-why">Pourquoi cette question : <?= htmlspecialchars($pourquoi) ?></div>
       <?php endif; ?>
 
-      <textarea id="answer-text" class="form-control" rows="5"
-                placeholder="Décris ton expérience concrète sur ce sujet. Inclus des exemples précis, des chiffres si possible, des projets nommés..."></textarea>
+      <?php $suggestion = findSuggestedAnswer($db, $currentQuestion['question']); ?>
+      <?php if ($suggestion): ?>
+        <div style="font-size:12px; color:#1565c0; background:#e8f4fd; border:1px solid #b3d4f0; border-radius:6px; padding:8px 12px; margin-bottom:8px;">
+          💡 Suggestion issue de ta base de connaissance — à compléter ou corriger :
+        </div>
+      <?php endif; ?>
+      <textarea id="answer-text" class="form-control" rows="7"
+                placeholder="Décris ton expérience concrète sur ce sujet. Inclus des exemples précis, des chiffres si possible, des projets nommés..."><?= htmlspecialchars($suggestion) ?></textarea>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#555; margin-top:10px; cursor:pointer; user-select:none;">
+        <input type="checkbox" id="save-to-knowledge" <?= $suggestion ? '' : 'checked' ?>>
+        Enregistrer cette réponse dans ma base de connaissance
+      </label>
 
       <div class="flex flex-gap mt-16">
         <button class="btn btn-primary" onclick="saveAnswer(<?= $currentQuestion['id'] ?>)">
@@ -720,8 +773,9 @@ function parseMatchingResponse() {
 
 // ── Step 4 — Enregistrer une réponse au dialogue ──
 function saveAnswer(questionId) {
-  const answer = document.getElementById('answer-text')?.value?.trim();
-  const msgEl  = document.getElementById('answer-msg');
+  const answer          = document.getElementById('answer-text')?.value?.trim();
+  const msgEl           = document.getElementById('answer-msg');
+  const saveToKnowledge = document.getElementById('save-to-knowledge')?.checked ?? false;
   if (!answer) {
     showMsg(msgEl, 'Saisis ta réponse avant de continuer.', 'error');
     return;
@@ -729,7 +783,7 @@ function saveAnswer(questionId) {
   fetch('php/save-answer.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, question_id: questionId, answer })
+    body: JSON.stringify({ id: appId, question_id: questionId, answer, save_to_knowledge: saveToKnowledge })
   })
   .then(r => r.json())
   .then(d => {
