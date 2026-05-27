@@ -95,7 +95,7 @@ switch ($step) {
         $db->prepare("UPDATE cv_applications SET cv_content = ?, step_current = 6, status = 'completed', updated_at = NOW() WHERE id = ?")
            ->execute([$cvHtml, $id]);
 
-        // Enregistrer les réponses validées dans la base de connaissance (première génération seulement)
+        // Enrichir la base de connaissance avec les réponses validées (première génération seulement)
         if ((int)$app['step_current'] === 5) {
             $dStmt = $db->prepare(
                 "SELECT question, answer FROM cv_dialogue
@@ -105,11 +105,48 @@ switch ($step) {
             $dialogueAnswers = $dStmt->fetchAll();
 
             if (!empty($dialogueAnswers)) {
-                $kStmt = $db->prepare("INSERT INTO cv_knowledge (type, title, content) VALUES ('experience', ?, ?)");
+                $stopWords = ['cette','votre','avez','vous','dans','avec','pour','quels',
+                    'quelles','pouvez','décris','décrivez','quand','comment','quelle','quel',
+                    'avoir','être','faire','plus','comme','mais','dont','aussi','entre',
+                    'après','avant','depuis','pendant','lors','selon','suite','parle','parlez'];
+
                 foreach ($dialogueAnswers as $d) {
-                    $title = $app['company'] . ' — ' . mb_substr($d['question'], 0, 100);
-                    if (mb_strlen($d['question']) > 100) $title .= '…';
-                    $kStmt->execute([$title, $d['answer']]);
+                    // Extraire les mots-clés significatifs de la question
+                    $words    = preg_split('/[\s\W]+/u', mb_strtolower($d['question']));
+                    $keywords = array_values(array_filter($words,
+                        fn($w) => mb_strlen($w) > 4 && !in_array($w, $stopWords)));
+                    $keywords = array_slice($keywords, 0, 4);
+
+                    if (empty($keywords)) continue;
+
+                    // Trouver l'entrée existante la plus pertinente
+                    $conditions = [];
+                    $params     = [];
+                    foreach ($keywords as $kw) {
+                        $conditions[] = "(title LIKE ? OR content LIKE ?)";
+                        $params[]     = "%$kw%";
+                        $params[]     = "%$kw%";
+                    }
+                    $params[] = 1;
+
+                    $findStmt = $db->prepare(
+                        "SELECT id, content FROM cv_knowledge
+                         WHERE (" . implode(' OR ', $conditions) . ") AND is_active = ?
+                         ORDER BY type = 'experience' DESC, created_at DESC LIMIT 1"
+                    );
+                    $findStmt->execute($params);
+                    $entry = $findStmt->fetch();
+
+                    if ($entry) {
+                        // Enrichir l'entrée existante
+                        $enriched = $entry['content'] . "\n\n---\n" . $d['answer'];
+                        $db->prepare("UPDATE cv_knowledge SET content = ? WHERE id = ?")
+                           ->execute([$enriched, $entry['id']]);
+                    } else {
+                        // Aucune entrée trouvée → créer une nouvelle (info vraiment absente de la base)
+                        $db->prepare("INSERT INTO cv_knowledge (type, title, content) VALUES ('experience', ?, ?)")
+                           ->execute([mb_substr($d['question'], 0, 100), $d['answer']]);
+                    }
                 }
             }
         }
