@@ -36,7 +36,7 @@ $html = '<!DOCTYPE html>
 body {
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 11.5pt; color: #1c1c18; background: #fff;
-  padding: 5mm 14mm; line-height: 1.55;
+  padding: 0 14mm; line-height: 1.55;
 }
 .cv-header { text-align: center; margin-bottom: 18px; }
 h1 {
@@ -94,7 +94,7 @@ curl_setopt_array($curl, [
     CURLOPT_POSTFIELDS     => json_encode([
         'source'      => $html,
         'format'      => 'A4',
-        'margin'      => ['top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0'],
+        'margin'      => ['top' => '5mm', 'right' => '0mm', 'bottom' => '5mm', 'left' => '0mm'],
         'use_print'   => false,
         'landscape'   => false,
     ]),
