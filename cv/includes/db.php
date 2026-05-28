@@ -18,6 +18,30 @@ function getDB(): PDO {
     return $pdo;
 }
 
+// Helper : détecte la plateforme depuis une URL
+function detectPlatform(string $url): string {
+    if (empty($url)) return '';
+    $map = [
+        'linkedin.com'           => 'LinkedIn',
+        'apec.fr'                => 'APEC',
+        'hellowork.com'          => 'HelloWork',
+        'cadremploi.fr'          => 'Cadremploi',
+        'michaelpage.fr'         => 'Michael Page',
+        'robertwalters.fr'       => 'Robert Walters',
+        'roberthalffrance.fr'    => 'Robert Half',
+        'indeed.com'             => 'Indeed',
+        'welcometothejungle.com' => 'WTTJ',
+        'monster.fr'             => 'Monster',
+        'jobteaser.com'          => 'JobTeaser',
+        'regionsjob.com'         => 'RégionsJob',
+    ];
+    foreach ($map as $domain => $label) {
+        if (str_contains($url, $domain)) return $label;
+    }
+    $host = parse_url($url, PHP_URL_HOST);
+    return $host ? preg_replace('/^www\./', '', $host) : 'Lien';
+}
+
 // Helper : retourne un JSON et stoppe l'exécution
 function jsonResponse(array $data, int $code = 200): void {
     http_response_code($code);

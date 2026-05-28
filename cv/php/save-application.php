@@ -10,6 +10,7 @@ if (!$data) jsonResponse(['error' => 'Données invalides.'], 400);
 $company     = trim($data['company'] ?? '');
 $position    = trim($data['position'] ?? '');
 $job_posting = trim($data['job_posting'] ?? '');
+$source_url  = trim($data['source_url'] ?? '');
 
 if ($company === '' || $position === '' || $job_posting === '') {
     jsonResponse(['error' => 'Tous les champs sont obligatoires.'], 400);
@@ -20,12 +21,12 @@ $id  = (int)($data['id'] ?? 0);
 
 if ($id > 0) {
     // Mise à jour (retour en étape 1 pour corriger)
-    $stmt = $db->prepare("UPDATE cv_applications SET company = ?, position = ?, job_posting = ?, step_current = 2, status = 'analysis', updated_at = NOW() WHERE id = ?");
-    $stmt->execute([$company, $position, $job_posting, $id]);
+    $stmt = $db->prepare("UPDATE cv_applications SET company = ?, position = ?, job_posting = ?, source_url = ?, step_current = 2, status = 'analysis', updated_at = NOW() WHERE id = ?");
+    $stmt->execute([$company, $position, $job_posting, $source_url ?: null, $id]);
     jsonResponse(['success' => true, 'id' => $id]);
 } else {
     // Nouvelle candidature
-    $stmt = $db->prepare("INSERT INTO cv_applications (company, position, job_posting, step_current, status) VALUES (?, ?, ?, 2, 'analysis')");
-    $stmt->execute([$company, $position, $job_posting]);
+    $stmt = $db->prepare("INSERT INTO cv_applications (company, position, job_posting, source_url, step_current, status) VALUES (?, ?, ?, ?, 2, 'analysis')");
+    $stmt->execute([$company, $position, $job_posting, $source_url ?: null]);
     jsonResponse(['success' => true, 'id' => (int)$db->lastInsertId()]);
 }

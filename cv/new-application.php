@@ -74,25 +74,8 @@ Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
   ],
   "points_forts": ["point fort 1 du candidat pour ce poste", "point fort 2"],
   "lacunes": ["lacune ou point à renforcer 1", "lacune 2"],
-  "questions": [
-    {
-      "id": 1,
-      "question": "Question précise sur une expérience ou réalisation concrète ?",
-      "pourquoi": "En quoi la réponse renforcera la candidature pour ce poste",
-      "reponse_suggeree": "Réponse rédigée en première personne, basée sur les éléments trouvés dans le profil — ex : J'ai piloté..."
-    }
-  ]
 }
 
-Génère EXACTEMENT 3 questions — pas plus, pas moins.
-Choisis les 3 questions les plus stratégiques pour mettre en évidence les compétences
-attendues par le recruteur au travers des expériences concrètes du candidat.
-Pour chaque question, rédige une reponse_suggeree en PREMIÈRE PERSONNE (je, j'ai, mon, ma...)
-basée sur les informations déjà disponibles dans le profil du candidat.
-La reponse_suggeree doit être une ébauche concrète et directement utilisable que le candidat
-pourra compléter ou corriger — pas une invitation à répondre, mais une réponse rédigée.
-Si le profil ne contient pas d'éléments pertinents pour cette question, écris une trame vide
-avec les points clés à renseigner entre [crochets].
 Ne retourne que le JSON, sans texte avant ou après.
 
 ---
@@ -109,17 +92,7 @@ $jobPosting
 PROMPT;
 }
 
-function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, array $dialogue, string $jobPosting): string {
-    $qa = '';
-    foreach ($dialogue as $d) {
-        if (!empty($d['answer'])) {
-            if ((int)$d['question_order'] === 0) {
-                $qa .= "EXPÉRIENCES COMPLÉMENTAIRES HORS BASE :\n" . $d['answer'] . "\n\n";
-            } else {
-                $qa .= "Q : " . $d['question'] . "\nR : " . $d['answer'] . "\n\n";
-            }
-        }
-    }
+function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, string $jobPosting): string {
     return <<<PROMPT
 Tu es expert en rédaction de CV pour des cadres dirigeants français. Génère un CV sur-mesure en français.
 
@@ -240,9 +213,6 @@ MATCHING ET STRATÉGIE :
 $matchingJson
 
 ---
-INFORMATIONS COMPLÉMENTAIRES (dialogue + expériences hors base) :
-$qa
----
 FICHE DE POSTE :
 $jobPosting
 PROMPT;
@@ -254,26 +224,7 @@ $analysisJson  = $app['analysis_result'] ?? '';
 $matchingJson  = $app['matching_result'] ?? '';
 $cvContent     = $app['cv_content'] ?? '';
 
-$dialogue = [];
-if ($app && $step >= 4) {
-    $stmt = $db->prepare("SELECT * FROM cv_dialogue WHERE application_id = ? ORDER BY question_order");
-    $stmt->execute([$app['id']]);
-    $dialogue = $stmt->fetchAll();
-}
-
-$currentQuestion = null;
-$allAnswered     = true;
-if ($step === 4 && !empty($dialogue)) {
-    foreach ($dialogue as $q) {
-        if (empty($q['answer'])) {
-            $currentQuestion = $q;
-            $allAnswered = false;
-            break;
-        }
-    }
-}
-
-$stepLabels = ['Fiche de poste', 'Analyse', 'Matching', 'Dialogue', 'Génération CV', 'Export'];
+$stepLabels = ['Fiche de poste', 'Analyse', 'Matching & Enrichissement', 'Génération CV', 'Export'];
 
 $pageTitle  = $app ? 'Candidature — ' . htmlspecialchars($app['company']) : 'Nouvelle candidature';
 $activePage = 'new';
@@ -282,7 +233,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- Barre de progression -->
 <div class="steps-bar">
-  <?php for ($i = 1; $i <= 6; $i++): ?>
+  <?php for ($i = 1; $i <= 5; $i++): ?>
     <div class="step <?= $i < $step ? 'done' : ($i === $step ? 'active' : '') ?>">
       <div class="step-circle"><?= $i < $step ? '✓' : $i ?></div>
       <span class="step-label"><?= $stepLabels[$i-1] ?></span>
@@ -316,6 +267,18 @@ if ($step === 1): ?>
         <input type="text" name="position" class="form-control" required
                value="<?= htmlspecialchars($app['position'] ?? '') ?>"
                placeholder="Intitulé du poste">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>URL de l'offre <span class="text-muted" style="font-weight:normal;">(optionnel)</span></label>
+      <div class="flex flex-gap items-center">
+        <input type="url" name="source_url" id="source-url" class="form-control"
+               value="<?= htmlspecialchars($app['source_url'] ?? '') ?>"
+               placeholder="https://www.linkedin.com/jobs/..."
+               oninput="updatePlatformBadge(this.value)">
+        <span id="platform-badge" class="badge" style="flex-shrink:0; <?= empty($app['source_url']) ? 'display:none' : '' ?>">
+          <?= !empty($app['source_url']) ? htmlspecialchars(detectPlatform($app['source_url'])) : '' ?>
+        </span>
       </div>
     </div>
     <div class="form-group">
@@ -367,15 +330,15 @@ elseif ($step === 2):
 <?php /* ═══════════════════════════════════════════════════
    STEP 3 — Matching
    ═══════════════════════════════════════════════════ */
-elseif ($step === 3):
+elseif ($step === 3 && ($app['status'] ?? '') === 'matching'):
     $prompt = buildMatchingPrompt($knowledge, $analysisJson, $app['job_posting']);
 ?>
 <div class="card">
-  <div class="card-title">🎯 Étape 3 — Matching avec ta base de connaissance</div>
+  <div class="card-title">🎯 Étape 3 — Matching & Enrichissement</div>
 
   <div class="alert alert-info">
-    Ce prompt inclut l'intégralité de ta base de connaissance. Claude va identifier ce qui matche
-    et générer des questions ciblées pour enrichir le CV.
+    Ce prompt inclut ta base de connaissance. Claude va identifier les correspondances avec le poste.
+    L'enrichissement de la base se fera ensuite compétence par compétence.
   </div>
 
   <div class="prompt-block">
@@ -399,145 +362,206 @@ elseif ($step === 3):
 
   <div id="phase-review" style="display:none;">
     <div id="matching-display" style="margin-top:24px;"></div>
-
-    <div class="response-block" style="margin-top:24px;">
-      <div class="response-block-title">As-tu des expériences non listées dans ta base de connaissance ?</div>
-      <p style="font-size:13px; color:#6b6b65; margin:8px 0 10px;">
-        Regarde les lacunes identifiées ci-dessus. Si tu as des projets ou réalisations non encore documentés dans ta base, décris-les ici — ils seront intégrés comme contexte supplémentaire pour la génération du CV.
-      </p>
-      <textarea id="extra-experiences" class="form-control" rows="4"
-                placeholder="Ex : Lors de mon passage chez X en 2022, j'ai aussi piloté une migration SI — non encore documentée dans ma base..."></textarea>
-      <div class="flex flex-gap mt-16">
-        <button class="btn btn-primary btn-lg" onclick="saveStep(3)">Enregistrer et continuer →</button>
-      </div>
-      <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary btn-lg" onclick="saveStep(3)">Enregistrer et passer à l'enrichissement →</button>
     </div>
+    <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
 </div>
 
 <?php /* ═══════════════════════════════════════════════════
-   STEP 4 — Dialogue Q&A
+   STEP 3 (phase B) — Enrichissement de la base
    ═══════════════════════════════════════════════════ */
-elseif ($step === 4):
-    // Séparer l'entrée "expériences complémentaires" (question_order=0) des vraies questions
-    $gapEntry       = null;
-    $actualDialogue = [];
-    foreach ($dialogue as $q) {
-        if ((int)$q['question_order'] === 0) {
-            $gapEntry = $q;
-        } else {
-            $actualDialogue[] = $q;
-        }
+elseif ($step === 3):
+    $enrichmentData = json_decode($app['enrichment_data'] ?? '[]', true) ?? [];
+    $totalComps     = count($enrichmentData);
+    $currentComp    = null;
+    $currentIndex   = -1;
+    $doneCount      = 0;
+    foreach ($enrichmentData as $i => $comp) {
+        if ($comp['status'] !== 'pending') { $doneCount++; continue; }
+        if ($currentComp === null) { $currentComp = $comp; $currentIndex = $i; }
     }
-    $answered = array_filter($actualDialogue, fn($q) => !empty($q['answer']));
-    $total    = count($actualDialogue);
-    $done     = count($answered);
+    $matchingData = json_decode($matchingJson, true) ?? [];
+    $experiences  = $db->query("SELECT id, title, meta_json FROM cv_knowledge WHERE type = 'experience' AND is_active = 1 ORDER BY created_at DESC")->fetchAll();
 ?>
 <div class="card">
-  <div class="card-title">💬 Étape 4 — Dialogue</div>
+  <div class="card-title">🎯 Étape 3 — Matching & Enrichissement</div>
 
-  <?php if ($gapEntry && !empty($gapEntry['answer'])): ?>
-    <div style="margin-bottom:20px; padding:14px 16px; background:#f8f4fc; border-left:4px solid #6D155D; border-radius:6px;">
-      <div style="font-size:11px; font-weight:700; color:#6D155D; text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px;">Expériences complémentaires (hors base de connaissance)</div>
-      <div style="font-size:13px; color:#333; white-space:pre-wrap;"><?= htmlspecialchars($gapEntry['answer']) ?></div>
-    </div>
-  <?php endif; ?>
-
-  <?php if (empty($actualDialogue)): ?>
-    <div class="alert alert-warning">
-      Aucune question trouvée. <a href="php/reparse-questions.php?id=<?= $id ?>">Réanalyser le matching</a>
-      ou <a href="#" onclick="addManualQuestion()">ajouter une question manuellement</a>.
-    </div>
-  <?php elseif ($allAnswered): ?>
-    <div class="alert alert-success">
-      ✓ Toutes les questions ont été répondues. Tu peux passer à la génération du CV.
-    </div>
-    <div class="mt-16">
-      <h3 style="font-size:15px; font-weight:600; margin-bottom:12px;">Récapitulatif du dialogue</h3>
-      <?php foreach ($actualDialogue as $i => $q): ?>
-        <div style="margin-bottom:16px; padding:14px; background:#f9f9f7; border-radius:8px; border:1px solid #e4e0db;">
-          <div style="font-weight:600; font-size:13px; color:#6D155D; margin-bottom:4px;">Question <?= $i+1 ?></div>
-          <div style="font-size:14px; margin-bottom:8px;"><?= htmlspecialchars($q['question']) ?></div>
-          <div style="font-size:13px; color:#444; border-left:3px solid #D3A625; padding-left:10px;"><?= nl2br(htmlspecialchars($q['answer'])) ?></div>
+  <!-- Résumé matching (repliable) -->
+  <details style="margin-bottom:20px;">
+    <summary style="font-size:13px; font-weight:600; color:#6D155D; cursor:pointer; padding:8px 0; list-style:none; display:flex; align-items:center; gap:8px;">
+      <span>▶</span> Résumé du matching (<?= count($matchingData['correspondances'] ?? []) ?> compétences analysées)
+    </summary>
+    <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+      <?php if (!empty($matchingData['resume_matching'])): ?>
+        <div style="background:#f0eaf8;border-left:4px solid #6D155D;padding:12px 16px;border-radius:6px;font-size:13px;color:#333;margin-bottom:14px;">
+          <?= htmlspecialchars($matchingData['resume_matching']) ?>
         </div>
-      <?php endforeach; ?>
-      <button class="btn btn-primary btn-lg" onclick="goToStep5()">Générer le CV →</button>
+      <?php endif; ?>
+      <?php if (!empty($matchingData['points_forts'])): ?>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:#2a7d4b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Points forts</div>
+          <?php foreach ($matchingData['points_forts'] as $p): ?>
+            <div style="font-size:13px;padding:5px 10px;margin-bottom:3px;background:#f0faf4;border-radius:5px;border-left:3px solid #2a7d4b;">✓ <?= htmlspecialchars($p) ?></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+      <?php if (!empty($matchingData['lacunes'])): ?>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">À renforcer</div>
+          <?php foreach ($matchingData['lacunes'] as $l): ?>
+            <div style="font-size:13px;padding:5px 10px;margin-bottom:3px;background:#fdf2f2;border-radius:5px;border-left:3px solid #c0392b;">⚠ <?= htmlspecialchars($l) ?></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
     </div>
-  <?php else: ?>
-    <div class="alert alert-info">
-      Question <?= $done + 1 ?> sur <?= $total ?>. Réponds directement ici, dans l'application.
-    </div>
+  </details>
 
-    <div class="question-card">
-      <div class="question-number">Question <?= $done + 1 ?> / <?= $total ?></div>
-      <div class="question-text"><?= htmlspecialchars($currentQuestion['question']) ?></div>
-      <?php
-        $matchingData = json_decode($matchingJson, true);
-        $pourquoi     = '';
-        $suggestion   = '';
-        if ($matchingData && isset($matchingData['questions'])) {
-            foreach ($matchingData['questions'] as $mq) {
-                if ((int)$mq['id'] === (int)$currentQuestion['question_order']) {
-                    $pourquoi   = $mq['pourquoi'] ?? '';
-                    $suggestion = $mq['reponse_suggeree'] ?? '';
-                    break;
-                }
-            }
-        }
+  <!-- Barre de progression enrichissement -->
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f9f9f7;border-radius:8px;border:1px solid var(--border);margin-bottom:20px;">
+    <div style="font-size:13px;color:var(--text-muted);">Enrichissement :</div>
+    <div style="font-size:15px;font-weight:700;color:#6D155D;"><?= $doneCount ?>/<?= $totalComps ?></div>
+    <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+      <div style="height:100%;background:#6D155D;width:<?= $totalComps > 0 ? round($doneCount/$totalComps*100) : 0 ?>%;border-radius:3px;"></div>
+    </div>
+  </div>
+
+  <!-- Tags compétences -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);margin-bottom:8px;">Compétences requises</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <?php foreach ($enrichmentData as $i => $comp):
+        $st = $comp['status'];
+        if ($st === 'enriched')     $style = 'background:#e8f8ee;color:#2a7d4b;';
+        elseif ($st === 'skipped')  $style = 'background:#f0f0f0;color:#999;text-decoration:line-through;';
+        elseif ($comp['found'])     $style = 'background:#e8f4fd;color:#1565c0;';
+        else                        $style = 'background:#fff4e0;color:#b36b00;';
+        $icon = ($st === 'enriched') ? '✓ ' : (($st === 'skipped') ? '— ' : ($comp['found'] ? '● ' : '○ '));
+        $outline = ($i === $currentIndex) ? 'outline:2px solid #D3A625;outline-offset:1px;' : '';
       ?>
-      <?php if ($pourquoi): ?>
-        <div class="question-why">Pourquoi cette question : <?= htmlspecialchars($pourquoi) ?></div>
-      <?php endif; ?>
+        <span style="<?= $style . $outline ?> font-size:12px;padding:3px 10px;border-radius:20px;">
+          <?= $icon . htmlspecialchars($comp['name']) ?>
+        </span>
+      <?php endforeach; ?>
+    </div>
+    <div style="font-size:11px;color:#bbb;margin-top:6px;">● dans la base · ○ à enrichir · ✓ enrichie · — passée</div>
+  </div>
 
-      <?php if ($suggestion): ?>
-        <div style="font-size:12px; color:#1565c0; background:#e8f4fd; border:1px solid #b3d4f0; border-radius:6px; padding:8px 12px; margin-bottom:8px;">
-          💡 Suggestion de Claude basée sur ton profil — à compléter ou corriger :
+  <?php if ($currentComp === null): ?>
+    <!-- Toutes traitées -->
+    <div class="alert alert-success">✓ Toutes les compétences ont été traitées. La base de connaissance est à jour.</div>
+    <div class="mt-16">
+      <button class="btn btn-primary btn-lg" onclick="advanceToCV()">Générer le CV →</button>
+    </div>
+    <div id="advance-msg" class="hidden alert" style="margin-top:12px;"></div>
+
+  <?php else: ?>
+    <!-- Formulaire d'enrichissement pour la compétence courante -->
+    <div style="border:2px solid #D3A625;border-radius:var(--radius);padding:20px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#b36b00;margin-bottom:6px;">
+        Compétence <?= $currentIndex + 1 ?> / <?= $totalComps ?>
+      </div>
+      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px;">
+        <?= htmlspecialchars($currentComp['name']) ?>
+      </div>
+
+      <?php if ($currentComp['found'] && !empty($currentComp['matches'])): ?>
+        <div style="font-size:13px;color:#1565c0;background:#e8f4fd;padding:8px 12px;border-radius:6px;margin-bottom:12px;">
+          Déjà présente dans :
+          <?= implode(', ', array_map(fn($m) => '<strong>' . htmlspecialchars($m['title']) . '</strong>', $currentComp['matches'])) ?>
+        </div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+          Tu peux enrichir une entrée avec un exemple concret, ou passer directement.
+        </div>
+      <?php else: ?>
+        <div style="font-size:13px;color:#b36b00;background:#fff4e0;padding:8px 12px;border-radius:6px;margin-bottom:16px;">
+          Non trouvée dans ta base de connaissance.
         </div>
       <?php endif; ?>
-      <textarea id="answer-text" class="form-control" rows="7"
-                placeholder="Décris ton expérience concrète sur ce sujet..."><?= htmlspecialchars($suggestion) ?></textarea>
-      <div style="font-size:11px; color:#888; margin-top:6px;">
-        Les réponses validées seront automatiquement enregistrées dans ta base de connaissance à la fin du processus.
+
+      <div class="form-group">
+        <label style="font-size:13px;">Sur quel poste ?</label>
+        <select id="select-knowledge" class="form-control" onchange="toggleNewPostForm(this.value)">
+          <option value="">— Choisir une expérience —</option>
+          <?php if (!empty($currentComp['matches'])): ?>
+            <optgroup label="Correspondances trouvées">
+              <?php foreach ($currentComp['matches'] as $m): ?>
+                <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['title']) ?></option>
+              <?php endforeach; ?>
+            </optgroup>
+          <?php endif; ?>
+          <?php
+            $matchIds = array_column($currentComp['matches'] ?? [], 'id');
+            $otherExp = array_filter($experiences, fn($e) => !in_array($e['id'], $matchIds));
+            if (!empty($otherExp)):
+          ?>
+            <optgroup label="Autres expériences">
+              <?php foreach ($otherExp as $exp):
+                $meta = json_decode($exp['meta_json'] ?? '{}', true);
+              ?>
+                <option value="<?= $exp['id'] ?>"><?= htmlspecialchars($exp['title']) ?><?= !empty($meta['company']) ? ' · ' . htmlspecialchars($meta['company']) : '' ?></option>
+              <?php endforeach; ?>
+            </optgroup>
+          <?php endif; ?>
+          <option value="0">+ Nouveau poste (non encore dans la base)</option>
+        </select>
+      </div>
+
+      <div id="new-post-form" style="display:none;">
+        <div class="grid-2">
+          <div class="form-group">
+            <label style="font-size:13px;">Poste / titre</label>
+            <input type="text" id="new-role" class="form-control" placeholder="Ex : DSI, Directeur de programme...">
+          </div>
+          <div class="form-group">
+            <label style="font-size:13px;">Entreprise</label>
+            <input type="text" id="new-company" class="form-control" placeholder="Nom de l'entreprise">
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="font-size:13px;">Période</label>
+          <input type="text" id="new-period" class="form-control" placeholder="Ex : 2020 – 2023">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="font-size:13px;">Décris ton expérience avec "<?= htmlspecialchars($currentComp['name']) ?>"</label>
+        <textarea id="enrich-description" class="form-control" rows="4"
+                  placeholder="Contexte, actions concrètes, résultats obtenus..."
+                  oninput="updateEnrichPreview()"></textarea>
+      </div>
+
+      <div id="enrich-preview" style="display:none;font-size:13px;padding:10px 12px;background:#f0eaf8;border-radius:6px;border-left:3px solid #6D155D;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6D155D;margin-bottom:4px;">Aperçu de l'ajout en base</div>
+        <span id="enrich-preview-text"></span>
       </div>
 
       <div class="flex flex-gap mt-16">
-        <button class="btn btn-primary" onclick="saveAnswer(<?= $currentQuestion['id'] ?>)">
-          Répondre →
+        <button class="btn btn-primary" onclick="submitEnrichment(<?= $currentIndex ?>, <?= json_encode($currentComp['name']) ?>)">
+          Valider et enrichir →
         </button>
-        <button class="btn btn-ghost" onclick="skipQuestion(<?= $currentQuestion['id'] ?>)">
-          Passer cette question
+        <button class="btn btn-ghost" onclick="skipCompetency(<?= $currentIndex ?>)">
+          Passer
         </button>
       </div>
-      <div id="answer-msg" class="hidden alert" style="margin-top:12px;"></div>
+      <div id="enrich-msg" class="hidden alert" style="margin-top:12px;"></div>
     </div>
-
-    <!-- Questions précédentes -->
-    <?php if ($done > 0): ?>
-      <div style="margin-top:20px;">
-        <div style="font-size:13px; font-weight:600; color:#6b6b65; margin-bottom:10px;">Réponses précédentes :</div>
-        <?php foreach ($answered as $q): ?>
-          <div style="margin-bottom:10px; padding:12px; background:#f9f9f7; border-radius:8px; border:1px solid #e4e0db; font-size:13px;">
-            <strong><?= htmlspecialchars($q['question']) ?></strong><br>
-            <span style="color:#444;"><?= nl2br(htmlspecialchars($q['answer'])) ?></span>
-          </div>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
   <?php endif; ?>
 </div>
 
 <?php /* ═══════════════════════════════════════════════════
-   STEP 5 — Génération du CV
+   STEP 4 — Génération du CV
    ═══════════════════════════════════════════════════ */
-elseif ($step === 5):
-    $prompt = buildCVPrompt($knowledge, $analysisJson, $matchingJson, $dialogue, $app['job_posting']);
+elseif ($step === 4):
+    $prompt = buildCVPrompt($knowledge, $analysisJson, $matchingJson, $app['job_posting']);
 ?>
 <div class="card">
-  <div class="card-title">✍ Étape 5 — Génération du CV</div>
+  <div class="card-title">✍ Étape 4 — Génération du CV</div>
 
   <div class="alert alert-info">
-    Ce prompt contient l'ensemble des informations collectées. Claude va générer ton CV sur-mesure.
-    Colle le résultat ci-dessous — l'app extraira automatiquement le HTML du CV.
+    La base de connaissance a été enrichie à l'étape précédente. Ce prompt contient tout le contexte.
+    Claude va générer ton CV sur-mesure — colle le résultat ci-dessous.
   </div>
 
   <div class="prompt-block">
@@ -556,10 +580,9 @@ elseif ($step === 5):
       <button class="btn btn-primary" onclick="previewCV()">Prévisualiser le CV →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
     </div>
-    <div id="step5-msg" class="hidden alert" style="margin-top:12px;"></div>
+    <div id="step4-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
 
-  <!-- Zone de prévisualisation (masquée par défaut) -->
   <div id="cv-preview-wrap" style="display:none; margin-top:28px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border);">
       <div style="font-size:14px; font-weight:700; color:#333;">Aperçu du CV</div>
@@ -573,14 +596,14 @@ elseif ($step === 5):
       <button class="btn btn-ghost btn-sm" onclick="resetPreview()">← Modifier la réponse</button>
       <button class="btn btn-primary" onclick="confirmCV()">Confirmer et enregistrer →</button>
     </div>
-    <div id="step5-confirm-msg" class="hidden alert" style="margin-top:12px;"></div>
+    <div id="step4-confirm-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
 </div>
 
 <?php /* ═══════════════════════════════════════════════════
-   STEP 6 — Export
+   STEP 5 — Export
    ═══════════════════════════════════════════════════ */
-elseif ($step === 6): ?>
+elseif ($step === 5): ?>
 <div class="alert alert-success">
   ✓ CV généré avec succès pour <strong><?= htmlspecialchars($app['company']) ?></strong> — <?= htmlspecialchars($app['position']) ?>
 </div>
@@ -614,6 +637,29 @@ function copyPrompt(id) {
     btn.style.color = 'white';
     setTimeout(() => { btn.textContent = '📋 Copier'; btn.style = ''; }, 2000);
   });
+}
+
+// ── Détection plateforme depuis URL ───────────────
+const platformMap = {
+  'linkedin.com': 'LinkedIn', 'apec.fr': 'APEC', 'hellowork.com': 'HelloWork',
+  'cadremploi.fr': 'Cadremploi', 'michaelpage.fr': 'Michael Page',
+  'robertwalters.fr': 'Robert Walters', 'roberthalffrance.fr': 'Robert Half',
+  'indeed.com': 'Indeed', 'welcometothejungle.com': 'WTTJ',
+  'monster.fr': 'Monster', 'jobteaser.com': 'JobTeaser', 'regionsjob.com': 'RégionsJob'
+};
+function updatePlatformBadge(url) {
+  const badge = document.getElementById('platform-badge');
+  if (!badge) return;
+  if (!url) { badge.style.display = 'none'; badge.textContent = ''; return; }
+  let label = '';
+  for (const [domain, name] of Object.entries(platformMap)) {
+    if (url.includes(domain)) { label = name; break; }
+  }
+  if (!label) {
+    try { label = new URL(url).hostname.replace(/^www\./, ''); } catch(e) { label = 'Lien'; }
+  }
+  badge.textContent = label;
+  badge.style.display = '';
 }
 
 // ── Step 1 — Créer / mettre à jour la candidature ─
@@ -743,78 +789,80 @@ function parseMatchingResponse() {
     html += '</div>';
   }
 
-  if (parsed.questions?.length) {
-    html += `<div style="font-size:13px;color:#6b6b65;padding:10px 14px;background:#f9f9f7;border-radius:6px;border:1px solid #e4e0db;">
-      💬 <strong>${parsed.questions.length} question(s)</strong> générées pour approfondir ton profil lors de l'étape de dialogue.
-    </div>`;
-  }
-
   document.getElementById('matching-display').innerHTML = html;
   document.getElementById('phase-review').style.display = 'block';
   document.getElementById('btn-parse-matching').style.display = 'none';
   document.getElementById('matching-display').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── Step 4 — Enregistrer une réponse au dialogue ──
-function saveAnswer(questionId) {
-  const answer = document.getElementById('answer-text')?.value?.trim();
-  const msgEl  = document.getElementById('answer-msg');
-  if (!answer) {
-    showMsg(msgEl, 'Saisis ta réponse avant de continuer.', 'error');
-    return;
+// ── Step 3 — Enrichissement compétence par compétence
+const currentCompName = <?= json_encode($currentComp['name'] ?? '') ?>;
+
+function toggleNewPostForm(value) {
+  const f = document.getElementById('new-post-form');
+  if (f) f.style.display = (value === '0') ? 'block' : 'none';
+}
+
+function updateEnrichPreview() {
+  const desc = document.getElementById('enrich-description')?.value?.trim();
+  const wrap = document.getElementById('enrich-preview');
+  const text = document.getElementById('enrich-preview-text');
+  if (!wrap || !text) return;
+  if (desc) {
+    text.textContent = currentCompName + ' : ' + desc;
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
   }
-  fetch('php/save-answer.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, question_id: questionId, answer })
-  })
-  .then(r => r.json())
-  .then(d => {
+}
+
+function submitEnrichment(compIndex, compName) {
+  const selectEl    = document.getElementById('select-knowledge');
+  const selectVal   = selectEl?.value ?? '';
+  const description = document.getElementById('enrich-description')?.value?.trim();
+  const msgEl       = document.getElementById('enrich-msg');
+
+  if (selectVal === '') { showMsg(msgEl, 'Sélectionne un poste avant de valider.', 'error'); return; }
+  if (!description)     { showMsg(msgEl, 'Décris ton expérience avant de valider.', 'error'); return; }
+
+  const knowledgeId = parseInt(selectVal);
+  const payload = { app_id: appId, comp_index: compIndex, knowledge_id: knowledgeId, competency: compName, description };
+  if (knowledgeId === 0) {
+    payload.new_role    = document.getElementById('new-role')?.value?.trim()    || '';
+    payload.new_company = document.getElementById('new-company')?.value?.trim() || '';
+    payload.new_period  = document.getElementById('new-period')?.value?.trim()  || '';
+  }
+
+  fetch('php/enrich-knowledge.php', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+  }).then(r => r.json()).then(d => {
     if (d.success) window.location.reload();
     else showMsg(msgEl, d.error || 'Erreur.', 'error');
   });
 }
 
-function skipQuestion(questionId) {
-  if (!confirm('Passer cette question sans répondre ?')) return;
-  fetch('php/save-answer.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, question_id: questionId, answer: '' })
-  })
-  .then(r => r.json())
-  .then(d => { if (d.success) window.location.reload(); });
+function skipCompetency(compIndex) {
+  fetch('php/skip-competency.php', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ app_id: appId, comp_index: compIndex })
+  }).then(r => r.json()).then(d => { if (d.success) window.location.reload(); });
 }
 
-function goToStep5() {
-  fetch('php/save-step.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, step: 4, content: '__dialogue_complete__' })
-  })
-  .then(r => r.json())
-  .then(d => { if (d.success) window.location = 'new-application.php?id=' + appId; });
-}
-
-// ── Step 6 — Ajouter dialogue à la base ───────────
-function addDialogueToKnowledge() {
-  const msgEl = document.getElementById('knowledge-save-msg');
-  fetch('php/add-to-knowledge.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId })
-  })
-  .then(r => r.json())
-  .then(d => {
-    const type = d.success ? 'success' : 'error';
-    showMsg(msgEl, d.success ? 'Réponses ajoutées à la base de connaissance.' : (d.error || 'Erreur.'), type);
+function advanceToCV() {
+  const msgEl = document.getElementById('advance-msg');
+  fetch('php/advance-to-cv.php', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ app_id: appId })
+  }).then(r => r.json()).then(d => {
+    if (d.success) window.location = 'new-application.php?id=' + appId;
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
   });
 }
 
-// ── Step 5 — Prévisualiser / confirmer le CV ───────
+// ── Step 4 — Prévisualiser / confirmer le CV ───────
 function previewCV() {
   const raw   = document.getElementById('cv-response')?.value?.trim();
-  const msgEl = document.getElementById('step5-msg');
+  const msgEl = document.getElementById('step4-msg');
   if (!raw) { showMsg(msgEl, 'Colle la réponse de Claude avant de prévisualiser.', 'error'); return; }
 
   // Extraire <section id="cv"> via DOMParser (gère correctement les sections imbriquées)
@@ -841,12 +889,12 @@ function confirmCV() {
   fetch('php/save-step.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: appId, step: 5, content: raw })
+    body: JSON.stringify({ id: appId, step: 4, content: raw })
   })
   .then(r => r.json())
   .then(d => {
     if (d.success) window.location = 'new-application.php?id=' + appId;
-    else showMsg(msgEl, d.error || 'Erreur lors de l\'enregistrement.', 'error');
+    else showMsg(document.getElementById('step4-confirm-msg'), d.error || 'Erreur lors de l\'enregistrement.', 'error');
   });
 }
 
