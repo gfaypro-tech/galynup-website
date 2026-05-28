@@ -485,31 +485,37 @@ elseif ($step === 3):
       <?php endif; ?>
 
       <div class="form-group">
-        <label style="font-size:13px;">Sur quel poste ?</label>
-        <select id="select-knowledge" class="form-control" onchange="toggleNewPostForm(this.value)">
-          <option value="">— Choisir une expérience —</option>
+        <label style="font-size:13px;">Sur quel(s) poste(s) ? <span style="font-weight:400;color:#888;">(coche tout ce qui s'applique)</span></label>
+        <div id="experience-checkboxes" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">
           <?php if (!empty($currentComp['matches'])): ?>
-            <optgroup label="Correspondances trouvées">
-              <?php foreach ($currentComp['matches'] as $m): ?>
-                <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['title']) ?></option>
-              <?php endforeach; ?>
-            </optgroup>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6D155D;margin-bottom:2px;">Correspondances trouvées</div>
+            <?php foreach ($currentComp['matches'] as $m): ?>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+                <input type="checkbox" class="exp-checkbox" value="<?= $m['id'] ?>" checked>
+                <?= htmlspecialchars($m['title']) ?>
+              </label>
+            <?php endforeach; ?>
           <?php endif; ?>
           <?php
             $matchIds = array_column($currentComp['matches'] ?? [], 'id');
             $otherExp = array_filter($experiences, fn($e) => !in_array($e['id'], $matchIds));
             if (!empty($otherExp)):
           ?>
-            <optgroup label="Autres expériences">
-              <?php foreach ($otherExp as $exp):
-                $meta = json_decode($exp['meta_json'] ?? '{}', true);
-              ?>
-                <option value="<?= $exp['id'] ?>"><?= htmlspecialchars($exp['title']) ?><?= !empty($meta['company']) ? ' · ' . htmlspecialchars($meta['company']) : '' ?></option>
-              <?php endforeach; ?>
-            </optgroup>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#888;margin-top:6px;margin-bottom:2px;">Autres expériences</div>
+            <?php foreach ($otherExp as $exp):
+              $meta = json_decode($exp['meta_json'] ?? '{}', true);
+            ?>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+                <input type="checkbox" class="exp-checkbox" value="<?= $exp['id'] ?>">
+                <?= htmlspecialchars($exp['title']) ?><?= !empty($meta['company']) ? ' · ' . htmlspecialchars($meta['company']) : '' ?>
+              </label>
+            <?php endforeach; ?>
           <?php endif; ?>
-          <option value="0">+ Nouveau poste (non encore dans la base)</option>
-        </select>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-top:4px;padding-top:8px;border-top:1px solid var(--border);">
+            <input type="checkbox" id="check-new-post" onchange="toggleNewPostForm(this.checked)">
+            <span>+ Nouveau poste (non encore dans la base)</span>
+          </label>
+        </div>
       </div>
 
       <div id="new-post-form" style="display:none;">
@@ -839,9 +845,9 @@ function parseMatchingResponse() {
 // ── Step 3 — Enrichissement compétence par compétence
 const currentCompName = <?= json_encode(isset($currentComp) && $currentComp ? $currentComp['name'] : '') ?>;
 
-function toggleNewPostForm(value) {
+function toggleNewPostForm(checked) {
   const f = document.getElementById('new-post-form');
-  if (f) f.style.display = (value === '0') ? 'block' : 'none';
+  if (f) f.style.display = checked ? 'block' : 'none';
 }
 
 function updateEnrichPreview() {
@@ -858,17 +864,19 @@ function updateEnrichPreview() {
 }
 
 function submitEnrichment(compIndex, compName) {
-  const selectEl    = document.getElementById('select-knowledge');
-  const selectVal   = selectEl?.value ?? '';
-  const description = document.getElementById('enrich-description')?.value?.trim();
-  const msgEl       = document.getElementById('enrich-msg');
+  const description  = document.getElementById('enrich-description')?.value?.trim();
+  const msgEl        = document.getElementById('enrich-msg');
+  const checkedBoxes = document.querySelectorAll('.exp-checkbox:checked');
+  const knowledgeIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+  const createNew    = document.getElementById('check-new-post')?.checked || false;
 
-  if (selectVal === '') { showMsg(msgEl, 'Sélectionne un poste avant de valider.', 'error'); return; }
-  if (!description)     { showMsg(msgEl, 'Décris ton expérience avant de valider.', 'error'); return; }
+  if (knowledgeIds.length === 0 && !createNew) {
+    showMsg(msgEl, 'Coche au moins une expérience ou crée un nouveau poste.', 'error'); return;
+  }
+  if (!description) { showMsg(msgEl, 'Décris ton expérience avant de valider.', 'error'); return; }
 
-  const knowledgeId = parseInt(selectVal);
-  const payload = { app_id: appId, comp_index: compIndex, knowledge_id: knowledgeId, competency: compName, description };
-  if (knowledgeId === 0) {
+  const payload = { app_id: appId, comp_index: compIndex, knowledge_ids: knowledgeIds, competency: compName, description };
+  if (createNew) {
     payload.new_role    = document.getElementById('new-role')?.value?.trim()    || '';
     payload.new_company = document.getElementById('new-company')?.value?.trim() || '';
     payload.new_period  = document.getElementById('new-period')?.value?.trim()  || '';
