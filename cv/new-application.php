@@ -623,7 +623,7 @@ elseif ($step === 5): ?>
 
 <div class="flex flex-gap mb-16">
   <a href="php/export-word.php?id=<?= $id ?>" class="btn btn-primary btn-lg">⬇ Télécharger Word (.doc)</a>
-  <a href="php/export-pdf.php?id=<?= $id ?>" target="_blank" class="btn btn-outline btn-lg">⬇ Télécharger PDF</a>
+  <a href="php/export-pdf-server.php?id=<?= $id ?>" class="btn btn-outline btn-lg">⬇ Télécharger PDF</a>
   <button onclick="window.print()" class="btn btn-outline btn-lg">🖨 Imprimer</button>
   <a href="new-application.php" class="btn btn-gold">+ Nouvelle candidature</a>
 </div>
