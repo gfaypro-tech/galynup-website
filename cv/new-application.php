@@ -623,7 +623,8 @@ elseif ($step === 5): ?>
 
 <div class="flex flex-gap mb-16">
   <a href="php/export-word.php?id=<?= $id ?>" class="btn btn-primary btn-lg">⬇ Télécharger Word (.doc)</a>
-  <button onclick="window.print()" class="btn btn-outline btn-lg">🖨 Imprimer / PDF</button>
+  <button onclick="downloadPDF(this)" class="btn btn-outline btn-lg">⬇ Télécharger PDF</button>
+  <button onclick="window.print()" class="btn btn-outline btn-lg">🖨 Imprimer</button>
   <a href="new-application.php" class="btn btn-gold">+ Nouvelle candidature</a>
 </div>
 
@@ -631,9 +632,35 @@ elseif ($step === 5): ?>
   <?= $cvContent ?>
 </div>
 
-<div style="margin-top:16px; font-size:12px; color:#888;">
-  ✓ Les réponses du dialogue ont été automatiquement intégrées à ta base de connaissance.
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const pdfPosition = <?= json_encode($app['position'] ?? '') ?>;
+
+function getPdfFilename() {
+  const sanitized = pdfPosition
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9\s]/g, '')
+    .trim().replace(/\s+/g, '_').toUpperCase();
+  return 'CV_GFAY_' + (sanitized || 'CV') + '.pdf';
+}
+
+function downloadPDF(btn) {
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '⏳ Génération...';
+  html2pdf()
+    .set({
+      margin: [10, 10, 10, 10],
+      filename: getPdfFilename(),
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    })
+    .from(document.getElementById('cv-output'))
+    .save()
+    .then(() => { btn.disabled = false; btn.textContent = orig; });
+}
+</script>
 
 <?php endif; ?>
 
