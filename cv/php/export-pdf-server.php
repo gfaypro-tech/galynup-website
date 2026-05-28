@@ -1,4 +1,5 @@
 <?php
+ini_set('zlib.output_compression', 'Off'); // désactiver la compression gzip sur le binaire PDF
 ob_start(); // capturer tout output parasite (warnings, notices)
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -135,6 +136,8 @@ if ($httpCode !== 200) {
 ob_end_clean(); // vider tout output parasite accumulé
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
-header('Content-Length: ' . strlen($response));
-header('Cache-Control: no-cache');
+header('Content-Transfer-Encoding: binary');
+header('Cache-Control: no-store, no-cache');
+header('Pragma: no-cache');
+// Pas de Content-Length : évite les conflits avec la compression OVH
 echo $response;
