@@ -876,10 +876,13 @@ function submitEnrichment(compIndex, compName) {
 
   fetch('php/enrich-knowledge.php', {
     method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
-  }).then(r => r.json()).then(d => {
+  })
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(d => {
     if (d.success) window.location.reload();
     else showMsg(msgEl, d.error || 'Erreur.', 'error');
-  });
+  })
+  .catch(e => showMsg(msgEl, 'Erreur : ' + e.message + '. Vérifie que enrich-knowledge.php est bien uploadé.', 'error'));
 }
 
 function skipCompetency(compIndex) {
