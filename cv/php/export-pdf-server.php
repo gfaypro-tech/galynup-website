@@ -1,5 +1,10 @@
 <?php
-ini_set('zlib.output_compression', 'Off'); // désactiver la compression gzip sur le binaire PDF
+// Désactiver toute compression (PHP + Apache mod_deflate)
+ini_set('zlib.output_compression', 'Off');
+if (function_exists('apache_setenv')) {
+    apache_setenv('no-gzip', '1');
+    apache_setenv('dont-vary', '1');
+}
 ob_start(); // capturer tout output parasite (warnings, notices)
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -139,12 +144,16 @@ if (substr($response, 0, 4) !== '%PDF') {
     die('PDFShift n\'a pas retourné un PDF valide. Réponse : ' . htmlspecialchars(substr($response, 0, 500)));
 }
 
-// ── Envoyer le PDF au navigateur ────────────────────────────────────
-ob_end_clean(); // vider tout output parasite accumulé
+// ── Envoyer le PDF via fichier temporaire (contourne les filtres de sortie OVH) ──
+$tmp = tempnam(sys_get_temp_dir(), 'cvpdf_');
+file_put_contents($tmp, $response);
+
+ob_end_clean();
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Transfer-Encoding: binary');
+header('Content-Length: ' . filesize($tmp));
 header('Cache-Control: no-store, no-cache');
 header('Pragma: no-cache');
-// Pas de Content-Length : évite les conflits avec la compression OVH
-echo $response;
+readfile($tmp);
+unlink($tmp);
