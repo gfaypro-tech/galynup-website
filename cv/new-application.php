@@ -255,36 +255,40 @@ if ($step === 1): ?>
   <?php endif; ?>
 
   <form id="form-step1">
+    <div class="form-group">
+      <label>URL de l'offre <span class="text-muted" style="font-weight:normal;">(optionnel — LinkedIn, APEC, Indeed...)</span></label>
+      <div class="flex flex-gap items-center">
+        <input type="url" name="source_url" id="source-url" class="form-control"
+               value="<?= htmlspecialchars($app['source_url'] ?? '') ?>"
+               placeholder="https://www.linkedin.com/jobs/view/..."
+               oninput="updatePlatformBadge(this.value)">
+        <span id="platform-badge" class="badge" style="flex-shrink:0; <?= empty($app['source_url']) ? 'display:none' : '' ?>">
+          <?= !empty($app['source_url']) ? htmlspecialchars(detectPlatform($app['source_url'])) : '' ?>
+        </span>
+        <button type="button" class="btn btn-gold btn-sm" id="btn-fetch" onclick="fetchJobPosting()" style="flex-shrink:0; white-space:nowrap;">
+          ↓ Récupérer
+        </button>
+      </div>
+      <div id="fetch-msg" class="hidden alert" style="margin-top:8px;"></div>
+    </div>
     <div class="grid-2">
       <div class="form-group">
         <label>Entreprise</label>
-        <input type="text" name="company" class="form-control" required
+        <input type="text" name="company" id="field-company" class="form-control" required
                value="<?= htmlspecialchars($app['company'] ?? '') ?>"
                placeholder="Nom de l'entreprise">
       </div>
       <div class="form-group">
         <label>Poste visé</label>
-        <input type="text" name="position" class="form-control" required
+        <input type="text" name="position" id="field-position" class="form-control" required
                value="<?= htmlspecialchars($app['position'] ?? '') ?>"
                placeholder="Intitulé du poste">
       </div>
     </div>
     <div class="form-group">
-      <label>URL de l'offre <span class="text-muted" style="font-weight:normal;">(optionnel)</span></label>
-      <div class="flex flex-gap items-center">
-        <input type="url" name="source_url" id="source-url" class="form-control"
-               value="<?= htmlspecialchars($app['source_url'] ?? '') ?>"
-               placeholder="https://www.linkedin.com/jobs/..."
-               oninput="updatePlatformBadge(this.value)">
-        <span id="platform-badge" class="badge" style="flex-shrink:0; <?= empty($app['source_url']) ? 'display:none' : '' ?>">
-          <?= !empty($app['source_url']) ? htmlspecialchars(detectPlatform($app['source_url'])) : '' ?>
-        </span>
-      </div>
-    </div>
-    <div class="form-group">
       <label>Fiche de poste complète</label>
-      <textarea name="job_posting" class="form-control" rows="16" required
-                placeholder="Colle ici la fiche de poste intégrale..."><?= htmlspecialchars($app['job_posting'] ?? '') ?></textarea>
+      <textarea name="job_posting" id="field-job-posting" class="form-control" rows="16" required
+                placeholder="Colle ici la fiche de poste intégrale, ou utilise le bouton ↑ Récupérer..."><?= htmlspecialchars($app['job_posting'] ?? '') ?></textarea>
     </div>
     <div class="flex flex-gap items-center">
       <button type="submit" class="btn btn-primary btn-lg">Générer le prompt d'analyse →</button>
@@ -660,6 +664,43 @@ function updatePlatformBadge(url) {
   }
   badge.textContent = label;
   badge.style.display = '';
+}
+
+// ── Step 1 — Récupérer l'annonce depuis une URL ───
+function fetchJobPosting() {
+  const url    = document.getElementById('source-url')?.value?.trim();
+  const btn    = document.getElementById('btn-fetch');
+  const msgEl  = document.getElementById('fetch-msg');
+
+  if (!url) { showMsg(msgEl, 'Colle d\'abord une URL.', 'error'); return; }
+
+  btn.disabled    = true;
+  btn.textContent = '…';
+  msgEl.className = 'hidden';
+
+  fetch('php/fetch-job-posting.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ url })
+  })
+  .then(r => r.json())
+  .then(d => {
+    btn.disabled    = false;
+    btn.textContent = '↓ Récupérer';
+    if (d.success) {
+      if (d.company)     document.getElementById('field-company').value     = d.company;
+      if (d.position)    document.getElementById('field-position').value    = d.position;
+      if (d.job_posting) document.getElementById('field-job-posting').value = d.job_posting;
+      showMsg(msgEl, '✓ Annonce récupérée — vérifie et corrige si besoin.', 'success');
+    } else {
+      showMsg(msgEl, d.error || 'Erreur lors de la récupération.', 'error');
+    }
+  })
+  .catch(() => {
+    btn.disabled    = false;
+    btn.textContent = '↓ Récupérer';
+    showMsg(msgEl, 'Erreur réseau. Colle l\'annonce manuellement.', 'error');
+  });
 }
 
 // ── Step 1 — Créer / mettre à jour la candidature ─
