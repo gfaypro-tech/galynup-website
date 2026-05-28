@@ -1,11 +1,4 @@
 <?php
-// Désactiver toute compression (PHP + Apache mod_deflate)
-ini_set('zlib.output_compression', 'Off');
-if (function_exists('apache_setenv')) {
-    apache_setenv('no-gzip', '1');
-    apache_setenv('dont-vary', '1');
-}
-ob_start(); // capturer tout output parasite (warnings, notices)
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -32,7 +25,7 @@ $clean    = strtoupper(trim(preg_replace('/[^a-zA-Z0-9\s]/', '', $ascii)));
 $slug     = preg_replace('/\s+/', '_', $clean);
 $filename = 'CV_GFAY_' . ($slug ?: 'CV') . '.pdf';
 
-// ── HTML complet pour PDFShift ──────────────────────────────────────
+// ── HTML pour PDFShift ──────────────────────────────────────────────
 $html = '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -42,28 +35,23 @@ $html = '<!DOCTYPE html>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: "DM Sans", system-ui, sans-serif;
-  font-size: 11.5pt;
-  color: #1c1c18;
-  background: #fff;
-  padding: 12mm 14mm;
-  line-height: 1.55;
+  font-size: 11.5pt; color: #1c1c18; background: #fff;
+  padding: 12mm 14mm; line-height: 1.55;
 }
 .cv-header { text-align: center; margin-bottom: 18px; }
 h1 {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 26px; font-weight: 700;
-  letter-spacing: 2px; color: #1c1c18;
-  margin: 0 0 6px; text-transform: uppercase;
+  font-size: 26px; font-weight: 700; letter-spacing: 2px;
+  color: #1c1c18; margin: 0 0 6px; text-transform: uppercase;
 }
 .cv-subtitle { font-size: 13.5px; font-weight: 600; color: #6D155D; margin: 0 0 5px; }
 .cv-tagline  { font-size: 11px; color: #555; margin: 0 0 4px; }
 .cv-contact  { font-size: 11px; color: #666; margin: 0; }
 .cv-section  { margin-bottom: 15px; }
 .cv-section-title {
-  font-size: 9.5px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.7px;
-  color: #6D155D; border-bottom: 1px solid #6D155D;
-  padding-bottom: 3px; margin: 0 0 9px;
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.7px; color: #6D155D;
+  border-bottom: 1px solid #6D155D; padding-bottom: 3px; margin: 0 0 9px;
 }
 p { margin: 0 0 6px; font-size: 12px; line-height: 1.55; }
 .cv-list-2col {
@@ -97,65 +85,50 @@ section#cv { display: block; }
 <body>' . $app['cv_content'] . '</body>
 </html>';
 
-// ── Appel API PDFShift ──────────────────────────────────────────────
-$payload = json_encode([
-    'source'   => $html,
-    'format'   => 'A4',
-    'margin'   => ['top' => '12mm', 'right' => '14mm', 'bottom' => '12mm', 'left' => '14mm'],
-    'filename' => $filename,
-    'sandbox'  => false,
-]);
-
-$ch = curl_init('https://api.pdfshift.io/v3/convert/pdf');
-curl_setopt_array($ch, [
+// ── Appel API PDFShift (header exact de la doc officielle) ──────────
+$curl = curl_init();
+curl_setopt_array($curl, [
+    CURLOPT_URL            => 'https://api.pdfshift.io/v3/convert/pdf',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => $payload,
+    CURLOPT_POSTFIELDS     => json_encode([
+        'source'      => $html,
+        'format'      => 'A4',
+        'margin'      => ['top' => '12mm', 'right' => '14mm', 'bottom' => '12mm', 'left' => '14mm'],
+        'use_print'   => false,
+        'landscape'   => false,
+    ]),
     CURLOPT_HTTPHEADER     => [
+        'X-API-Key: ' . PDFSHIFT_API_KEY,
         'Content-Type: application/json',
-        'Authorization: Basic ' . base64_encode('api:' . PDFSHIFT_API_KEY),
     ],
     CURLOPT_TIMEOUT        => 30,
     CURLOPT_SSL_VERIFYPEER => true,
 ]);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlErr  = curl_error($ch);
-curl_close($ch);
+$response = curl_exec($curl);
+$httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+$curlErr  = curl_error($curl);
+curl_close($curl);
 
-if ($curlErr) {
-    ob_end_clean();
-    http_response_code(500);
-    die('Erreur réseau : ' . htmlspecialchars($curlErr));
-}
+if ($curlErr)      { die('Erreur réseau : ' . htmlspecialchars($curlErr)); }
 if ($httpCode !== 200) {
-    ob_end_clean();
-    http_response_code(502);
-    $decoded = json_decode($response, true);
-    $detail  = $decoded['error'] ?? $decoded['message'] ?? substr($response, 0, 500);
+    $detail = json_decode($response, true)['message'] ?? substr($response, 0, 300);
     die('Erreur PDFShift (' . $httpCode . ') : ' . htmlspecialchars($detail));
 }
 
-// Vérifier que la réponse est bien un PDF (commence par %PDF)
-if (substr($response, 0, 4) !== '%PDF') {
-    ob_end_clean();
-    http_response_code(502);
-    die('PDFShift n\'a pas retourné un PDF valide. Réponse : ' . htmlspecialchars(substr($response, 0, 500)));
+// ── Écrire le PDF dans cv/tmp/ et rediriger → Apache le sert directement ──
+$tmpDir = __DIR__ . '/../tmp/';
+if (!is_dir($tmpDir)) mkdir($tmpDir, 0755, true);
+
+// Nettoyer les anciens fichiers (> 10 min)
+foreach (glob($tmpDir . '*.pdf') as $f) {
+    if (time() - filemtime($f) > 600) @unlink($f);
 }
 
-// ── Vider TOUS les niveaux de buffer (OVH peut en avoir plusieurs) ──
-while (ob_get_level() > 0) ob_end_clean();
+$tmpFile = $tmpDir . $filename;
+file_put_contents($tmpFile, $response);
 
-header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="' . $filename . '"');
-header('Content-Transfer-Encoding: binary');
-header('Content-Length: ' . mb_strlen($response, '8bit'));
-header('Cache-Control: no-store, no-cache');
-header('Pragma: no-cache');
-
-// Écrire via fichier temp pour éviter les filtres de sortie PHP
-$tmp = tempnam(sys_get_temp_dir(), 'cvpdf_');
-file_put_contents($tmp, $response);
-readfile($tmp);
-unlink($tmp);
+// Redirection : Apache sert le fichier sans passer par PHP
+header('Location: ' . CV_BASE_URL . '/tmp/' . rawurlencode($filename));
+exit;
