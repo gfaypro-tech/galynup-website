@@ -837,7 +837,7 @@ function parseMatchingResponse() {
 }
 
 // ── Step 3 — Enrichissement compétence par compétence
-const currentCompName = <?= json_encode($currentComp['name'] ?? '') ?>;
+const currentCompName = <?= json_encode(isset($currentComp) && $currentComp ? $currentComp['name'] : '') ?>;
 
 function toggleNewPostForm(value) {
   const f = document.getElementById('new-post-form');
