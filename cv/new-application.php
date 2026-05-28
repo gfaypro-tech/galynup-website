@@ -485,15 +485,15 @@ elseif ($step === 3):
       <?php endif; ?>
 
       <div class="form-group">
-        <label style="font-size:13px;">Sur quel(s) poste(s) ? <span style="font-weight:400;color:#888;">(coche tout ce qui s'applique)</span></label>
-        <div id="experience-checkboxes" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:13px;">Sur quel(s) poste(s) ? <span style="font-weight:400;color:#888;">clique pour sélectionner</span></label>
+        <div id="experience-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;">
           <?php if (!empty($currentComp['matches'])): ?>
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6D155D;margin-bottom:2px;">Correspondances trouvées</div>
+            <span class="exp-pills-group-label">Correspondances</span>
             <?php foreach ($currentComp['matches'] as $m): ?>
-              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
-                <input type="checkbox" class="exp-checkbox" value="<?= $m['id'] ?>" checked>
+              <button type="button" class="exp-pill selected" data-id="<?= $m['id'] ?>"
+                      onclick="togglePill(this)">
                 <?= htmlspecialchars($m['title']) ?>
-              </label>
+              </button>
             <?php endforeach; ?>
           <?php endif; ?>
           <?php
@@ -501,20 +501,23 @@ elseif ($step === 3):
             $otherExp = array_filter($experiences, fn($e) => !in_array($e['id'], $matchIds));
             if (!empty($otherExp)):
           ?>
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#888;margin-top:6px;margin-bottom:2px;">Autres expériences</div>
+            <span class="exp-pills-group-label">Autres expériences</span>
             <?php foreach ($otherExp as $exp):
               $meta = json_decode($exp['meta_json'] ?? '{}', true);
+              $label = htmlspecialchars($exp['title']);
+              if (!empty($meta['company'])) $label .= ' · ' . htmlspecialchars($meta['company']);
             ?>
-              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
-                <input type="checkbox" class="exp-checkbox" value="<?= $exp['id'] ?>">
-                <?= htmlspecialchars($exp['title']) ?><?= !empty($meta['company']) ? ' · ' . htmlspecialchars($meta['company']) : '' ?>
-              </label>
+              <button type="button" class="exp-pill" data-id="<?= $exp['id'] ?>"
+                      onclick="togglePill(this)">
+                <?= $label ?>
+              </button>
             <?php endforeach; ?>
           <?php endif; ?>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-top:4px;padding-top:8px;border-top:1px solid var(--border);">
-            <input type="checkbox" id="check-new-post" onchange="toggleNewPostForm(this.checked)">
-            <span>+ Nouveau poste (non encore dans la base)</span>
-          </label>
+          <span class="exp-pills-group-label" style="margin-top:4px;"></span>
+          <button type="button" class="exp-pill exp-pill-new" data-id="new"
+                  onclick="togglePill(this); toggleNewPostForm(this.classList.contains('selected'))">
+            + Nouveau poste
+          </button>
         </div>
       </div>
 
@@ -845,6 +848,10 @@ function parseMatchingResponse() {
 // ── Step 3 — Enrichissement compétence par compétence
 const currentCompName = <?= json_encode(isset($currentComp) && $currentComp ? $currentComp['name'] : '') ?>;
 
+function togglePill(btn) {
+  btn.classList.toggle('selected');
+}
+
 function toggleNewPostForm(checked) {
   const f = document.getElementById('new-post-form');
   if (f) f.style.display = checked ? 'block' : 'none';
@@ -866,9 +873,9 @@ function updateEnrichPreview() {
 function submitEnrichment(compIndex, compName) {
   const description  = document.getElementById('enrich-description')?.value?.trim();
   const msgEl        = document.getElementById('enrich-msg');
-  const checkedBoxes = document.querySelectorAll('.exp-checkbox:checked');
-  const knowledgeIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
-  const createNew    = document.getElementById('check-new-post')?.checked || false;
+  const selectedPills = document.querySelectorAll('.exp-pill.selected:not(.exp-pill-new)');
+  const knowledgeIds  = Array.from(selectedPills).map(btn => parseInt(btn.dataset.id));
+  const createNew     = document.querySelector('.exp-pill-new.selected') !== null;
 
   if (knowledgeIds.length === 0 && !createNew) {
     showMsg(msgEl, 'Coche au moins une expérience ou crée un nouveau poste.', 'error'); return;

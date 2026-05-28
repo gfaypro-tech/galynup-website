@@ -587,6 +587,49 @@ select.form-control {
 
 #platform-badge { background: #fff4e0; color: #b36b00; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
 
+/* ── Experience pills (multi-select enrichment) ──── */
+.exp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  line-height: 1.3;
+}
+.exp-pill:hover { border-color: var(--aubergine); color: var(--aubergine); }
+.exp-pill.selected {
+  background: var(--aubergine);
+  border-color: var(--aubergine);
+  color: #fff;
+  font-weight: 600;
+}
+.exp-pill.selected::before { content: '✓ '; }
+.exp-pill-new {
+  border-style: dashed;
+  border-color: var(--aubergine);
+  color: var(--aubergine);
+  background: #fdf8fc;
+}
+.exp-pill-new.selected {
+  background: var(--aubergine);
+  color: #fff;
+}
+.exp-pills-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #aaa;
+  width: 100%;
+  margin-top: 4px;
+}
+
 /* ── Hiring pipeline select ──────────────────────── */
 .hiring-select {
   border: none;
