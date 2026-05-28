@@ -742,6 +742,27 @@ select.form-control {
 .cv-preview strong { font-weight: 600; }
 .cv-preview em { font-style: italic; }
 
+/* ── Letter preview ─────────────────────────────── */
+.letter-preview {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 52px;
+  font-family: var(--font-body);
+  font-size: 11pt;
+  color: #1c1c18;
+  line-height: 1.6;
+  max-width: 800px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.letter-preview .letter-meta { margin-bottom: 28px; }
+.letter-preview .letter-sender { font-size: 10pt; color: #555; }
+.letter-preview .letter-date { font-size: 10pt; color: #555; margin-top: 4px; }
+.letter-preview .letter-recipient { margin-bottom: 16px; }
+.letter-preview .letter-object { font-weight: 600; margin-bottom: 20px; }
+.letter-preview .letter-body p { margin: 0 0 12px; text-align: justify; }
+.letter-preview .letter-signature { margin-top: 28px; }
+
 /* ── Tabs ────────────────────────────────────────── */
 .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
 .tab-btn {

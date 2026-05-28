@@ -218,11 +218,64 @@ $jobPosting
 PROMPT;
 }
 
+function buildLetterPrompt(string $company, string $position, string $jobPosting, string $analysisJson, string $knowledge): string {
+    return <<<PROMPT
+Tu es expert en rédaction de lettres de motivation pour des cadres dirigeants français. Rédige une lettre de motivation percutante, personnalisée et sobre.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises :
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<section id="letter">
+  <div class="letter-meta">
+    <div class="letter-sender">Gaëlle FAY<br>[Ville] | [email] | [téléphone]</div>
+    <div class="letter-date">[Ville], le [date du jour]</div>
+  </div>
+  <div class="letter-recipient">
+    À l'attention du Service des Ressources Humaines<br>
+    $company
+  </div>
+  <div class="letter-object">Objet : Candidature au poste de $position</div>
+  <div class="letter-body">
+    <p>[Paragraphe 1 : accroche — pourquoi ce poste, pourquoi cette entreprise]</p>
+    <p>[Paragraphe 2 : parcours et compétences clés en lien direct avec l'annonce]</p>
+    <p>[Paragraphe 3 : valeur ajoutée concrète et différenciante]</p>
+    <p>[Paragraphe 4 : conclusion, disponibilité, appel à l'action]</p>
+  </div>
+  <div class="letter-signature">
+    <p>Gaëlle FAY</p>
+  </div>
+</section>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONSIGNES :
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Ton professionnel, direct, sans formules creuses
+- 4 paragraphes maximum, chacun dense et utile
+- S'appuyer sur les éléments de la base de connaissance ci-dessous
+- Ne pas inventer de faits non présents dans la base de connaissance
+- Retourner UNIQUEMENT le HTML, sans texte avant ni après
+
+---
+ANALYSE DU POSTE :
+$analysisJson
+
+---
+BASE DE CONNAISSANCE (expériences, compétences) :
+$knowledge
+
+---
+FICHE DE POSTE :
+$jobPosting
+PROMPT;
+}
+
 // ── Données pour les étapes actives ───────────────────────────────────
 $knowledge     = buildKnowledgeBlock($db);
 $analysisJson  = $app['analysis_result'] ?? '';
 $matchingJson  = $app['matching_result'] ?? '';
 $cvContent     = $app['cv_content'] ?? '';
+$letterContent = $app['letter_content'] ?? '';
 
 $stepLabels = ['Fiche de poste', 'Analyse', 'Matching & Enrichissement', 'Génération CV', 'Export'];
 
@@ -632,6 +685,65 @@ elseif ($step === 5): ?>
   <?= $cvContent ?>
 </div>
 
+<?php
+/* ── Section Lettre de motivation ── */
+$letterPrompt = buildLetterPrompt($app['company'], $app['position'], $app['job_posting'], $analysisJson, $knowledge);
+?>
+<div class="card" style="margin-top:28px;">
+  <div class="card-title">✉ Lettre de motivation</div>
+
+  <?php if (empty($letterContent)): ?>
+    <div class="alert alert-info" style="margin-bottom:16px;">
+      Génère une lettre de motivation personnalisée pour ce poste. Copie le prompt dans Claude.ai, colle la réponse ci-dessous.
+    </div>
+    <div class="prompt-block">
+      <div class="prompt-block-header">
+        <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+        <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-letter')">📋 Copier</button>
+      </div>
+      <div class="prompt-text" id="prompt-letter"><?= htmlspecialchars($letterPrompt) ?></div>
+    </div>
+    <div class="response-block" style="margin-top:16px;">
+      <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
+      <textarea id="letter-response" class="form-control" rows="12"
+                placeholder="Colle ici la réponse complète de Claude (le HTML de la lettre)..."></textarea>
+      <div class="flex flex-gap mt-16">
+        <button class="btn btn-primary" onclick="saveLetter()">Enregistrer la lettre →</button>
+      </div>
+      <div id="letter-msg" class="hidden alert" style="margin-top:12px;"></div>
+    </div>
+
+  <?php else: ?>
+    <div class="flex flex-gap mb-16" style="flex-wrap:wrap;">
+      <a href="php/export-letter-pdf.php?id=<?= $id ?>" class="btn btn-outline">⬇ Télécharger PDF</a>
+      <a href="php/export-letter-word.php?id=<?= $id ?>" class="btn btn-outline">⬇ Télécharger Word</a>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('regen-letter').style.display='block';this.style.display='none'">↺ Régénérer</button>
+    </div>
+
+    <div class="letter-preview">
+      <?= $letterContent ?>
+    </div>
+
+    <div id="regen-letter" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <span class="prompt-block-title">Nouveau prompt</span>
+          <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-letter-regen')">📋 Copier</button>
+        </div>
+        <div class="prompt-text" id="prompt-letter-regen"><?= htmlspecialchars($letterPrompt) ?></div>
+      </div>
+      <div class="response-block" style="margin-top:12px;">
+        <div class="response-block-title">↳ Coller la nouvelle version</div>
+        <textarea id="letter-response" class="form-control" rows="10"
+                  placeholder="Colle la nouvelle lettre générée par Claude..."></textarea>
+        <div class="flex flex-gap mt-16">
+          <button class="btn btn-primary" onclick="saveLetter()">Remplacer la lettre →</button>
+        </div>
+        <div id="letter-msg" class="hidden alert" style="margin-top:12px;"></div>
+      </div>
+    </div>
+  <?php endif; ?>
+</div>
 
 <?php endif; ?>
 
@@ -896,6 +1008,22 @@ function submitEnrichment(compIndex, compName) {
     else showMsg(msgEl, d.error || 'Erreur.', 'error');
   })
   .catch(e => showMsg(msgEl, 'Erreur : ' + e.message + '. Vérifie que enrich-knowledge.php est bien uploadé.', 'error'));
+}
+
+function saveLetter() {
+  const raw   = document.getElementById('letter-response')?.value?.trim();
+  const msgEl = document.getElementById('letter-msg');
+  if (!raw) { showMsg(msgEl, 'Colle la lettre générée par Claude avant de sauvegarder.', 'error'); return; }
+  fetch('php/save-letter.php', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, content: raw })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location.reload();
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
+  })
+  .catch(e => showMsg(msgEl, 'Erreur réseau : ' + e.message, 'error'));
 }
 
 function skipCompetency(compIndex) {
