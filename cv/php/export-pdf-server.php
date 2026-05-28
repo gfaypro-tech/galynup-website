@@ -144,16 +144,18 @@ if (substr($response, 0, 4) !== '%PDF') {
     die('PDFShift n\'a pas retourné un PDF valide. Réponse : ' . htmlspecialchars(substr($response, 0, 500)));
 }
 
-// ── Envoyer le PDF via fichier temporaire (contourne les filtres de sortie OVH) ──
-$tmp = tempnam(sys_get_temp_dir(), 'cvpdf_');
-file_put_contents($tmp, $response);
+// ── Vider TOUS les niveaux de buffer (OVH peut en avoir plusieurs) ──
+while (ob_get_level() > 0) ob_end_clean();
 
-ob_end_clean();
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Transfer-Encoding: binary');
-header('Content-Length: ' . filesize($tmp));
+header('Content-Length: ' . mb_strlen($response, '8bit'));
 header('Cache-Control: no-store, no-cache');
 header('Pragma: no-cache');
+
+// Écrire via fichier temp pour éviter les filtres de sortie PHP
+$tmp = tempnam(sys_get_temp_dir(), 'cvpdf_');
+file_put_contents($tmp, $response);
 readfile($tmp);
 unlink($tmp);
