@@ -36,7 +36,7 @@ $html = '<!DOCTYPE html>
 body {
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 11.5pt; color: #1c1c18; background: #fff;
-  padding: 10mm 14mm; line-height: 1.55;
+  padding: 5mm 14mm; line-height: 1.55;
 }
 .cv-header { text-align: center; margin-bottom: 18px; }
 h1 {
