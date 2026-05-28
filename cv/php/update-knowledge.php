@@ -17,17 +17,22 @@ $type  = in_array($data['type'] ?? '', ['import','experience','competence','form
          ? $data['type'] : 'autre';
 $title = trim($data['title'] ?? '');
 
-$meta = null;
+$meta         = null;
+$period_start = null;
 if ($type === 'experience') {
-    $meta = json_encode([
+    $period = trim($data['period'] ?? '');
+    $meta   = json_encode([
         'company' => trim($data['company'] ?? ''),
         'role'    => trim($data['role'] ?? ''),
-        'period'  => trim($data['period'] ?? ''),
+        'period'  => $period,
     ], JSON_UNESCAPED_UNICODE);
+    if (preg_match('/(\d{4})/', $period, $m)) {
+        $period_start = (int)$m[1];
+    }
 }
 
 $db = getDB();
-$db->prepare("UPDATE cv_knowledge SET type = ?, title = ?, content = ?, meta_json = ? WHERE id = ? AND is_active = 1")
-   ->execute([$type, $title, $content, $meta, $id]);
+$db->prepare("UPDATE cv_knowledge SET type = ?, title = ?, content = ?, meta_json = ?, period_start = ? WHERE id = ? AND is_active = 1")
+   ->execute([$type, $title, $content, $meta, $period_start, $id]);
 
 jsonResponse(['success' => true]);

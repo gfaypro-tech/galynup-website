@@ -53,12 +53,16 @@ foreach ($knowledge_ids as $kid) {
 
 // ── Créer une nouvelle entrée si demandé ──────────────────────────────────
 if ($has_new) {
-    $title    = $new_role ?: $competency;
-    $meta     = json_encode(['company' => $new_company, 'role' => $new_role, 'period' => $new_period], JSON_UNESCAPED_UNICODE);
-    $keywords = mb_strtolower($competency);
+    $title        = $new_role ?: $competency;
+    $meta         = json_encode(['company' => $new_company, 'role' => $new_role, 'period' => $new_period], JSON_UNESCAPED_UNICODE);
+    $keywords     = mb_strtolower($competency);
+    $period_start = null;
+    if (preg_match('/(\d{4})/', $new_period, $pm)) {
+        $period_start = (int)$pm[1];
+    }
 
-    $db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json, keywords) VALUES ('experience', ?, ?, ?, ?)")
-       ->execute([$title, $newLine, $meta, $keywords]);
+    $db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json, keywords, period_start) VALUES ('experience', ?, ?, ?, ?, ?)")
+       ->execute([$title, $newLine, $meta, $keywords, $period_start]);
     $resultIds[] = (int)$db->lastInsertId();
 }
 

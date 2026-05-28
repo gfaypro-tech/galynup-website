@@ -14,18 +14,22 @@ $type  = in_array($data['type'] ?? '', ['import','experience','competence','form
          ? $data['type'] : 'autre';
 $title = trim($data['title'] ?? '');
 
-// Métadonnées structurées pour les expériences
-$meta = null;
+$meta         = null;
+$period_start = null;
 if ($type === 'experience') {
-    $meta = json_encode([
+    $period = trim($data['period'] ?? '');
+    $meta   = json_encode([
         'company' => trim($data['company'] ?? ''),
         'role'    => trim($data['role'] ?? ''),
-        'period'  => trim($data['period'] ?? ''),
+        'period'  => $period,
     ], JSON_UNESCAPED_UNICODE);
+    if (preg_match('/(\d{4})/', $period, $m)) {
+        $period_start = (int)$m[1];
+    }
 }
 
 $db = getDB();
-$stmt = $db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json) VALUES (?, ?, ?, ?)");
-$stmt->execute([$type, $title, $content, $meta]);
+$db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json, period_start) VALUES (?, ?, ?, ?, ?)")
+   ->execute([$type, $title, $content, $meta, $period_start]);
 
 jsonResponse(['success' => true, 'id' => (int)$db->lastInsertId()]);

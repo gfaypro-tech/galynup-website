@@ -22,7 +22,7 @@ if ($search !== '') {
     $params[] = "%$search%";
 }
 
-$stmt = $db->prepare("SELECT * FROM cv_knowledge $where ORDER BY created_at DESC");
+$stmt = $db->prepare("SELECT * FROM cv_knowledge $where ORDER BY type, IFNULL(period_start, 0) DESC, created_at DESC");
 $stmt->execute($params);
 $entries = $stmt->fetchAll();
 

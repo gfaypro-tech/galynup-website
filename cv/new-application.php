@@ -19,7 +19,7 @@ $step = $app ? (int)$app['step_current'] : 1;
 
 // ── Construire le bloc "Base de connaissance" pour les prompts ─────────
 function buildKnowledgeBlock(PDO $db): string {
-    $entries = $db->query("SELECT type, title, content, meta_json FROM cv_knowledge WHERE is_active = 1 ORDER BY type, created_at")->fetchAll();
+    $entries = $db->query("SELECT type, title, content, meta_json FROM cv_knowledge WHERE is_active = 1 ORDER BY type, IFNULL(period_start, 0) DESC, created_at DESC")->fetchAll();
     if (empty($entries)) return "(Base de connaissance vide — ajoute des entrées dans la section 'Base de connaissance')";
     $text = '';
     foreach ($entries as $e) {
@@ -387,7 +387,7 @@ elseif ($step === 3):
         if ($currentComp === null) { $currentComp = $comp; $currentIndex = $i; }
     }
     $matchingData = json_decode($matchingJson, true) ?? [];
-    $experiences  = $db->query("SELECT id, title, meta_json FROM cv_knowledge WHERE type = 'experience' AND is_active = 1 ORDER BY created_at DESC")->fetchAll();
+    $experiences  = $db->query("SELECT id, title, meta_json FROM cv_knowledge WHERE type = 'experience' AND is_active = 1 ORDER BY IFNULL(period_start, 0) DESC, created_at DESC")->fetchAll();
 ?>
 <div class="card">
   <div class="card-title">🎯 Étape 3 — Matching & Enrichissement</div>
