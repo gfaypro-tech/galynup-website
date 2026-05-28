@@ -542,7 +542,7 @@ elseif ($step === 3):
       </div>
 
       <div class="flex flex-gap mt-16">
-        <button class="btn btn-primary" onclick="submitEnrichment(<?= $currentIndex ?>, <?= json_encode($currentComp['name']) ?>)">
+        <button class="btn btn-primary" onclick="submitEnrichment(<?= $currentIndex ?>, <?= htmlspecialchars(json_encode($currentComp['name']), ENT_QUOTES) ?>)">
           Valider et enrichir →
         </button>
         <button class="btn btn-ghost" onclick="skipCompetency(<?= $currentIndex ?>)">
