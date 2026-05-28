@@ -34,13 +34,13 @@ body {
   font-size: 11pt; color: #1c1c18; background: #fff;
   padding: 5mm 20mm; line-height: 1.6;
 }
-.letter-meta { margin-bottom: 20mm; }
+.letter-meta { margin-bottom: 12mm; }
 .letter-sender { font-size: 10pt; color: #555; }
 .letter-date { font-size: 10pt; color: #555; margin-top: 4pt; }
-.letter-recipient { margin-bottom: 12mm; font-size: 11pt; }
-.letter-object { font-weight: 600; margin-bottom: 14mm; font-size: 11pt; }
-.letter-body p { margin: 0 0 10pt; font-size: 11pt; text-align: justify; }
-.letter-signature { margin-top: 16mm; font-size: 11pt; }
+.letter-recipient { margin-bottom: 8mm; font-size: 11pt; }
+.letter-object { font-weight: 600; margin-bottom: 8mm; font-size: 11pt; }
+.letter-body p { margin: 0 0 8pt; font-size: 11pt; text-align: justify; }
+.letter-signature { margin-top: 10mm; font-size: 11pt; }
 strong { font-weight: 600; }
 em { font-style: italic; }
 section#letter { display: block; }
