@@ -128,8 +128,15 @@ if ($httpCode !== 200) {
     ob_end_clean();
     http_response_code(502);
     $decoded = json_decode($response, true);
-    $detail  = $decoded['error'] ?? $decoded['message'] ?? substr($response, 0, 300);
+    $detail  = $decoded['error'] ?? $decoded['message'] ?? substr($response, 0, 500);
     die('Erreur PDFShift (' . $httpCode . ') : ' . htmlspecialchars($detail));
+}
+
+// Vérifier que la réponse est bien un PDF (commence par %PDF)
+if (substr($response, 0, 4) !== '%PDF') {
+    ob_end_clean();
+    http_response_code(502);
+    die('PDFShift n\'a pas retourné un PDF valide. Réponse : ' . htmlspecialchars(substr($response, 0, 500)));
 }
 
 // ── Envoyer le PDF au navigateur ────────────────────────────────────
