@@ -1,4 +1,5 @@
 <?php
+ob_start(); // capturer tout output parasite (warnings, notices)
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -118,16 +119,20 @@ $curlErr  = curl_error($ch);
 curl_close($ch);
 
 if ($curlErr) {
+    ob_end_clean();
     http_response_code(500);
     die('Erreur réseau : ' . htmlspecialchars($curlErr));
 }
 if ($httpCode !== 200) {
+    ob_end_clean();
     http_response_code(502);
-    $detail = json_decode($response, true)['error'] ?? $response;
+    $decoded = json_decode($response, true);
+    $detail  = $decoded['error'] ?? $decoded['message'] ?? substr($response, 0, 300);
     die('Erreur PDFShift (' . $httpCode . ') : ' . htmlspecialchars($detail));
 }
 
 // ── Envoyer le PDF au navigateur ────────────────────────────────────
+ob_end_clean(); // vider tout output parasite accumulé
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Length: ' . strlen($response));
