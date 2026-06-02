@@ -80,6 +80,15 @@ p { margin: 0 0 6px; font-size: 12px; line-height: 1.55; }
 strong { font-weight: 600; }
 em { font-style: italic; }
 section#cv { display: block; }
+@page {
+  margin-bottom: 18mm;
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-size: 9pt;
+    color: #888;
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+}
 </style>
 </head>
 <body>' . $app['cv_content'] . '</body>
@@ -94,7 +103,7 @@ curl_setopt_array($curl, [
     CURLOPT_POSTFIELDS     => json_encode([
         'source'      => $html,
         'format'      => 'A4',
-        'margin'      => ['top' => '5mm', 'right' => '0mm', 'bottom' => '5mm', 'left' => '0mm'],
+        'margin'      => ['top' => '5mm', 'right' => '0mm', 'bottom' => '18mm', 'left' => '0mm'],
         'use_print'   => false,
         'landscape'   => false,
     ]),

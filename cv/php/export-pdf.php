@@ -137,6 +137,16 @@ $filename = 'CV_GFAY_' . ($slug ?: 'CV');
       #print-bar { display: none !important; }
       #cv-wrap { margin: 0; padding: 12mm 14mm; max-width: 100%; box-shadow: none; }
       body { background: #fff; }
+
+      @page {
+        margin-bottom: 18mm;
+        @bottom-right {
+          content: counter(page) " / " counter(pages);
+          font-size: 9pt;
+          color: #888;
+          font-family: 'DM Sans', system-ui, sans-serif;
+        }
+      }
     }
   </style>
 </head>

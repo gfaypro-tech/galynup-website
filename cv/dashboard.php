@@ -12,8 +12,26 @@ $completedApps  = $db->query("SELECT COUNT(*) FROM cv_applications WHERE status 
 $knowledgeCount = $db->query("SELECT COUNT(*) FROM cv_knowledge WHERE is_active = 1")->fetchColumn();
 $entretienCount = $db->query("SELECT COUNT(*) FROM cv_applications WHERE hiring_status IN ('entretien','offre')")->fetchColumn();
 
-// Candidatures récentes (5 dernières)
-$recent = $db->query("SELECT * FROM cv_applications ORDER BY updated_at DESC LIMIT 5")->fetchAll();
+// Filtres dashboard
+$filterStatus = $_GET['status'] ?? 'all';
+$filterMonth  = trim($_GET['month'] ?? '');   // format YYYY-MM
+
+$where  = 'WHERE 1=1';
+$params = [];
+if ($filterStatus !== 'all') {
+    $where   .= ' AND status = ?';
+    $params[] = $filterStatus;
+}
+if ($filterMonth !== '' && preg_match('/^\d{4}-\d{2}$/', $filterMonth)) {
+    $where   .= ' AND DATE_FORMAT(updated_at, \'%Y-%m\') = ?';
+    $params[] = $filterMonth;
+}
+$hasFilter = ($filterStatus !== 'all' || $filterMonth !== '');
+$limit     = $hasFilter ? '' : 'LIMIT 20';
+
+$stmt = $db->prepare("SELECT * FROM cv_applications $where ORDER BY updated_at DESC $limit");
+$stmt->execute($params);
+$recent = $stmt->fetchAll();
 
 $statusLabels = [
     'draft'      => 'Brouillon',
@@ -62,13 +80,34 @@ require_once __DIR__ . '/includes/header.php';
   <a href="knowledge-base.php" class="btn btn-outline">Gérer la base de connaissance</a>
 </div>
 
+<div class="card" style="padding:16px 20px; margin-bottom:16px;">
+  <form method="GET" class="flex flex-gap items-center" style="flex-wrap:wrap;">
+    <select name="status" class="form-control" style="max-width:180px;">
+      <option value="all">Tous les statuts</option>
+      <?php foreach ($statusLabels as $val => $label): ?>
+        <option value="<?= $val ?>" <?= $filterStatus === $val ? 'selected' : '' ?>><?= $label ?></option>
+      <?php endforeach; ?>
+    </select>
+    <input type="month" name="month" value="<?= htmlspecialchars($filterMonth) ?>"
+           class="form-control" style="max-width:160px;" title="Filtrer par mois">
+    <button type="submit" class="btn btn-outline btn-sm">Filtrer</button>
+    <?php if ($hasFilter): ?>
+      <a href="dashboard.php" class="btn btn-ghost btn-sm">Réinitialiser</a>
+    <?php endif; ?>
+  </form>
+</div>
+
 <div class="card">
-  <div class="card-title">◷ Candidatures récentes</div>
+  <div class="card-title">◷ <?= $hasFilter ? 'Candidatures filtrées' : 'Candidatures récentes' ?></div>
 
   <?php if (empty($recent)): ?>
     <p class="text-muted text-center" style="padding: 32px 0;">
-      Aucune candidature pour l'instant.<br>
-      <a href="new-application.php" class="btn btn-gold btn-sm" style="margin-top:12px;">Commencer</a>
+      <?php if ($hasFilter): ?>
+        Aucune candidature ne correspond aux filtres sélectionnés.
+      <?php else: ?>
+        Aucune candidature pour l'instant.<br>
+        <a href="new-application.php" class="btn btn-gold btn-sm" style="margin-top:12px;">Commencer</a>
+      <?php endif; ?>
     </p>
   <?php else: ?>
     <div class="applications-list">
@@ -102,9 +141,13 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       <?php endforeach; ?>
     </div>
-    <?php if ($totalApps > 5): ?>
+    <?php if (!$hasFilter && $totalApps > 20): ?>
       <div style="margin-top:16px;">
         <a href="history.php" class="btn btn-ghost btn-sm">Voir tout l'historique (<?= $totalApps ?>)</a>
+      </div>
+    <?php elseif ($hasFilter): ?>
+      <div style="margin-top:16px;">
+        <a href="history.php?<?= http_build_query(array_filter(['status' => $filterStatus !== 'all' ? $filterStatus : null])) ?>" class="btn btn-ghost btn-sm">Voir dans l'historique complet</a>
       </div>
     <?php endif; ?>
   <?php endif; ?>

@@ -89,6 +89,18 @@ if (str_contains($url, 'linkedin.com')) {
     }
 }
 
+// ── Fallback "TOTO recrute MOMO" sur le titre brut ───
+if (empty($company) || empty($position)) {
+    if (preg_match(
+        '/^([\w\s\-&\'\.À-ÿ]{2,60}?)\s+recrute(?:\s*:)?\s+(?:un(?:e)?\s+)?(.{5,120}?)(?:\s*[|\-–]|$)/iu',
+        $rawTitle,
+        $m
+    )) {
+        if (empty($company))  $company  = trim($m[1]);
+        if (empty($position)) $position = trim(preg_replace('/^un(?:e)?\s+/iu', '', trim($m[2])));
+    }
+}
+
 // ── Extraction du texte de l'annonce ─────────────────
 // Supprimer les balises inutiles
 foreach (['script','style','nav','header','footer','noscript','aside','iframe'] as $tag) {
@@ -135,6 +147,19 @@ $jobText = preg_replace('/[ \t]{2,}/', ' ', $jobText);
 $jobText = preg_replace('/\n{3,}/', "\n\n", $jobText);
 $jobText = preg_replace('/^\s+|\s+$/m', '', $jobText);
 $jobText = trim($jobText);
+
+// ── Fallback "TOTO recrute MOMO" sur les premières lignes du texte ───
+if ((empty($company) || empty($position)) && !empty($jobText)) {
+    $firstLines = implode("\n", array_slice(explode("\n", $jobText), 0, 15));
+    if (preg_match(
+        '/([\w\s\-&\'\.À-ÿ]{2,60}?)\s+recrute(?:\s*:)?\s+(?:un(?:e)?\s+)?(.{5,120}?)(?:\n|[|\-–]|$)/iu',
+        $firstLines,
+        $m
+    )) {
+        if (empty($company))  $company  = trim($m[1]);
+        if (empty($position)) $position = trim(preg_replace('/^un(?:e)?\s+/iu', '', trim($m[2])));
+    }
+}
 
 if (empty($position) && empty($jobText)) {
     jsonResponse(['error' => 'Contenu introuvable. La page nécessite peut-être une connexion.'], 400);

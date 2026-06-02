@@ -120,7 +120,7 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
     <ul class="cv-list-2col">
       <li>PMP, Project Management Professional, PMI</li>
       <li>ITIL 4 Foundation, Axelos</li>
-      <li>PMI-ACP, Agile Certified Practitioner, PMI</li>
+      <li>ACP, Agile Certified Practitioner, PMI</li>
       <li>Stratégie@HEC, HEC Paris</li>
       <li>TOGAF 10 Foundation, The Open Group</li>
       <li>Agile Scrum Foundation (ASF), EXIN</li>
@@ -218,12 +218,27 @@ $jobPosting
 PROMPT;
 }
 
-function buildLetterPrompt(string $company, string $position, string $jobPosting, string $analysisJson, string $knowledge): string {
+function buildMessagesPrompt(string $company, string $position, string $jobPosting, string $analysisJson, string $knowledge): string {
     return <<<PROMPT
-Tu es expert en rédaction de lettres de motivation pour des cadres dirigeants français. Rédige une lettre de motivation percutante, personnalisée et sobre.
+Tu es expert en rédaction de contenus de candidature pour des cadres dirigeants français.
+
+À partir des informations ci-dessous, génère SIMULTANÉMENT les 3 formats suivants.
+Retourne EXACTEMENT cette structure, sans aucun texte avant ni après, sans commentaire :
+
+###LETTRE###
+[HTML de la lettre — structure <section id="letter">...</section> à respecter exactement]
+###/LETTRE###
+
+###LINKEDIN###
+[Texte de candidature LinkedIn — 400 caractères MAXIMUM, sans HTML, accroche directe dès la première phrase, sans formule de politesse d'introduction]
+###/LINKEDIN###
+
+###MALT###
+[Présentation Malt — commence OBLIGATOIREMENT par "Bonjour, Je suis [métier], spécialisée en [domaine d'activité]. J'aimerais vous accompagner sur ce projet" — développe ensuite en 4 à 6 paragraphes : parcours et expertise, valeur ajoutée concrète pour ce projet, exemples de missions similaires tirés de la base de connaissance, mode de travail et disponibilité — ton professionnel, direct et humain, sans HTML, 800 à 1200 mots]
+###/MALT###
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises :
+STRUCTURE HTML OBLIGATOIRE POUR ###LETTRE### :
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 <section id="letter">
@@ -248,20 +263,18 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises :
 </section>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CONSIGNES :
+CONSIGNES COMMUNES :
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Ton professionnel, direct, sans formules creuses
-- 4 paragraphes maximum, chacun dense et utile
-- S'appuyer sur les éléments de la base de connaissance ci-dessous
-- Ne pas inventer de faits non présents dans la base de connaissance
-- Retourner UNIQUEMENT le HTML, sans texte avant ni après
+- S'appuyer UNIQUEMENT sur la base de connaissance — ne pas inventer de faits
+- Chaque format doit être cohérent avec les autres mais adapté à son canal
 
 ---
 ANALYSE DU POSTE :
 $analysisJson
 
 ---
-BASE DE CONNAISSANCE (expériences, compétences) :
+BASE DE CONNAISSANCE :
 $knowledge
 
 ---
@@ -276,6 +289,7 @@ $analysisJson  = $app['analysis_result'] ?? '';
 $matchingJson  = $app['matching_result'] ?? '';
 $cvContent     = $app['cv_content'] ?? '';
 $letterContent = $app['letter_content'] ?? '';
+$lettersData   = json_decode($app['letters_json'] ?? 'null', true);
 
 $stepLabels = ['Fiche de poste', 'Analyse', 'Matching & Enrichissement', 'Génération CV', 'Export'];
 
@@ -669,79 +683,184 @@ elseif ($step === 4):
 <?php /* ═══════════════════════════════════════════════════
    STEP 5 — Export
    ═══════════════════════════════════════════════════ */
-elseif ($step === 5): ?>
+elseif ($step === 5):
+  $messagesPrompt = buildMessagesPrompt($app['company'], $app['position'], $app['job_posting'], $analysisJson, $knowledge);
+  $activeTab  = (($_GET['tab'] ?? 'cv') === 'ecrits') ? 'ecrits' : 'cv';
+  $hasMessages = !empty($lettersData) || !empty($letterContent);
+?>
+
 <div class="alert alert-success">
   ✓ CV généré avec succès pour <strong><?= htmlspecialchars($app['company']) ?></strong> — <?= htmlspecialchars($app['position']) ?>
 </div>
 
-<div class="flex flex-gap mb-16">
-  <a href="php/export-word.php?id=<?= $id ?>" class="btn btn-primary btn-lg">⬇ Télécharger Word (.doc)</a>
-  <a href="php/export-pdf-server.php?id=<?= $id ?>" class="btn btn-outline btn-lg">⬇ Télécharger PDF</a>
-  <button onclick="window.print()" class="btn btn-outline btn-lg">🖨 Imprimer</button>
-  <a href="new-application.php" class="btn btn-gold">+ Nouvelle candidature</a>
+<!-- Barre d'onglets principales -->
+<div class="tabs">
+  <button class="tab-btn <?= $activeTab === 'cv' ? 'active' : '' ?>"
+          onclick="switchTab('cv', this)">📄 CV</button>
+  <button class="tab-btn <?= $activeTab === 'ecrits' ? 'active' : '' ?>"
+          onclick="switchTab('ecrits', this)">✦ Écrits<?= !$hasMessages ? ' <span class="tab-badge">à générer</span>' : '' ?></button>
+  <a href="new-application.php" class="btn btn-gold btn-sm"
+     style="margin-left:auto; align-self:center;">+ Nouvelle</a>
 </div>
 
-<div class="cv-preview" id="cv-output">
-  <?= $cvContent ?>
+<!-- Onglet CV -->
+<div class="tab-content <?= $activeTab === 'cv' ? 'active' : '' ?>" id="tab-cv">
+  <div class="flex flex-gap mb-16">
+    <a href="php/export-word.php?id=<?= $id ?>" class="btn btn-primary">⬇ Télécharger Word (.doc)</a>
+    <a href="php/export-pdf-server.php?id=<?= $id ?>" class="btn btn-outline">⬇ Télécharger PDF</a>
+    <button onclick="window.print()" class="btn btn-outline">🖨 Imprimer</button>
+  </div>
+  <div class="cv-preview" id="cv-output"><?= $cvContent ?></div>
 </div>
 
-<?php
-/* ── Section Lettre de motivation ── */
-$letterPrompt = buildLetterPrompt($app['company'], $app['position'], $app['job_posting'], $analysisJson, $knowledge);
-?>
-<div class="card" style="margin-top:28px;">
-  <div class="card-title">✉ Lettre de motivation</div>
+<!-- Onglet Écrits -->
+<div class="tab-content <?= $activeTab === 'ecrits' ? 'active' : '' ?>" id="tab-ecrits">
 
-  <?php if (empty($letterContent)): ?>
-    <div class="alert alert-info" style="margin-bottom:16px;">
-      Génère une lettre de motivation personnalisée pour ce poste. Copie le prompt dans Claude.ai, colle la réponse ci-dessous.
+  <?php if (!$hasMessages): ?>
+  <!-- ── Génération initiale ── -->
+  <div class="alert alert-info" style="margin-bottom:16px;">
+    Un seul prompt génère les 3 formats en une fois. Copie dans Claude.ai, colle la réponse complète ci-dessous.
+  </div>
+  <div class="prompt-block">
+    <div class="prompt-block-header">
+      <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+      <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-messages')">📋 Copier</button>
     </div>
-    <div class="prompt-block">
-      <div class="prompt-block-header">
-        <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
-        <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-letter')">📋 Copier</button>
+    <div class="prompt-text" id="prompt-messages"><?= htmlspecialchars($messagesPrompt) ?></div>
+  </div>
+  <div class="response-block" id="messages-response-block" style="margin-top:16px;">
+    <div class="response-block-title">↳ Coller la réponse complète de Claude ici</div>
+    <textarea id="messages-response" class="form-control" rows="14"
+              placeholder="Colle ici la réponse complète avec les 3 formats..."></textarea>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary" onclick="previewMessages()">Prévisualiser les 3 formats →</button>
+    </div>
+    <div id="messages-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+  <!-- Aperçu avant sauvegarde -->
+  <div id="messages-preview-wrap" style="display:none; margin-top:24px;">
+    <div class="sub-tabs-container">
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" onclick="switchSubTab('prev-lettre', this)">✦ Lettre</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('prev-linkedin', this)">in LinkedIn</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('prev-malt', this)">◎ Malt</button>
       </div>
-      <div class="prompt-text" id="prompt-letter"><?= htmlspecialchars($letterPrompt) ?></div>
-    </div>
-    <div class="response-block" style="margin-top:16px;">
-      <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
-      <textarea id="letter-response" class="form-control" rows="12"
-                placeholder="Colle ici la réponse complète de Claude (le HTML de la lettre)..."></textarea>
-      <div class="flex flex-gap mt-16">
-        <button class="btn btn-primary" onclick="saveLetter()">Enregistrer la lettre →</button>
+      <div class="sub-tab-content active" id="sub-prev-lettre">
+        <div id="prev-lettre-content" class="letter-preview"></div>
       </div>
-      <div id="letter-msg" class="hidden alert" style="margin-top:12px;"></div>
+      <div class="sub-tab-content" id="sub-prev-linkedin">
+        <div id="prev-linkedin-counter" class="linkedin-counter" style="margin-bottom:10px;"></div>
+        <div id="prev-linkedin-content" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
+      <div class="sub-tab-content" id="sub-prev-malt">
+        <div id="prev-malt-content" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
     </div>
+    <div class="flex flex-gap mt-16">
+      <button class="btn btn-primary" onclick="saveMessages()">Enregistrer les 3 formats →</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('messages-preview-wrap').style.display='none';document.getElementById('messages-response-block').style.display='block';">← Modifier</button>
+    </div>
+    <div id="messages-save-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
 
   <?php else: ?>
-    <div class="flex flex-gap mb-16" style="flex-wrap:wrap;">
-      <a href="php/export-letter-pdf.php?id=<?= $id ?>" class="btn btn-outline">⬇ Télécharger PDF</a>
-      <a href="php/export-letter-word.php?id=<?= $id ?>" class="btn btn-outline">⬇ Télécharger Word</a>
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('regen-letter').style.display='block';this.style.display='none'">↺ Régénérer</button>
+  <!-- ── Contenu sauvegardé — sous-onglets ── -->
+  <div class="sub-tabs-container">
+    <div class="sub-tabs">
+      <button class="sub-tab-btn active" onclick="switchSubTab('lettre', this)">✦ Lettre</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('linkedin', this)">in LinkedIn</button>
+      <button class="sub-tab-btn" onclick="switchSubTab('malt', this)">◎ Malt</button>
     </div>
 
-    <div class="letter-preview">
-      <?= $letterContent ?>
+    <!-- Lettre traditionnelle -->
+    <div class="sub-tab-content active" id="sub-lettre">
+      <?php if (!empty($letterContent)): ?>
+        <div class="flex flex-gap mb-16" style="flex-wrap:wrap;">
+          <a href="php/export-letter-pdf.php?id=<?= $id ?>" class="btn btn-outline">⬇ PDF</a>
+          <a href="php/export-letter-word.php?id=<?= $id ?>" class="btn btn-outline">⬇ Word</a>
+        </div>
+        <div class="letter-preview"><?= $letterContent ?></div>
+      <?php else: ?>
+        <div class="alert alert-warning">Lettre non générée — régénère les écrits ci-dessous.</div>
+      <?php endif; ?>
     </div>
 
-    <div id="regen-letter" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+    <!-- LinkedIn -->
+    <div class="sub-tab-content" id="sub-linkedin">
+      <?php if (!empty($lettersData['linkedin'])): ?>
+        <?php $llen = mb_strlen($lettersData['linkedin']); ?>
+        <div class="flex items-center flex-gap mb-16">
+          <span class="linkedin-counter <?= $llen > 400 ? 'over' : '' ?>"><?= $llen ?> / 400 caractères</span>
+          <button class="btn btn-gold btn-sm" onclick="copyText('linkedin-text')">📋 Copier</button>
+        </div>
+        <div id="linkedin-text" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"><?= htmlspecialchars($lettersData['linkedin']) ?></div>
+      <?php else: ?>
+        <div class="alert alert-warning">Texte LinkedIn non généré — régénère les écrits ci-dessous.</div>
+      <?php endif; ?>
+    </div>
+
+    <!-- Malt -->
+    <div class="sub-tab-content" id="sub-malt">
+      <?php if (!empty($lettersData['malt'])): ?>
+        <div class="flex flex-gap mb-16">
+          <button class="btn btn-gold btn-sm" onclick="copyText('malt-text')">📋 Copier</button>
+        </div>
+        <div id="malt-text" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"><?= htmlspecialchars($lettersData['malt']) ?></div>
+      <?php else: ?>
+        <div class="alert alert-warning">Texte Malt non généré — régénère les écrits ci-dessous.</div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- Regénérer tous les formats -->
+  <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
+    <button class="btn btn-ghost btn-sm"
+            onclick="this.style.display='none';document.getElementById('regen-messages').style.display='block'">
+      ↺ Regénérer les 3 formats
+    </button>
+    <div id="regen-messages" style="display:none;margin-top:16px;">
       <div class="prompt-block">
         <div class="prompt-block-header">
-          <span class="prompt-block-title">Nouveau prompt</span>
-          <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-letter-regen')">📋 Copier</button>
+          <span class="prompt-block-title">Prompt à copier dans Claude.ai</span>
+          <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-messages-regen')">📋 Copier</button>
         </div>
-        <div class="prompt-text" id="prompt-letter-regen"><?= htmlspecialchars($letterPrompt) ?></div>
+        <div class="prompt-text" id="prompt-messages-regen"><?= htmlspecialchars($messagesPrompt) ?></div>
       </div>
-      <div class="response-block" style="margin-top:12px;">
-        <div class="response-block-title">↳ Coller la nouvelle version</div>
-        <textarea id="letter-response" class="form-control" rows="10"
-                  placeholder="Colle la nouvelle lettre générée par Claude..."></textarea>
+      <div class="response-block" id="messages-response-block" style="margin-top:12px;">
+        <div class="response-block-title">↳ Coller la nouvelle réponse</div>
+        <textarea id="messages-response" class="form-control" rows="12"
+                  placeholder="Colle ici la réponse complète avec les 3 formats..."></textarea>
         <div class="flex flex-gap mt-16">
-          <button class="btn btn-primary" onclick="saveLetter()">Remplacer la lettre →</button>
+          <button class="btn btn-primary" onclick="previewMessages()">Prévisualiser →</button>
         </div>
-        <div id="letter-msg" class="hidden alert" style="margin-top:12px;"></div>
+        <div id="messages-msg" class="hidden alert" style="margin-top:12px;"></div>
+      </div>
+      <div id="messages-preview-wrap" style="display:none;margin-top:24px;">
+        <div class="sub-tabs-container">
+          <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="switchSubTab('prev-lettre', this)">✦ Lettre</button>
+            <button class="sub-tab-btn" onclick="switchSubTab('prev-linkedin', this)">in LinkedIn</button>
+            <button class="sub-tab-btn" onclick="switchSubTab('prev-malt', this)">◎ Malt</button>
+          </div>
+          <div class="sub-tab-content active" id="sub-prev-lettre">
+            <div id="prev-lettre-content" class="letter-preview"></div>
+          </div>
+          <div class="sub-tab-content" id="sub-prev-linkedin">
+            <div id="prev-linkedin-counter" class="linkedin-counter" style="margin-bottom:10px;"></div>
+            <div id="prev-linkedin-content" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"></div>
+          </div>
+          <div class="sub-tab-content" id="sub-prev-malt">
+            <div id="prev-malt-content" class="card" style="font-size:14px;line-height:1.8;white-space:pre-wrap;"></div>
+          </div>
+        </div>
+        <div class="flex flex-gap mt-16">
+          <button class="btn btn-primary" onclick="saveMessages()">Remplacer les 3 formats →</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('messages-preview-wrap').style.display='none';document.getElementById('messages-response-block').style.display='block';">← Modifier</button>
+        </div>
+        <div id="messages-save-msg" class="hidden alert" style="margin-top:12px;"></div>
       </div>
     </div>
+  </div>
   <?php endif; ?>
 </div>
 
@@ -821,6 +940,31 @@ function fetchJobPosting() {
     showMsg(msgEl, 'Erreur réseau. Colle l\'annonce manuellement.', 'error');
   });
 }
+
+// ── Step 1 — Auto-détection "Entreprise recrute Poste" ─
+(function() {
+  const textarea = document.getElementById('field-job-posting');
+  if (!textarea) return;
+  textarea.addEventListener('blur', function() {
+    const companyField  = document.getElementById('field-company');
+    const positionField = document.getElementById('field-position');
+    // Ne pas écraser des valeurs déjà saisies
+    if (companyField.value.trim() && positionField.value.trim()) return;
+    const text = this.value.trim();
+    if (!text) return;
+    // Chercher le pattern dans les 15 premières lignes
+    const firstLines = text.split('\n').slice(0, 15).join('\n');
+    const m = firstLines.match(
+      /([\w\s\-&'.À-ÿ]{2,60}?)\s+recrute(?:\s*:)?\s+(?:un(?:e)?\s+)?([A-Za-zÀ-ÿ][^\n|–\-]{4,120}?)(?:\n|[|–\-]|$)/i
+    );
+    if (m) {
+      if (!companyField.value.trim())
+        companyField.value = m[1].trim();
+      if (!positionField.value.trim())
+        positionField.value = m[2].trim().replace(/^un(?:e)?\s+/i, '').replace(/\s*[,.].*$/, '').trim();
+    }
+  });
+})();
 
 // ── Step 1 — Créer / mettre à jour la candidature ─
 const form1 = document.getElementById('form-step1');
@@ -1020,10 +1164,93 @@ function saveLetter() {
   })
   .then(r => r.json())
   .then(d => {
-    if (d.success) window.location.reload();
+    if (d.success) window.location = 'new-application.php?id=' + appId + '&tab=lettre';
     else showMsg(msgEl, d.error || 'Erreur.', 'error');
   })
   .catch(e => showMsg(msgEl, 'Erreur réseau : ' + e.message, 'error'));
+}
+
+// ── Step 5 — Onglets CV / Écrits ──────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function switchSubTab(name, btn) {
+  const container = btn.closest('.sub-tabs-container');
+  container.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.sub-tab-content').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = container.querySelector('#sub-' + name);
+  if (panel) panel.classList.add('active');
+}
+
+function parseMessages(raw) {
+  const extract = (tag) => {
+    const re = new RegExp('###' + tag + '###([\\s\\S]*?)###\\/' + tag + '###', 'i');
+    const m = raw.match(re);
+    return m ? m[1].trim() : '';
+  };
+  return { lettre: extract('LETTRE'), linkedin: extract('LINKEDIN'), malt: extract('MALT') };
+}
+
+function previewMessages() {
+  const raw   = document.getElementById('messages-response')?.value?.trim();
+  const msgEl = document.getElementById('messages-msg');
+  if (!raw) { showMsg(msgEl, 'Colle la réponse de Claude avant de prévisualiser.', 'error'); return; }
+
+  const parsed = parseMessages(raw);
+  if (!parsed.lettre && !parsed.linkedin && !parsed.malt) {
+    showMsg(msgEl, 'Format non reconnu — assure-toi de coller la réponse complète avec les balises ###LETTRE###, ###LINKEDIN### et ###MALT###.', 'error');
+    return;
+  }
+
+  document.getElementById('prev-lettre-content').innerHTML  = parsed.lettre;
+  document.getElementById('prev-linkedin-content').textContent = parsed.linkedin;
+  document.getElementById('prev-malt-content').textContent  = parsed.malt;
+
+  const llen    = parsed.linkedin.length;
+  const counter = document.getElementById('prev-linkedin-counter');
+  counter.textContent = llen + ' / 400 caractères';
+  counter.className   = 'linkedin-counter' + (llen > 400 ? ' over' : '');
+
+  window._parsedMessages = parsed;
+
+  document.getElementById('messages-response-block').style.display = 'none';
+  document.getElementById('messages-preview-wrap').style.display   = 'block';
+  document.getElementById('messages-preview-wrap')
+    .querySelector('.sub-tab-btn')?.click();
+}
+
+function saveMessages() {
+  const data  = window._parsedMessages;
+  const msgEl = document.getElementById('messages-save-msg');
+  if (!data) { showMsg(msgEl, 'Prévisualise d\'abord les messages.', 'error'); return; }
+  fetch('php/save-messages.php', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, lettre: data.lettre, linkedin: data.linkedin, malt: data.malt })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location = 'new-application.php?id=' + appId + '&tab=ecrits';
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
+  })
+  .catch(e => showMsg(msgEl, 'Erreur réseau : ' + e.message, 'error'));
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    document.querySelectorAll('[onclick*="copyText(\'' + id + '\')"]').forEach(btn => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copié !';
+      btn.style.background = '#2a7d4b'; btn.style.color = 'white';
+      setTimeout(() => { btn.textContent = orig; btn.style = ''; }, 2000);
+    });
+  });
 }
 
 function skipCompetency(compIndex) {
