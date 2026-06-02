@@ -315,7 +315,7 @@ if ($step === 1): ?>
 <div class="card">
   <div class="card-title">📋 Fiche de poste</div>
 
-  <?php if (empty(trim($knowledge)) || strpos($knowledge, 'vide') !== false): ?>
+  <?php if (empty(trim($knowledge)) || str_starts_with($knowledge, '(Base de connaissance vide')): ?>
     <div class="alert alert-warning">
       ⚠ Ta base de connaissance est vide. <a href="knowledge-base.php">Ajoute des entrées</a> avant de candidater.
     </div>
