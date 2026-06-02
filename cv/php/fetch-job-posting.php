@@ -63,7 +63,7 @@ $rawTitle = $ogTitle->length > 0
 // LinkedIn : "Position - Entreprise | LinkedIn" ou "Position chez Entreprise"
 // ou "Entreprise recrute [pour des postes de] Position"
 if (str_contains($url, 'linkedin.com')) {
-    if (preg_match('/^(.+?)\s*[-–]\s*(.+?)\s*\|/', $rawTitle, $m)) {
+    if (preg_match('/^(.+?)\s+[-–]\s+(.+?)\s*\|/', $rawTitle, $m)) {
         $position = trim($m[1]);
         $company  = trim($m[2]);
     } elseif (preg_match('/^(.+?)\s+chez\s+(.+?)(?:\s*\||$)/i', $rawTitle, $m)) {
