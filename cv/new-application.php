@@ -393,6 +393,7 @@ elseif ($step === 2):
     <div class="flex flex-gap mt-16">
       <button class="btn btn-primary" onclick="saveStep(2)">Enregistrer et continuer →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;color:#bbb;" onclick="abandonApplication()">Abandonner</button>
     </div>
     <div id="step2-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
@@ -427,6 +428,7 @@ elseif ($step === 3 && ($app['status'] ?? '') === 'matching'):
     <div class="flex flex-gap mt-16">
       <button class="btn btn-primary" id="btn-parse-matching" onclick="parseMatchingResponse()">Analyser le matching →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;color:#bbb;" onclick="abandonApplication()">Abandonner</button>
     </div>
     <div id="step3-parse-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
@@ -435,6 +437,7 @@ elseif ($step === 3 && ($app['status'] ?? '') === 'matching'):
     <div id="matching-display" style="margin-top:24px;"></div>
     <div class="flex flex-gap mt-16">
       <button class="btn btn-primary btn-lg" onclick="saveStep(3)">Enregistrer et passer à l'enrichissement →</button>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;color:#bbb;" onclick="abandonApplication()">Abandonner</button>
     </div>
     <div id="step3-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
@@ -651,6 +654,7 @@ elseif ($step === 3):
         <button class="btn btn-ghost" onclick="skipCompetency(<?= $currentIndex ?>)">
           Passer
         </button>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto;color:#bbb;" onclick="abandonApplication()">Abandonner</button>
       </div>
       <div id="enrich-msg" class="hidden alert" style="margin-top:12px;"></div>
     </div>
@@ -1312,6 +1316,21 @@ function copyText(id) {
       setTimeout(() => { btn.textContent = orig; btn.style = ''; }, 2000);
     });
   });
+}
+
+function abandonApplication() {
+  if (!confirm('Marquer cette candidature comme "Abandonné" et revenir au dashboard ?')) return;
+  fetch('php/update-hiring-status.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, hiring_status: 'abandon' })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location = 'dashboard.php';
+    else alert('Erreur lors de la mise à jour du statut.');
+  })
+  .catch(() => alert('Erreur réseau.'));
 }
 
 function skipCompetency(compIndex) {
