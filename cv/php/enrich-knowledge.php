@@ -4,22 +4,26 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 requireLogin();
 
-$data         = json_decode(file_get_contents('php://input'), true);
-$app_id       = (int)($data['app_id'] ?? 0);
-$comp_index   = (int)($data['comp_index'] ?? -1);
+$data          = json_decode(file_get_contents('php://input'), true);
+$app_id        = (int)($data['app_id'] ?? 0);
+$comp_index    = (int)($data['comp_index'] ?? -1);
 $knowledge_ids = array_map('intval', $data['knowledge_ids'] ?? []);
-$competency   = trim($data['competency'] ?? '');
-$description  = trim($data['description'] ?? '');
-$new_role     = trim($data['new_role'] ?? '');
-$new_company  = trim($data['new_company'] ?? '');
-$new_period   = trim($data['new_period'] ?? '');
+$competency    = trim($data['competency'] ?? '');
+$description   = trim($data['description'] ?? '');
+$new_role      = trim($data['new_role'] ?? '');
+$new_company   = trim($data['new_company'] ?? '');
+$new_period    = trim($data['new_period'] ?? '');
+$transversal   = !empty($data['transversal']);
 
 $has_new = ($new_role !== '' || $new_company !== '');
 
-if ($app_id <= 0 || $comp_index < 0 || $competency === '' || $description === '') {
+if ($app_id <= 0 || $comp_index < 0 || $competency === '') {
     jsonResponse(['error' => 'Paramètres invalides.'], 400);
 }
-if (empty($knowledge_ids) && !$has_new) {
+if (!$transversal && $description === '') {
+    jsonResponse(['error' => 'Paramètres invalides.'], 400);
+}
+if (!$transversal && empty($knowledge_ids) && !$has_new) {
     jsonResponse(['error' => 'Aucune expérience sélectionnée.'], 400);
 }
 
@@ -63,6 +67,18 @@ if ($has_new) {
 
     $db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json, keywords, period_start) VALUES ('experience', ?, ?, ?, ?, ?)")
        ->execute([$title, $newLine, $meta, $keywords, $period_start]);
+    $resultIds[] = (int)$db->lastInsertId();
+}
+
+// ── Créer une entrée transversale (non liée à une expérience) ────────────
+if ($transversal) {
+    $content  = $competency . ' : ' . ($description !== ''
+        ? $description
+        : 'Compétence acquise progressivement tout au long du parcours professionnel.');
+    $meta     = json_encode(['transversal' => true], JSON_UNESCAPED_UNICODE);
+    $keywords = mb_strtolower($competency);
+    $db->prepare("INSERT INTO cv_knowledge (type, title, content, meta_json, keywords) VALUES ('competence', ?, ?, ?, ?)")
+       ->execute([$competency, $content, $meta, $keywords]);
     $resultIds[] = (int)$db->lastInsertId();
 }
 

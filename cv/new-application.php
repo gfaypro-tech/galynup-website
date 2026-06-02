@@ -551,62 +551,89 @@ elseif ($step === 3):
         </div>
       <?php endif; ?>
 
-      <div class="form-group">
-        <label style="font-size:13px;">Sur quel(s) poste(s) ? <span style="font-weight:400;color:#888;">clique pour sélectionner</span></label>
-        <div id="experience-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;">
-          <?php if (!empty($currentComp['matches'])): ?>
-            <span class="exp-pills-group-label">Correspondances</span>
-            <?php foreach ($currentComp['matches'] as $m): ?>
-              <button type="button" class="exp-pill selected" data-id="<?= $m['id'] ?>"
-                      onclick="togglePill(this)">
-                <?= htmlspecialchars($m['title']) ?>
-              </button>
-            <?php endforeach; ?>
-          <?php endif; ?>
-          <?php
-            $matchIds = array_column($currentComp['matches'] ?? [], 'id');
-            $otherExp = array_filter($experiences, fn($e) => !in_array($e['id'], $matchIds));
-            if (!empty($otherExp)):
-          ?>
-            <span class="exp-pills-group-label">Autres expériences</span>
-            <?php foreach ($otherExp as $exp):
-              $meta = json_decode($exp['meta_json'] ?? '{}', true);
-              $label = htmlspecialchars($exp['title']);
-              if (!empty($meta['company'])) $label .= ' · ' . htmlspecialchars($meta['company']);
-            ?>
-              <button type="button" class="exp-pill" data-id="<?= $exp['id'] ?>"
-                      onclick="togglePill(this)">
-                <?= $label ?>
-              </button>
-            <?php endforeach; ?>
-          <?php endif; ?>
-          <span class="exp-pills-group-label" style="margin-top:4px;"></span>
-          <button type="button" class="exp-pill exp-pill-new" data-id="new"
-                  onclick="togglePill(this); toggleNewPostForm(this.classList.contains('selected'))">
-            + Nouveau poste
-          </button>
-        </div>
+      <!-- ── Toggle mode enrichissement ── -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <button type="button" id="btn-mode-specific" onclick="setEnrichMode('specific')"
+                style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #6D155D;background:#6D155D;color:#fff;transition:.15s;">
+          📌 Sur une expérience précise
+        </button>
+        <button type="button" id="btn-mode-transversal" onclick="setEnrichMode('transversal')"
+                style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #6D155D;background:#fff;color:#6D155D;transition:.15s;">
+          ✦ Tout au long de mon parcours
+        </button>
       </div>
 
-      <div id="new-post-form" style="display:none;">
-        <div class="grid-2">
-          <div class="form-group">
-            <label style="font-size:13px;">Poste / titre</label>
-            <input type="text" id="new-role" class="form-control" placeholder="Ex : DSI, Directeur de programme...">
-          </div>
-          <div class="form-group">
-            <label style="font-size:13px;">Entreprise</label>
-            <input type="text" id="new-company" class="form-control" placeholder="Nom de l'entreprise">
-          </div>
-        </div>
+      <!-- Mode : expérience précise -->
+      <div id="mode-specific-content">
         <div class="form-group">
-          <label style="font-size:13px;">Période</label>
-          <input type="text" id="new-period" class="form-control" placeholder="Ex : 2020 – 2023">
+          <label style="font-size:13px;">Sur quel(s) poste(s) ? <span style="font-weight:400;color:#888;">clique pour sélectionner</span></label>
+          <div id="experience-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;">
+            <?php if (!empty($currentComp['matches'])): ?>
+              <span class="exp-pills-group-label">Correspondances</span>
+              <?php foreach ($currentComp['matches'] as $m): ?>
+                <button type="button" class="exp-pill selected" data-id="<?= $m['id'] ?>"
+                        onclick="togglePill(this)">
+                  <?= htmlspecialchars($m['title']) ?>
+                </button>
+              <?php endforeach; ?>
+            <?php endif; ?>
+            <?php
+              $matchIds = array_column($currentComp['matches'] ?? [], 'id');
+              $otherExp = array_filter($experiences, fn($e) => !in_array($e['id'], $matchIds));
+              if (!empty($otherExp)):
+            ?>
+              <span class="exp-pills-group-label">Autres expériences</span>
+              <?php foreach ($otherExp as $exp):
+                $meta = json_decode($exp['meta_json'] ?? '{}', true);
+                $label = htmlspecialchars($exp['title']);
+                if (!empty($meta['company'])) $label .= ' · ' . htmlspecialchars($meta['company']);
+              ?>
+                <button type="button" class="exp-pill" data-id="<?= $exp['id'] ?>"
+                        onclick="togglePill(this)">
+                  <?= $label ?>
+                </button>
+              <?php endforeach; ?>
+            <?php endif; ?>
+            <span class="exp-pills-group-label" style="margin-top:4px;"></span>
+            <button type="button" class="exp-pill exp-pill-new" data-id="new"
+                    onclick="togglePill(this); toggleNewPostForm(this.classList.contains('selected'))">
+              + Nouveau poste
+            </button>
+          </div>
+        </div>
+
+        <div id="new-post-form" style="display:none;">
+          <div class="grid-2">
+            <div class="form-group">
+              <label style="font-size:13px;">Poste / titre</label>
+              <input type="text" id="new-role" class="form-control" placeholder="Ex : DSI, Directeur de programme...">
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;">Entreprise</label>
+              <input type="text" id="new-company" class="form-control" placeholder="Nom de l'entreprise">
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:13px;">Période</label>
+            <input type="text" id="new-period" class="form-control" placeholder="Ex : 2020 – 2023">
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label style="font-size:13px;">Décris ton expérience avec "<?= htmlspecialchars($currentComp['name']) ?>"</label>
+      <!-- Mode : compétence transversale -->
+      <div id="mode-transversal-content" style="display:none;">
+        <div style="background:#f0eaf8;border-left:3px solid #6D155D;padding:12px 16px;border-radius:6px;font-size:13px;color:#444;margin-bottom:4px;">
+          Cette compétence sera enregistrée comme <strong>compétence transversale</strong> — acquise progressivement
+          tout au long du parcours, non rattachée à une expérience unique. Claude pourra la valoriser librement
+          dans le profil ou les compétences clés du CV.
+        </div>
+      </div>
+
+      <!-- Description (commune aux deux modes) -->
+      <div class="form-group" style="margin-top:16px;">
+        <label id="enrich-desc-label" style="font-size:13px;">
+          Décris ton expérience avec "<?= htmlspecialchars($currentComp['name']) ?>"
+        </label>
         <textarea id="enrich-description" class="form-control" rows="4"
                   placeholder="Contexte, actions concrètes, résultats obtenus..."
                   oninput="updateEnrichPreview()"></textarea>
@@ -1102,6 +1129,31 @@ function parseMatchingResponse() {
 // ── Step 3 — Enrichissement compétence par compétence
 const currentCompName = <?= json_encode(isset($currentComp) && $currentComp ? $currentComp['name'] : '') ?>;
 
+// ── Enrichissement — toggle mode spécifique / transversal ─
+function setEnrichMode(mode) {
+  const isTransversal = (mode === 'transversal');
+  document.getElementById('mode-specific-content').style.display  = isTransversal ? 'none' : '';
+  document.getElementById('mode-transversal-content').style.display = isTransversal ? '' : 'none';
+
+  const btnSpec  = document.getElementById('btn-mode-specific');
+  const btnTrans = document.getElementById('btn-mode-transversal');
+  btnSpec.style.background  = isTransversal ? '#fff'     : '#6D155D';
+  btnSpec.style.color       = isTransversal ? '#6D155D'  : '#fff';
+  btnTrans.style.background = isTransversal ? '#6D155D'  : '#fff';
+  btnTrans.style.color      = isTransversal ? '#fff'     : '#6D155D';
+
+  const label = document.getElementById('enrich-desc-label');
+  if (label) label.innerHTML = isTransversal
+    ? 'Décris en quelques mots en quoi cette compétence est transversale <span style="font-weight:400;color:#888;">(optionnel)</span>'
+    : label.getAttribute('data-orig') || label.innerHTML;
+  if (label && !label.getAttribute('data-orig')) label.setAttribute('data-orig', label.innerHTML);
+
+  const ta = document.getElementById('enrich-description');
+  if (ta) ta.placeholder = isTransversal
+    ? 'Ex : pratiquée dans tous mes rôles de management, intégrée à ma posture professionnelle depuis 20 ans...'
+    : 'Contexte, actions concrètes, résultats obtenus...';
+}
+
 function togglePill(btn) {
   btn.classList.toggle('selected');
 }
@@ -1125,19 +1177,28 @@ function updateEnrichPreview() {
 }
 
 function submitEnrichment(compIndex, compName) {
-  const description  = document.getElementById('enrich-description')?.value?.trim();
-  const msgEl        = document.getElementById('enrich-msg');
+  const description   = document.getElementById('enrich-description')?.value?.trim();
+  const msgEl         = document.getElementById('enrich-msg');
+  const isTransversal = document.getElementById('btn-mode-transversal')?.style.background === 'rgb(109, 21, 93)';
+
   const selectedPills = document.querySelectorAll('.exp-pill.selected:not(.exp-pill-new)');
   const knowledgeIds  = Array.from(selectedPills).map(btn => parseInt(btn.dataset.id));
   const createNew     = document.querySelector('.exp-pill-new.selected') !== null;
 
-  if (knowledgeIds.length === 0 && !createNew) {
-    showMsg(msgEl, 'Coche au moins une expérience ou crée un nouveau poste.', 'error'); return;
+  if (!isTransversal) {
+    if (knowledgeIds.length === 0 && !createNew) {
+      showMsg(msgEl, 'Coche au moins une expérience ou crée un nouveau poste.', 'error'); return;
+    }
+    if (!description) { showMsg(msgEl, 'Décris ton expérience avant de valider.', 'error'); return; }
   }
-  if (!description) { showMsg(msgEl, 'Décris ton expérience avant de valider.', 'error'); return; }
 
-  const payload = { app_id: appId, comp_index: compIndex, knowledge_ids: knowledgeIds, competency: compName, description };
-  if (createNew) {
+  const payload = {
+    app_id: appId, comp_index: compIndex,
+    knowledge_ids: knowledgeIds, competency: compName,
+    description: description || '',
+    transversal: isTransversal
+  };
+  if (createNew && !isTransversal) {
     payload.new_role    = document.getElementById('new-role')?.value?.trim()    || '';
     payload.new_company = document.getElementById('new-company')?.value?.trim() || '';
     payload.new_period  = document.getElementById('new-period')?.value?.trim()  || '';
