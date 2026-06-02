@@ -140,7 +140,7 @@ $filename = 'CV_GFAY_' . ($slug ?: 'CV');
 
       @page {
         margin-bottom: 18mm;
-        @bottom-right {
+        @bottom-center {
           content: counter(page) " / " counter(pages);
           font-size: 9pt;
           color: #888;

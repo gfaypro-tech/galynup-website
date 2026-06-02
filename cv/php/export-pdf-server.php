@@ -82,7 +82,7 @@ em { font-style: italic; }
 section#cv { display: block; }
 @page {
   margin-bottom: 18mm;
-  @bottom-right {
+  @bottom-center {
     content: counter(page) " / " counter(pages);
     font-size: 9pt;
     color: #888;
