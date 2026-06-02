@@ -648,6 +648,7 @@ select.form-control {
 .hiring-select.hiring-entretien  { background: #ede0f0;  color: var(--aubergine); }
 .hiring-select.hiring-offre      { background: #e8f8ee;  color: var(--success); }
 .hiring-select.hiring-refuse     { background: #fde8e8;  color: #c62828; }
+.hiring-select.hiring-abandon    { background: #f0f0f0;  color: #999;    text-decoration: line-through; }
 
 /* ── CV preview ─────────────────────────────────── */
 .cv-preview {
@@ -782,6 +783,36 @@ select.form-control {
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
+/* ── Sous-onglets (step 5 écrits) ────────────────── */
+.sub-tabs-container { margin-bottom: 8px; }
+.sub-tabs {
+  display: flex; gap: 0; margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
+}
+.sub-tab-btn {
+  padding: 8px 18px; border: none; background: none;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.sub-tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 600; }
+.sub-tab-content { display: none; padding-top: 20px; }
+.sub-tab-content.active { display: block; }
+.linkedin-counter {
+  font-size: 12px; color: var(--text-muted);
+  font-weight: 500;
+}
+.linkedin-counter.over { color: var(--error); font-weight: 700; }
+
+.tab-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; line-height: 1;
+  padding: 2px 6px; border-radius: 20px;
+  background: #fff3cd; color: #856404;
+  margin-left: 6px; vertical-align: middle;
+}
+
 /* ── Question dialogue ───────────────────────────── */
 .question-card {
   background: var(--white);
@@ -842,6 +873,120 @@ select.form-control {
 .justify-between { justify-content: space-between; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .hidden { display: none !important; }
+
+/* ── Mobile UI chrome ────────────────────────────── */
+.mobile-topbar { display: none; }
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.sidebar-overlay--visible {
+  display: block;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .mobile-topbar {
+    display: flex; align-items: center; gap: 12px;
+    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    padding: 0 16px; background: var(--sidebar-bg);
+    z-index: 200; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mobile-brand-name {
+    font-family: var(--font-title); font-size: 18px; font-weight: 600;
+    color: var(--white); letter-spacing: 0.02em;
+  }
+
+  .hamburger {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 36px; height: 36px; padding: 6px;
+    background: none; border: none; cursor: pointer; border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .hamburger:hover { background: var(--sidebar-hover); }
+  .hamburger span {
+    display: block; height: 2px; background: var(--white); border-radius: 2px;
+  }
+
+  .sidebar {
+    transform: translateX(-240px);
+    transition: transform 0.25s ease;
+    z-index: 100;
+  }
+  .sidebar--open { transform: translateX(0); }
+
+  .main-content { margin-left: 0; padding-top: 56px; }
+  .page-header { padding: 20px 16px 0; }
+  .page-title { font-size: 22px; padding-bottom: 14px; }
+  .page-body { padding: 20px 16px; }
+  .card { padding: 16px; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .grid-2 { grid-template-columns: 1fr; gap: 0; }
+  .cv-preview .cv-list-2col { grid-template-columns: 1fr; }
+
+  .steps-bar {
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 12px 16px; flex-wrap: nowrap;
+  }
+  .step-circle { width: 26px; height: 26px; font-size: 11px; flex-shrink: 0; }
+  .step-label { font-size: 11px; white-space: nowrap; }
+
+  .application-item { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+  .application-link { flex: 1 1 100%; }
+  .application-date { margin-left: 0; font-size: 11px; }
+  .application-item .flex.flex-gap { width: 100%; justify-content: flex-end; }
+
+  .card form.flex.flex-gap.items-center { flex-direction: column; align-items: stretch; }
+  .card form.flex.flex-gap.items-center .form-control { max-width: 100% !important; }
+  .card form.flex.flex-gap.items-center .btn { width: 100%; justify-content: center; }
+
+  .flex.flex-gap.mb-16 { flex-direction: column; }
+  .flex.flex-gap.mb-16 .btn { width: 100%; justify-content: center; }
+
+  .knowledge-item { flex-wrap: wrap; gap: 10px; }
+  .knowledge-actions { width: 100%; justify-content: flex-end; }
+
+  .prompt-block, .response-block { padding: 14px; }
+  .prompt-block-header { flex-wrap: wrap; gap: 8px; }
+
+  .cv-preview { padding: 16px 20px 32px; }
+  .letter-preview { padding: 24px 20px; }
+
+  .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+  .tab-btn { white-space: nowrap; padding: 10px 14px; font-size: 13px; }
+  .sub-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+  .sub-tab-btn { white-space: nowrap; padding: 8px 12px; }
+
+  .login-box { padding: 32px 20px; margin: 0 16px; }
+
+  [id^="expand-"] > div > div[style*="grid-template-columns:1fr 1fr"],
+  [id^="expand-"] > div > div[style*="grid-template-columns: 1fr 1fr"] {
+    display: flex !important; flex-direction: column !important; gap: 8px !important;
+  }
+
+  /* Prevent any child from blowing the layout wider */
+  .main-content { overflow-x: hidden; }
+
+  /* Prompt text: break long unbreakable sequences (ex: ━━━━━) */
+  .prompt-text { overflow-wrap: break-word; max-width: 100%; }
+
+  /* Generated CV / letter HTML may contain wide elements */
+  .cv-preview, .letter-preview { overflow-x: auto; }
+
+  /* Step 4 — preview control buttons: wrap if screen too narrow */
+  #cv-preview-wrap .flex.flex-gap { flex-wrap: wrap; }
+}
+
+@media (max-width: 400px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
 
 /* ── Print (export PDF) ──────────────────────────── */
 @media print {

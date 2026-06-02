@@ -54,6 +54,7 @@ $hiringLabels = [
     'entretien'  => 'Entretien',
     'offre'      => 'Offre reçue',
     'refuse'     => 'Refusé',
+    'abandon'    => 'Abandonné',
 ];
 
 $pageTitle  = 'Dashboard';

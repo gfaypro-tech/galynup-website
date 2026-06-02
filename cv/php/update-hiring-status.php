@@ -8,7 +8,7 @@ $data   = json_decode(file_get_contents('php://input'), true);
 $id     = (int)($data['id'] ?? 0);
 $status = $data['hiring_status'] ?? '';
 
-$allowed = ['non_envoye', 'envoye', 'repondu', 'entretien', 'offre', 'refuse'];
+$allowed = ['non_envoye', 'envoye', 'repondu', 'entretien', 'offre', 'refuse', 'abandon'];
 if ($id <= 0 || !in_array($status, $allowed)) {
     jsonResponse(['error' => 'Paramètres invalides.'], 400);
 }
