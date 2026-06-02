@@ -648,7 +648,7 @@ select.form-control {
 .hiring-select.hiring-entretien  { background: #ede0f0;  color: var(--aubergine); }
 .hiring-select.hiring-offre      { background: #e8f8ee;  color: var(--success); }
 .hiring-select.hiring-refuse     { background: #fde8e8;  color: #c62828; }
-.hiring-select.hiring-abandon    { background: #f0f0f0;  color: #999;    text-decoration: line-through; }
+.hiring-select.hiring-abandon    { background: #efefef;  color: #aaa;    font-style: italic; }
 
 /* ── CV preview ─────────────────────────────────── */
 .cv-preview {
