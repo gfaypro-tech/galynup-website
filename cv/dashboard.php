@@ -13,8 +13,9 @@ $knowledgeCount = $db->query("SELECT COUNT(*) FROM cv_knowledge WHERE is_active 
 $entretienCount = $db->query("SELECT COUNT(*) FROM cv_applications WHERE hiring_status IN ('entretien','offre')")->fetchColumn();
 
 // Filtres dashboard
-$filterStatus = $_GET['status'] ?? 'all';
-$filterMonth  = trim($_GET['month'] ?? '');   // format YYYY-MM
+$filterStatus  = $_GET['status']  ?? 'all';
+$filterHiring  = $_GET['hiring']  ?? 'all';
+$filterMonth   = trim($_GET['month'] ?? '');   // format YYYY-MM
 
 $where  = 'WHERE 1=1';
 $params = [];
@@ -22,11 +23,15 @@ if ($filterStatus !== 'all') {
     $where   .= ' AND status = ?';
     $params[] = $filterStatus;
 }
+if ($filterHiring !== 'all') {
+    $where   .= ' AND hiring_status = ?';
+    $params[] = $filterHiring;
+}
 if ($filterMonth !== '' && preg_match('/^\d{4}-\d{2}$/', $filterMonth)) {
     $where   .= ' AND DATE_FORMAT(updated_at, \'%Y-%m\') = ?';
     $params[] = $filterMonth;
 }
-$hasFilter = ($filterStatus !== 'all' || $filterMonth !== '');
+$hasFilter = ($filterStatus !== 'all' || $filterHiring !== 'all' || $filterMonth !== '');
 $limit     = $hasFilter ? '' : 'LIMIT 20';
 
 $stmt = $db->prepare("SELECT * FROM cv_applications $where ORDER BY updated_at DESC $limit");
@@ -86,6 +91,12 @@ require_once __DIR__ . '/includes/header.php';
       <option value="all">Tous les statuts</option>
       <?php foreach ($statusLabels as $val => $label): ?>
         <option value="<?= $val ?>" <?= $filterStatus === $val ? 'selected' : '' ?>><?= $label ?></option>
+      <?php endforeach; ?>
+    </select>
+    <select name="hiring" class="form-control" style="max-width:160px;">
+      <option value="all">Pipeline complet</option>
+      <?php foreach ($hiringLabels as $val => $label): ?>
+        <option value="<?= $val ?>" <?= $filterHiring === $val ? 'selected' : '' ?>><?= $label ?></option>
       <?php endforeach; ?>
     </select>
     <input type="month" name="month" value="<?= htmlspecialchars($filterMonth) ?>"
