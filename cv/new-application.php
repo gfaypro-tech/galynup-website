@@ -243,7 +243,7 @@ STRUCTURE HTML OBLIGATOIRE POUR ###LETTRE### :
 
 <section id="letter">
   <div class="letter-meta">
-    <div class="letter-sender">Gaëlle FAY<br>[Ville] | [email] | [téléphone]</div>
+    <div class="letter-sender">Gaëlle FAY<br>Noisy-le-Grand | gaelle.fay@outlook.fr | +33 6 10 74 55 84</div>
     <div class="letter-date">[Ville], le [date du jour]</div>
   </div>
   <div class="letter-recipient">
