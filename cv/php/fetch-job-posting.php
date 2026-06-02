@@ -61,6 +61,7 @@ $rawTitle = $ogTitle->length > 0
     : trim($dom->getElementsByTagName('title')->item(0)?->textContent ?? '');
 
 // LinkedIn : "Position - Entreprise | LinkedIn" ou "Position chez Entreprise"
+// ou "Entreprise recrute [pour des postes de] Position"
 if (str_contains($url, 'linkedin.com')) {
     if (preg_match('/^(.+?)\s*[-–]\s*(.+?)\s*\|/', $rawTitle, $m)) {
         $position = trim($m[1]);
@@ -68,6 +69,13 @@ if (str_contains($url, 'linkedin.com')) {
     } elseif (preg_match('/^(.+?)\s+chez\s+(.+?)(?:\s*\||$)/i', $rawTitle, $m)) {
         $position = trim($m[1]);
         $company  = trim($m[2]);
+    } elseif (preg_match(
+        '/^(.+?)\s+recrute(?:\s+pour\s+(?:des?\s+)?postes?\s+de)?\s+(?:un(?:e)?\s+)?(.+?)(?:\s*[(\[]|\s*[|–\-]|$)/iu',
+        $rawTitle, $m
+    )) {
+        $company  = trim($m[1]);
+        // Nettoyer : "(Ville)", "[F/H]", "H/F", "F/H" en fin de chaîne
+        $position = trim(preg_replace('/\s*[\(\[].*?[\)\]]|\s+[HFhf]\/[HFhf]\s*$/u', '', trim($m[2])));
     } else {
         $position = $rawTitle;
     }
@@ -92,12 +100,12 @@ if (str_contains($url, 'linkedin.com')) {
 // ── Fallback "TOTO recrute MOMO" sur le titre brut ───
 if (empty($company) || empty($position)) {
     if (preg_match(
-        '/^([\w\s\-&\'\.À-ÿ]{2,60}?)\s+recrute(?:\s*:)?\s+(?:un(?:e)?\s+)?(.{5,120}?)(?:\s*[|\-–]|$)/iu',
+        '/^(.+?)\s+recrute(?:\s+pour\s+(?:des?\s+)?postes?\s+de|\s*:)?\s+(?:un(?:e)?\s+)?(.{5,120}?)(?:\s*[(\[]|\s*[|–\-]|$)/iu',
         $rawTitle,
         $m
     )) {
         if (empty($company))  $company  = trim($m[1]);
-        if (empty($position)) $position = trim(preg_replace('/^un(?:e)?\s+/iu', '', trim($m[2])));
+        if (empty($position)) $position = trim(preg_replace('/\s*[\(\[].*?[\)\]]|\s+[HFhf]\/[HFhf]\s*$/u', '', trim($m[2])));
     }
 }
 
