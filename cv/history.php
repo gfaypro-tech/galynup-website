@@ -133,7 +133,7 @@ function updateHiringStatus(id, selectEl) {
   .then(r => r.json())
   .then(d => {
     if (d.success) {
-      selectEl.className = selectEl.className.replace(/hiring-\S+/, 'hiring-' + newStatus);
+      selectEl.className = 'hiring-select hiring-' + newStatus;
     }
   });
 }
