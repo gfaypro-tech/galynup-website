@@ -52,18 +52,45 @@ switch ($step) {
         $analysisData = json_decode($app['analysis_result'] ?? '{}', true) ?? [];
         $competencies = $analysisData['competences_cles'] ?? [];
 
-        // Pour chaque compétence, chercher dans la base de connaissance
+        // Mots vides à ignorer dans la recherche par mots-clés
+        $stopWords = ['de', 'du', 'des', 'le', 'la', 'les', 'et', 'en', 'au', 'aux',
+                      'un', 'une', 'par', 'sur', 'dans', 'avec', 'pour', 'ou', 'à',
+                      'the', 'of', 'and', 'in', 'for', 'with'];
+
+        // Pour chaque compétence, chercher dans la base de connaissance (tous types)
         $enrichmentData = [];
         foreach ($competencies as $comp) {
+            // 1. Recherche exacte sur la phrase complète (tous types)
             $compSearch = '%' . mb_strtolower(trim($comp)) . '%';
             $findStmt   = $db->prepare(
-                "SELECT id, title FROM cv_knowledge
-                 WHERE is_active = 1 AND type = 'experience'
+                "SELECT id, title, type FROM cv_knowledge
+                 WHERE is_active = 1
                  AND (keywords LIKE ? OR title LIKE ? OR content LIKE ?)
-                 ORDER BY created_at DESC LIMIT 3"
+                 ORDER BY FIELD(type,'experience','competence','formation','import','autre'), created_at DESC LIMIT 3"
             );
             $findStmt->execute([$compSearch, $compSearch, $compSearch]);
             $matches = $findStmt->fetchAll();
+
+            // 2. Si rien trouvé → recherche par mots-clés significatifs (≥4 lettres, hors mots vides)
+            if (empty($matches)) {
+                $words = preg_split('/\s+/', mb_strtolower(trim($comp)));
+                $keywords = array_filter($words, fn($w) => mb_strlen($w) >= 4 && !in_array($w, $stopWords));
+                if (!empty($keywords)) {
+                    $conditions = [];
+                    $params = [];
+                    foreach ($keywords as $kw) {
+                        $like = '%' . $kw . '%';
+                        $conditions[] = "(keywords LIKE ? OR title LIKE ? OR content LIKE ?)";
+                        $params = array_merge($params, [$like, $like, $like]);
+                    }
+                    $sql = "SELECT id, title, type FROM cv_knowledge WHERE is_active = 1 AND "
+                         . implode(' AND ', $conditions)
+                         . " ORDER BY FIELD(type,'experience','competence','formation','import','autre'), created_at DESC LIMIT 3";
+                    $findStmt = $db->prepare($sql);
+                    $findStmt->execute($params);
+                    $matches = $findStmt->fetchAll();
+                }
+            }
 
             $enrichmentData[] = [
                 'name'    => $comp,
