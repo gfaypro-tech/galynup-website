@@ -148,8 +148,9 @@ foreach (['script','style','nav','header','footer','noscript','aside','iframe'] 
     }
 }
 
-// Chercher la section principale de l'annonce (sélecteurs courants)
-$selectors = [
+// Chercher la section principale de l'annonce
+// Stratégie : collecter tous les candidats, garder le plus long (pas le premier venu)
+$specificSelectors = [
     '//div[contains(@class,"description__text")]',        // LinkedIn
     '//div[contains(@class,"show-more-less-html")]',      // LinkedIn
     '//section[contains(@class,"description")]',          // LinkedIn
@@ -158,24 +159,44 @@ $selectors = [
     '//div[contains(@class,"jobDescription")]',           // Indeed
     '//div[@id="jobDescriptionText"]',                    // Indeed
     '//div[contains(@class,"job_description")]',          // HelloWork
+    '//div[contains(@class,"offer-description")]',        // portails RH français
+    '//div[contains(@class,"offer-content")]',            // portails RH français
+    '//div[contains(@class,"job-content")]',              // générique
+    '//div[contains(@class,"posting-content")]',          // Lever
+    '//div[contains(@class,"job-posting")]',              // générique
     '//article[contains(@class,"job")]',                  // générique
-    '//main',                                             // fallback
+    '//article',                                          // générique
 ];
 
-foreach ($selectors as $sel) {
-    if (!empty($jobText)) break;
+$bestCandidate = '';
+foreach ($specificSelectors as $sel) {
     $nodes = $xpath->query($sel);
     if ($nodes->length > 0) {
         $raw = trim($nodes->item(0)->textContent);
-        if (mb_strlen($raw) > 300) {
-            $jobText = $raw;
-            break;
+        if (mb_strlen($raw) > mb_strlen($bestCandidate)) {
+            $bestCandidate = $raw;
         }
     }
 }
 
+// Contenu de <main> (toutes sections après nettoyage nav/header/footer)
+$mainCandidate = '';
+$mainNodes = $xpath->query('//main');
+if ($mainNodes->length > 0) {
+    $mainCandidate = trim($mainNodes->item(0)->textContent);
+}
+
+// Prendre le plus long entre sélecteurs spécifiques et <main>
+if (mb_strlen($mainCandidate) > mb_strlen($bestCandidate)) {
+    $jobText = $mainCandidate;
+} elseif (mb_strlen($bestCandidate) > 300) {
+    $jobText = $bestCandidate;
+} else {
+    $jobText = $mainCandidate;
+}
+
 // Fallback : tout le body
-if (empty($jobText)) {
+if (mb_strlen(trim($jobText)) < 300) {
     $body = $dom->getElementsByTagName('body')->item(0);
     if ($body) $jobText = trim($body->textContent);
 }
