@@ -691,6 +691,12 @@ select.form-control {
   color: #666;
   margin: 0;
 }
+.cv-preview .cv-disponibilite {
+  font-size: 11px;
+  color: var(--aubergine);
+  font-weight: 600;
+  margin: 3px 0 0;
+}
 
 /* Sections */
 .cv-preview .cv-section { margin-bottom: 15px; }

@@ -107,6 +107,7 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
     <p class="cv-subtitle">[Titre adapté au poste ciblé — pas générique]</p>
     <p class="cv-tagline">[Domaine 1] · [Domaine 2] · [Domaine 3] | 25 ans d'expérience | [Secteur 1] · [Secteur 2]</p>
     <p class="cv-contact">+33 6 10 74 55 84 · gaelle.fay@outlook.fr · Noisy-le-Grand (93) · linkedin.com/in/gaellefay</p>
+    <p class="cv-disponibilite">Disponibilité : [DATE]</p>
   </header>
 
   <section class="cv-section">
@@ -195,10 +196,22 @@ RÈGLES IMPÉRATIVES — FORMATAGE
 - cv-job-context : contenu en texte brut dans <em>…</em>, aucune autre balise
 - Le cv-subtitle DOIT être adapté au poste ciblé (pas générique)
 - Les COMPÉTENCES CLÉS : 6 à 8 items texte brut — inclure les mots-clés exacts de la fiche de poste
-- Expériences récentes (< 5 ans) : 4 à 5 puces | expériences > 10 ans : 2 puces max
-- Intégrer toutes les réalisations mentionnées dans le dialogue et les expériences complémentaires
 - Ne jamais inventer ni exagérer — respecter strictement la réalité du parcours
-- Longueur totale : 1 à 2 pages imprimées
+
+RÈGLES IMPÉRATIVES — 2 PAGES MAXIMUM ABSOLU
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠ Le CV DOIT tenir en 2 pages A4 imprimées. C'est une contrainte non négociable.
+Applique ces limites strictes pour y parvenir :
+- PROFIL : 2 phrases maximum — pas de 2e paragraphe
+- EXPÉRIENCES : sélectionne les 5 ou 6 postes les plus pertinents pour CE poste uniquement
+  · Poste actuel ou récent (< 3 ans) : 3 puces maximum
+  · Postes de 3 à 10 ans : 2 puces maximum
+  · Postes de plus de 10 ans : 1 puce maximum, ou une ligne synthétique sans bullets
+  · Postes anciens et peu pertinents pour ce recrutement : à omettre complètement
+- LEADERSHIP : 1 ligne maximum — omettre si le CV est déjà dense
+- cv-job-context : une seule ligne courte, pas de phrase longue
+- Aucune ligne vide inutile entre les éléments
+Si tu constates que le contenu dépasse 2 pages, compresse en réduisant d'abord les puces des postes anciens, puis en raccourcissant les contextes.
 
 ---
 PROFIL DU CANDIDAT :
