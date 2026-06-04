@@ -109,7 +109,37 @@ if (empty($company) || empty($position)) {
     }
 }
 
-// ── Extraction du texte de l'annonce ─────────────────
+// ── Extraction via JSON-LD (contenu complet, pas tronqué par "voir plus") ──
+$jobText = '';
+$jsonldNodes = $xpath->query('//script[@type="application/ld+json"]');
+for ($i = 0; $i < $jsonldNodes->length; $i++) {
+    $raw = trim($jsonldNodes->item($i)->textContent);
+    $decoded = json_decode($raw, true);
+    if (!$decoded) continue;
+
+    // Peut être un tableau ou un objet direct
+    $items = isset($decoded[0]) ? $decoded : [$decoded];
+    foreach ($items as $item) {
+        $type = $item['@type'] ?? '';
+        if (is_array($type)) $type = implode(',', $type);
+        if (stripos($type, 'JobPosting') !== false) {
+            $desc = $item['description'] ?? '';
+            // Nettoyer le HTML éventuel dans la description
+            $desc = strip_tags(html_entity_decode($desc, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            if (mb_strlen($desc) > 200) {
+                $jobText = $desc;
+
+                // Récupérer position/entreprise depuis JSON-LD si pas encore trouvés
+                if (empty($position)) $position = trim($item['title'] ?? '');
+                if (empty($company))  $company  = trim($item['hiringOrganization']['name'] ?? ($item['hiringOrganization'] ?? ''));
+                if (is_array($company)) $company = '';
+                break 2;
+            }
+        }
+    }
+}
+
+// ── Extraction du texte de l'annonce (fallback si pas de JSON-LD) ─────────
 // Supprimer les balises inutiles
 foreach (['script','style','nav','header','footer','noscript','aside','iframe'] as $tag) {
     $nodes = $dom->getElementsByTagName($tag);
@@ -119,7 +149,6 @@ foreach (['script','style','nav','header','footer','noscript','aside','iframe'] 
 }
 
 // Chercher la section principale de l'annonce (sélecteurs courants)
-$jobText   = '';
 $selectors = [
     '//div[contains(@class,"description__text")]',        // LinkedIn
     '//div[contains(@class,"show-more-less-html")]',      // LinkedIn
@@ -134,6 +163,7 @@ $selectors = [
 ];
 
 foreach ($selectors as $sel) {
+    if (!empty($jobText)) break;
     $nodes = $xpath->query($sel);
     if ($nodes->length > 0) {
         $raw = trim($nodes->item(0)->textContent);
