@@ -250,13 +250,23 @@ RÈGLES IMPÉRATIVES — FORMATAGE
 - Les COMPÉTENCES CLÉS : 6 à 8 items texte brut — inclure les mots-clés exacts de la fiche de poste
 - Ne jamais inventer ni exagérer — respecter strictement la réalité du parcours
 
+EXPÉRIENCE EN COURS — OBLIGATOIRE, TOUJOURS EN PREMIÈRE POSITION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠ Ce bloc est FIXE et OBLIGATOIRE. Il doit toujours apparaître en tête de la section EXPÉRIENCE PROFESSIONNELLE, avant tous les autres postes. Ne jamais l'omettre, ne jamais le déplacer.
+
+  Intitulé du poste : [adapter selon l'offre — ex : "Consultante SI & Conduite de Projet" ou "Directrice de Programme Indépendante" — refléter le vocabulaire exact du recruteur]
+  Entreprise        : Activité indépendante
+  Période           : Novembre 2025 – Présent
+  Contexte          : Conseil en stratégie SIC et conduite de projets toutes approches (agile, PMI, hybride). Formatrice professionnelle partenaire CEGOS et ORSYS.
+  Bullets (2 à 3)   : Adapter au poste ciblé — valoriser les missions de conseil ou de formation les plus pertinentes pour CE recruteur. S'appuyer sur les certifications (PMP, ACP, TOGAF, ITIL, Agile Scrum) comme preuves d'expertise opérationnelle.
+
 RÈGLES IMPÉRATIVES — 2 PAGES MAXIMUM ABSOLU
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠ Le CV DOIT tenir en 2 pages A4 imprimées. C'est une contrainte non négociable.
 Applique ces limites strictes pour y parvenir :
 - PROFIL : 2 phrases maximum — pas de 2e paragraphe
-- EXPÉRIENCES : sélectionne les 5 ou 6 postes les plus pertinents pour CE poste uniquement
-  · Poste actuel ou récent (< 3 ans) : 3 puces maximum
+- EXPÉRIENCES : l'activité indépendante (ci-dessus) est toujours présente. Sélectionne ensuite 4 ou 5 postes salariés parmi les plus pertinents pour CE poste uniquement
+  · Poste récent (< 3 ans) : 3 puces maximum
   · Postes de 3 à 10 ans : 2 puces maximum
   · Postes de plus de 10 ans : 1 puce maximum, ou une ligne synthétique sans bullets
   · Postes anciens et peu pertinents pour ce recrutement : à omettre complètement
