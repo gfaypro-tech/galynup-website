@@ -169,6 +169,13 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
   </section>
 
   <section class="cv-section">
+    <h3 class="cv-section-title">COMPÉTENCES CLÉS</h3>
+    <ul class="cv-list-2col">
+      <li>[6 à 8 compétences — prioriser les mots-clés exacts de la fiche de poste]</li>
+    </ul>
+  </section>
+
+  <section class="cv-section">
     <h3 class="cv-section-title">CERTIFICATIONS PROFESSIONNELLES</h3>
     <ul class="cv-list-2col">
       <li>PMP, Project Management Professional, PMI</li>
@@ -177,13 +184,6 @@ STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
       <li>Stratégie@HEC, HEC Paris</li>
       <li>TOGAF 10 Foundation, The Open Group</li>
       <li>Agile Scrum Foundation (ASF), EXIN</li>
-    </ul>
-  </section>
-
-  <section class="cv-section">
-    <h3 class="cv-section-title">COMPÉTENCES CLÉS</h3>
-    <ul class="cv-list-2col">
-      <li>[6 à 8 compétences — prioriser les mots-clés exacts de la fiche de poste]</li>
     </ul>
   </section>
 
@@ -233,6 +233,7 @@ RÈGLES IMPÉRATIVES — STRUCTURE
 - Termine OBLIGATOIREMENT par </section> (fermeture de <section id="cv">)
 - N'inclus AUCUN CSS, AUCUN <style>, AUCUN attribut style="" sur aucune balise
 - N'utilise QUE les balises et classes du template ci-dessus — aucune balise supplémentaire
+- L'ORDRE DES SECTIONS EST FIXE ET NON NÉGOCIABLE : Header → Profil → Compétences clés → Certifications → Expérience → Formation → Leadership → Langues. Ne jamais permuter deux sections, même si cela semble plus pertinent pour le poste.
 
 RÈGLES IMPÉRATIVES — CONTENU FIGÉ (copie mot pour mot, sans aucune modification)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
