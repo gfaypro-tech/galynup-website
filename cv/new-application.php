@@ -74,6 +74,13 @@ Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
   ],
   "points_forts": ["point fort 1 du candidat pour ce poste", "point fort 2"],
   "lacunes": ["lacune ou point à renforcer 1", "lacune 2"],
+  "strategie_positionnement": {
+    "angle_narratif": "Le positionnement du candidat face à CE poste en 1-2 phrases — répond à la question : pourquoi ce profil répond exactement au besoin exprimé",
+    "atouts_cles": ["Atout n°1 à valoriser prioritairement", "Atout n°2", "Atout n°3"],
+    "experiences_a_prioriser": ["Poste ou mission le plus parlant pour ce recrutement et pourquoi"],
+    "mots_cles_miroir": ["terme exact du poste 1", "terme 2", "terme 3", "terme 4", "terme 5"],
+    "reframes": ["Lacune identifiée → reformulation positive ou angle d'esquive sans mentir"]
+  }
 }
 
 Ne retourne que le JSON, sans texte avant ou après.
@@ -92,10 +99,55 @@ $jobPosting
 PROMPT;
 }
 
-function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, string $jobPosting): string {
+function buildCVPrompt(string $knowledge, string $analysisJson, string $matchingJson, string $jobPosting, string $enrichmentJson = '[]'): string {
+    $matching   = json_decode($matchingJson, true) ?? [];
+    $strategy   = $matching['strategie_positionnement'] ?? null;
+    $enrichment = json_decode($enrichmentJson, true) ?? [];
+
+    // Bloc "Brief stratégique" (présent uniquement si le champ existe dans le matching)
+    $strategicBrief = '';
+    if ($strategy) {
+        $b = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $b .= "BRIEF STRATÉGIQUE — LIS ET APPLIQUE EN PREMIER\n";
+        $b .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        if (!empty($strategy['angle_narratif']))
+            $b .= "\nANGLE DU PROFIL :\n" . $strategy['angle_narratif'] . "\n";
+        if (!empty($strategy['atouts_cles'])) {
+            $b .= "\nATOUTS À METTRE EN AVANT EN PRIORITÉ :\n";
+            foreach ($strategy['atouts_cles'] as $a) $b .= "• " . $a . "\n";
+        }
+        if (!empty($strategy['experiences_a_prioriser'])) {
+            $b .= "\nEXPÉRIENCES À PRIORISER :\n";
+            foreach ($strategy['experiences_a_prioriser'] as $e) $b .= "• " . $e . "\n";
+        }
+        if (!empty($strategy['mots_cles_miroir']))
+            $b .= "\nVOCABULAIRE À MIROIR (utilise ces termes exacts dans le CV) :\n" . implode(' · ', $strategy['mots_cles_miroir']) . "\n";
+        if (!empty($strategy['reframes'])) {
+            $b .= "\nLACUNES → REFORMULATIONS POSITIVES :\n";
+            foreach ($strategy['reframes'] as $r) $b .= "• " . $r . "\n";
+        }
+        $strategicBrief = $b . "\n";
+    }
+
+    // Bloc "Compétences enrichies"
+    $enrichedNames = array_column(
+        array_filter($enrichment, fn($c) => ($c['status'] ?? '') === 'enriched'),
+        'name'
+    );
+    $enrichmentContext = '';
+    if (!empty($enrichedNames)) {
+        $enrichmentContext = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $enrichmentContext .= "COMPÉTENCES SPÉCIFIQUEMENT DOCUMENTÉES POUR CE POSTE\n";
+        $enrichmentContext .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $enrichmentContext .= "Ces compétences ont été enrichies avec des exemples concrets dans le profil ci-dessous. Utilise ces exemples prioritairement dans les bullets d'expérience :\n";
+        foreach ($enrichedNames as $n) $enrichmentContext .= "✓ " . $n . "\n";
+        $enrichmentContext .= "\n";
+    }
+
     return <<<PROMPT
 Tu es expert en rédaction de CV pour des cadres dirigeants français. Génère un CV sur-mesure en français.
 
+$strategicBrief
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STRUCTURE HTML OBLIGATOIRE — respecte exactement ces balises et classes CSS :
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -214,6 +266,7 @@ Applique ces limites strictes pour y parvenir :
 Si tu constates que le contenu dépasse 2 pages, compresse en réduisant d'abord les puces des postes anciens, puis en raccourcissant les contextes.
 
 ---
+$enrichmentContext
 PROFIL DU CANDIDAT :
 $knowledge
 
@@ -228,6 +281,74 @@ $matchingJson
 ---
 FICHE DE POSTE :
 $jobPosting
+PROMPT;
+}
+
+function buildValidationPrompt(string $cvContent, string $analysisJson, string $jobPosting): string {
+    return <<<PROMPT
+Tu es expert en candidature de cadres dirigeants. Analyse ce CV et vérifie sa cohérence stratégique face à l'offre d'emploi.
+
+Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
+
+{
+  "validations": [
+    {
+      "check": "titre_persona",
+      "label": "Titre du CV aligné sur le persona exact de l'offre",
+      "status": "pass",
+      "observation": "Ce qui est bien ou ce qui pose problème",
+      "correction": null
+    },
+    {
+      "check": "coherence_pitch",
+      "label": "Pitch de présentation cohérent avec le titre, sans contradiction",
+      "status": "fail",
+      "observation": "...",
+      "correction": "Suggestion de correction précise et actionnable — propose le texte exact à substituer"
+    },
+    {
+      "check": "coherence_narrative",
+      "label": "Expériences sélectionnées racontent la même trajectoire narrative",
+      "status": "pass",
+      "observation": "...",
+      "correction": null
+    },
+    {
+      "check": "absence_contradictions",
+      "label": "Aucun signal contradictoire entre les sections du CV",
+      "status": "pass",
+      "observation": "...",
+      "correction": null
+    },
+    {
+      "check": "homogeneite_seniorite",
+      "label": "Niveau de séniorité homogène sur l'ensemble du document",
+      "status": "pass",
+      "observation": "...",
+      "correction": null
+    }
+  ],
+  "pret_a_finaliser": true,
+  "synthese": "Résumé global de la cohérence stratégique en 1-2 phrases"
+}
+
+Règles impératives :
+- "status" vaut uniquement "pass" ou "fail"
+- "correction" : string précise et actionnable si status="fail" (propose le texte exact de remplacement), null si status="pass"
+- "pret_a_finaliser" : true uniquement si TOUS les checks ont status="pass"
+- Ne retourne que le JSON, sans texte avant ou après
+
+---
+FICHE DE POSTE :
+$jobPosting
+
+---
+ANALYSE DU POSTE (JSON) :
+$analysisJson
+
+---
+CV GÉNÉRÉ (HTML) :
+$cvContent
 PROMPT;
 }
 
@@ -678,14 +799,19 @@ elseif ($step === 3):
    STEP 4 — Génération du CV
    ═══════════════════════════════════════════════════ */
 elseif ($step === 4):
-    $prompt = buildCVPrompt($knowledge, $analysisJson, $matchingJson, $app['job_posting']);
+    $cvDraft = trim($app['cv_content'] ?? '');
+    $isRegen = isset($_GET['regen']) && $_GET['regen'] === '1';
+
+    if (empty($cvDraft) || $isRegen):
+        // ─── Phase A : Génération du CV
+        $prompt = buildCVPrompt($knowledge, $analysisJson, $matchingJson, $app['job_posting'], $app['enrichment_data'] ?? '[]');
 ?>
 <div class="card">
   <div class="card-title">✍ Étape 4 — Génération du CV</div>
 
   <div class="alert alert-info">
     La base de connaissance a été enrichie à l'étape précédente. Ce prompt contient tout le contexte.
-    Claude va générer ton CV sur-mesure — colle le résultat ci-dessous.
+    Claude va générer ton CV sur-mesure — colle le résultat ci-dessous. L'alignement stratégique sera vérifié avant de finaliser.
   </div>
 
   <div class="prompt-block">
@@ -699,7 +825,7 @@ elseif ($step === 4):
   <div class="response-block">
     <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
     <textarea id="cv-response" class="form-control" rows="14"
-              placeholder="Colle ici la réponse complète de Claude (le HTML du CV)..."></textarea>
+              placeholder="Colle ici la réponse complète de Claude (le HTML du CV)..."><?= $isRegen ? htmlspecialchars($cvDraft) : '' ?></textarea>
     <div class="flex flex-gap mt-16">
       <button class="btn btn-primary" onclick="previewCV()">Prévisualiser le CV →</button>
       <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
@@ -712,17 +838,100 @@ elseif ($step === 4):
       <div style="font-size:14px; font-weight:700; color:#333;">Aperçu du CV</div>
       <div class="flex flex-gap">
         <button class="btn btn-ghost btn-sm" onclick="resetPreview()">← Modifier la réponse</button>
-        <button class="btn btn-primary" onclick="confirmCV()">Confirmer et enregistrer →</button>
+        <button class="btn btn-primary" onclick="confirmCV()">Sauvegarder et analyser l'alignement →</button>
       </div>
     </div>
     <div id="cv-preview-area" class="cv-preview"></div>
     <div class="flex flex-gap" style="margin-top:16px; justify-content:flex-end;">
       <button class="btn btn-ghost btn-sm" onclick="resetPreview()">← Modifier la réponse</button>
-      <button class="btn btn-primary" onclick="confirmCV()">Confirmer et enregistrer →</button>
+      <button class="btn btn-primary" onclick="confirmCV()">Sauvegarder et analyser l'alignement →</button>
     </div>
     <div id="step4-confirm-msg" class="hidden alert" style="margin-top:12px;"></div>
   </div>
 </div>
+
+<?php
+    else:
+        // ─── Phase B : Validation de l'alignement stratégique
+        $validationPrompt = buildValidationPrompt($cvDraft, $analysisJson, $app['job_posting']);
+?>
+<div class="card">
+  <div class="card-title">✓ Étape 4 — Validation de l'alignement stratégique</div>
+
+  <details style="margin-bottom:20px;">
+    <summary style="font-size:13px;font-weight:600;color:#6D155D;cursor:pointer;padding:8px 0;list-style:none;display:flex;align-items:center;gap:8px;">
+      <span>▶</span> Aperçu du CV généré
+    </summary>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+      <div class="cv-preview"><?= $cvDraft ?></div>
+      <div style="margin-top:12px;">
+        <a href="new-application.php?id=<?= $id ?>&regen=1" class="btn btn-ghost btn-sm">↺ Regénérer depuis le prompt</a>
+      </div>
+    </div>
+  </details>
+
+  <div id="phase-val-prompt">
+    <div class="alert alert-info">
+      Avant de finaliser, vérifie la cohérence stratégique du CV avec ce prompt. La génération ne sera validée qu'une fois tous les contrôles passés.
+    </div>
+    <div class="prompt-block">
+      <div class="prompt-block-header">
+        <span class="prompt-block-title">Prompt de validation — à copier dans Claude.ai</span>
+        <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-validation')">📋 Copier</button>
+      </div>
+      <div class="prompt-text" id="prompt-validation"><?= htmlspecialchars($validationPrompt) ?></div>
+    </div>
+    <div class="response-block">
+      <div class="response-block-title">↳ Coller la réponse de Claude ici</div>
+      <textarea id="validation-response" class="form-control" rows="10"
+                placeholder="Colle ici le JSON de validation retourné par Claude..."></textarea>
+      <div class="flex flex-gap mt-16">
+        <button class="btn btn-primary" onclick="parseValidationResponse()">Analyser l'alignement →</button>
+        <a href="new-application.php?id=<?= $id ?>&back=1" class="btn btn-ghost">← Retour</a>
+      </div>
+      <div id="val-msg" class="hidden alert" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <div id="phase-val-results" style="display:none; margin-top:24px;">
+    <div id="validation-checklist"></div>
+
+    <div id="phase-corrections" style="display:none; margin-top:24px;">
+      <div class="alert alert-warning" style="margin-bottom:16px;">
+        ⚠ Des corrections sont nécessaires avant de finaliser le CV.
+      </div>
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <span class="prompt-block-title">Prompt de correction — à copier dans Claude.ai</span>
+          <button class="btn btn-gold btn-sm" onclick="copyPrompt('prompt-correction')">📋 Copier</button>
+        </div>
+        <div class="prompt-text" id="prompt-correction"></div>
+      </div>
+      <div class="response-block" style="margin-top:12px;">
+        <div class="response-block-title">↳ Coller le CV corrigé ici</div>
+        <textarea id="corrected-cv-response" class="form-control" rows="14"
+                  placeholder="Colle ici le HTML du CV corrigé par Claude..."></textarea>
+        <div class="flex flex-gap mt-16">
+          <button class="btn btn-primary" onclick="applyCorrectedCV()">Remplacer et revalider →</button>
+        </div>
+        <div id="correction-msg" class="hidden alert" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div id="phase-finalize" style="display:none; margin-top:24px;">
+      <div class="alert alert-success" style="margin-bottom:16px;">✓ Tous les contrôles sont passés — le CV est prêt à être finalisé.</div>
+      <button class="btn btn-primary btn-lg" onclick="finalizeCV()">Finaliser et passer à l'export →</button>
+    </div>
+
+    <div id="phase-force-finalize" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+      <button class="btn btn-ghost btn-sm" style="color:#bbb;" onclick="forceFinalizeCV()">Ignorer les corrections et finaliser quand même ↗</button>
+    </div>
+
+    <div id="finalize-msg" class="hidden alert" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<?php endif; ?>
 
 <?php /* ═══════════════════════════════════════════════════
    STEP 5 — Export
@@ -912,6 +1121,7 @@ elseif ($step === 5):
 
 <script>
 const appId = <?= $id > 0 ? $id : 'null' ?>;
+const cvDraftHtml = <?= ($step === 4 && !empty(trim($app['cv_content'] ?? '')) && !isset($_GET['regen'])) ? json_encode($app['cv_content']) : '""' ?>;
 
 // ── Copier un prompt ──────────────────────────────
 function copyPrompt(id) {
@@ -1389,7 +1599,7 @@ function resetPreview() {
 
 function confirmCV() {
   const raw   = document.getElementById('cv-response')?.value?.trim();
-  const msgEl = document.getElementById('step5-confirm-msg');
+  const msgEl = document.getElementById('step4-confirm-msg');
   if (!raw) return;
   fetch('php/save-step.php', {
     method: 'POST',
@@ -1399,8 +1609,127 @@ function confirmCV() {
   .then(r => r.json())
   .then(d => {
     if (d.success) window.location = 'new-application.php?id=' + appId;
-    else showMsg(document.getElementById('step4-confirm-msg'), d.error || 'Erreur lors de l\'enregistrement.', 'error');
+    else showMsg(msgEl, d.error || 'Erreur lors de l\'enregistrement.', 'error');
   });
+}
+
+// ── Step 4 Phase B — Validation de l'alignement stratégique ──────────
+function parseValidationResponse() {
+  const raw   = document.getElementById('validation-response')?.value?.trim();
+  const msgEl = document.getElementById('val-msg');
+  if (!raw) { showMsg(msgEl, 'Colle la réponse de Claude avant de continuer.', 'error'); return; }
+
+  let parsed = null;
+  try { parsed = JSON.parse(raw); } catch(e) {}
+  if (!parsed) {
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch(e) {} }
+  }
+  if (!parsed || !Array.isArray(parsed.validations)) {
+    showMsg(msgEl, 'Le JSON semble invalide. Vérifie ce que Claude a retourné.', 'error');
+    return;
+  }
+
+  window._validationResult = parsed;
+  const allPass     = parsed.pret_a_finaliser === true;
+  const failedChecks = parsed.validations.filter(v => v.status === 'fail');
+
+  // Construire l'affichage de la checklist
+  let html = '';
+  if (parsed.synthese) {
+    const synthBg     = allPass ? '#f0faf4' : '#fff4e0';
+    const synthBorder = allPass ? '#2a7d4b' : '#b36b00';
+    html += `<div style="background:${synthBg};border-left:4px solid ${synthBorder};padding:12px 16px;border-radius:6px;font-size:14px;color:#333;margin-bottom:20px;">${parsed.synthese}</div>`;
+  }
+
+  html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">';
+  parsed.validations.forEach(v => {
+    const isPass     = v.status === 'pass';
+    const icon       = isPass ? '✓' : '✗';
+    const iconColor  = isPass ? '#2a7d4b' : '#c0392b';
+    const bg         = isPass ? '#f0faf4' : '#fdf2f2';
+    const border     = isPass ? '#2a7d4b' : '#c0392b';
+    const corrHtml   = (!isPass && v.correction)
+      ? `<div style="font-size:12px;color:#c0392b;margin-top:6px;padding:6px 10px;background:#fff;border-radius:4px;border-left:2px solid #c0392b;"><strong>Correction :</strong> ${v.correction}</div>`
+      : '';
+    html += `<div style="display:flex;gap:12px;padding:12px 14px;background:${bg};border-radius:8px;border-left:3px solid ${border};">
+      <span style="font-size:16px;font-weight:700;color:${iconColor};flex-shrink:0;width:16px;">${icon}</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:#333;margin-bottom:${v.observation ? '4px' : '0'};">${v.label}</div>
+        ${v.observation ? `<div style="font-size:12px;color:#555;">${v.observation}</div>` : ''}
+        ${corrHtml}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('validation-checklist').innerHTML = html;
+  document.getElementById('phase-val-results').style.display = 'block';
+  document.getElementById('phase-val-prompt').style.display  = 'none';
+  document.getElementById('phase-val-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (allPass) {
+    document.getElementById('phase-finalize').style.display       = 'block';
+    document.getElementById('phase-corrections').style.display    = 'none';
+    document.getElementById('phase-force-finalize').style.display = 'none';
+  } else {
+    document.getElementById('phase-finalize').style.display       = 'none';
+    document.getElementById('phase-force-finalize').style.display = 'block';
+    document.getElementById('prompt-correction').textContent      = buildCorrectionPromptText(cvDraftHtml, failedChecks);
+    document.getElementById('phase-corrections').style.display    = 'block';
+  }
+}
+
+function buildCorrectionPromptText(cvHtml, failedChecks) {
+  let corrections = '';
+  failedChecks.forEach(c => {
+    corrections += '\n' + c.label + ' :\n→ ' + c.correction + '\n';
+  });
+  return `Tu dois corriger un CV de cadre dirigeant. Apporte UNIQUEMENT les corrections listées ci-dessous. Conserve EXACTEMENT la structure HTML, les classes CSS et tout le reste du contenu sans rien modifier d\'autre.
+
+CORRECTIONS À APPORTER :
+${corrections}
+Retourne le CV complet corrigé entre <section id="cv"> et </section>, sans aucun texte avant ni après.
+
+---
+CV ACTUEL :
+${cvHtml}`;
+}
+
+function applyCorrectedCV() {
+  const raw   = document.getElementById('corrected-cv-response')?.value?.trim();
+  const msgEl = document.getElementById('correction-msg');
+  if (!raw) { showMsg(msgEl, 'Colle le CV corrigé avant de continuer.', 'error'); return; }
+  fetch('php/save-step.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id: appId, step: 4, content: raw })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location = 'new-application.php?id=' + appId;
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
+  });
+}
+
+function finalizeCV() {
+  const msgEl          = document.getElementById('finalize-msg');
+  const validationJson = window._validationResult ? JSON.stringify(window._validationResult) : null;
+  fetch('php/finalize-cv.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ app_id: appId, validation_result: validationJson })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) window.location = 'new-application.php?id=' + appId;
+    else showMsg(msgEl, d.error || 'Erreur.', 'error');
+  });
+}
+
+function forceFinalizeCV() {
+  if (!confirm('Finaliser le CV sans corriger les problèmes détectés ?')) return;
+  finalizeCV();
 }
 
 // ── Utilitaires ────────────────────────────────────

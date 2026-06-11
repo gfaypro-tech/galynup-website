@@ -32,7 +32,7 @@ $html = '<!DOCTYPE html>
 body {
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 11pt; color: #1c1c18; background: #fff;
-  padding: 5mm 20mm; line-height: 1.6;
+  padding: 3mm 20mm; line-height: 1.6;
 }
 .letter-meta { margin-bottom: 12mm; }
 .letter-sender { font-size: 10pt; color: #555; }
@@ -57,7 +57,7 @@ curl_setopt_array($curl, [
     CURLOPT_POSTFIELDS     => json_encode([
         'source'    => $html,
         'format'    => 'A4',
-        'margin'    => ['top' => '5mm', 'right' => '0mm', 'bottom' => '5mm', 'left' => '0mm'],
+        'margin'    => ['top' => '3mm', 'right' => '0mm', 'bottom' => '3mm', 'left' => '0mm'],
         'use_print' => false,
         'landscape' => false,
     ]),

@@ -116,7 +116,7 @@ switch ($step) {
                 $cvHtml = $openTag . substr($content, $afterOpen, $closePos - $afterOpen) . '</section>';
             }
         }
-        $db->prepare("UPDATE cv_applications SET cv_content = ?, step_current = 5, status = 'completed', updated_at = NOW() WHERE id = ?")
+        $db->prepare("UPDATE cv_applications SET cv_content = ?, validation_result = NULL, updated_at = NOW() WHERE id = ?")
            ->execute([$cvHtml, $id]);
         break;
 

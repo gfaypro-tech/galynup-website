@@ -16,9 +16,19 @@ $pageTitle  = $pageTitle ?? CV_TITLE;
 </head>
 <body>
 
+<div class="mobile-topbar">
+  <button class="hamburger" id="hamburger-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <span class="mobile-brand-name">CV Builder</span>
+</div>
+
 <div class="layout">
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <span class="brand-icon">◈</span>
       <span class="brand-name">CV Builder</span>

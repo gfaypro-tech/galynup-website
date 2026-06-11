@@ -31,3 +31,39 @@ document.addEventListener('keydown', function(e) {
     if (btn && !btn.disabled) btn.click();
   }
 });
+
+// ── Mobile sidebar toggle ──────────────────────────
+(function() {
+  var btn     = document.getElementById('hamburger-btn');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebar-overlay');
+  if (!btn || !sidebar || !overlay) return;
+
+  function openSidebar() {
+    sidebar.classList.add('sidebar--open');
+    overlay.classList.add('sidebar-overlay--visible');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('sidebar--open');
+    overlay.classList.remove('sidebar-overlay--visible');
+    btn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.contains('sidebar--open') ? closeSidebar() : openSidebar();
+  });
+  overlay.addEventListener('click', closeSidebar);
+
+  sidebar.querySelectorAll('.nav-item').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSidebar();
+  });
+})();
