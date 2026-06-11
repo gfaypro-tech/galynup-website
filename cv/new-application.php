@@ -255,11 +255,15 @@ EXPÉRIENCE EN COURS — OBLIGATOIRE, TOUJOURS EN PREMIÈRE POSITION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠ Ce bloc est FIXE et OBLIGATOIRE. Il doit toujours apparaître en tête de la section EXPÉRIENCE PROFESSIONNELLE, avant tous les autres postes. Ne jamais l'omettre, ne jamais le déplacer.
 
-  Intitulé du poste : [adapter selon l'offre — ex : "Consultante SI & Conduite de Projet" ou "Directrice de Programme Indépendante" — refléter le vocabulaire exact du recruteur]
+  Intitulé du poste : [adapter selon l'offre — ex : "Consultante en Stratégie SIC & Conduite de Projet" ou "Experte Transformation & Gestion de Projet" — refléter le vocabulaire exact du recruteur]
   Entreprise        : Activité indépendante
   Période           : Novembre 2025 – Présent
-  Contexte          : Conseil en stratégie SIC et conduite de projets toutes approches (agile, PMI, hybride). Formatrice professionnelle partenaire CEGOS et ORSYS.
-  Bullets (2 à 3)   : Adapter au poste ciblé — valoriser les missions de conseil ou de formation les plus pertinentes pour CE recruteur. S'appuyer sur les certifications (PMP, ACP, TOGAF, ITIL, Agile Scrum) comme preuves d'expertise opérationnelle.
+  Contexte          : Conseil en stratégie SIC (Systèmes d'Information et Connaissances) et conduite de projets toutes approches (agile, PMI, hybride). Formatrice professionnelle partenaire CEGOS et ORSYS. Auteure d'un ouvrage sur l'IA au service de la gestion de projet, édité par AFNOR.
+  Bullets (3)       : Rédiger 3 puces adaptées au poste ciblé en puisant dans ces 4 leviers selon ce qui résonne le mieux avec l'offre :
+    1. Missions de conseil SI — stratégie, gouvernance, architecture, transformation numérique
+    2. Formation professionnelle — conception et animation de formations conduite de projet (CEGOS, ORSYS), toutes approches
+    3. Publication AFNOR — auteure d'un livre sur l'IA appliquée à la gestion de projet, signal fort d'expertise et de légitimité sectorielle
+    4. Certifications comme preuves d'expertise opérationnelle — PMP, ACP, TOGAF, ITIL, Agile Scrum
 
 RÈGLES IMPÉRATIVES — 2 PAGES MAXIMUM ABSOLU
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
