@@ -61,6 +61,12 @@ function buildMatchingPrompt(string $knowledge, string $analysisJson, string $jo
     return <<<PROMPT
 Tu es expert en recrutement. Compare le profil d'un candidat avec une fiche de poste analysée.
 
+RÈGLE DE MATCHING — LIS AVANT TOUT :
+- Tu recherches des ÉQUIVALENCES SÉMANTIQUES, pas des correspondances mot à mot. Une compétence peut être formulée différemment dans le profil et dans l'offre : "coordination de parties prenantes" peut apparaître dans le profil comme "pilotage éditeurs/prestataires", "liaison avec intégrateurs", "gestion multi-acteurs", "interface entre équipes", etc. C'est un MATCH.
+- Cherche activement des preuves dans TOUTES les entrées du profil (expériences, formations, compétences, certifications). Une compétence présente dans une seule expérience ancienne reste une compétence prouvée.
+- Ne mets "Non trouvé" et force "absent" QUE s'il n'existe aucune trace directe ou indirecte dans l'ensemble du profil.
+- En cas de doute, préfère "faible" à "absent".
+
 Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
 
 {
@@ -68,7 +74,7 @@ Retourne UNIQUEMENT un JSON valide avec exactement cette structure :
   "correspondances": [
     {
       "competence": "compétence requise par le poste",
-      "trouve_dans_profil": "ce qui correspond dans le profil du candidat (ou 'Non trouvé')",
+      "trouve_dans_profil": "citation ou reformulation exacte de ce qui correspond dans le profil (ou 'Non trouvé' uniquement si vraiment absent)",
       "force": "fort|moyen|faible|absent"
     }
   ],
