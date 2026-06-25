@@ -255,7 +255,7 @@ EXPÉRIENCE EN COURS — OBLIGATOIRE, TOUJOURS EN PREMIÈRE POSITION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠ Ce bloc est FIXE et OBLIGATOIRE. Il doit toujours apparaître en tête de la section EXPÉRIENCE PROFESSIONNELLE, avant tous les autres postes. Ne jamais l'omettre, ne jamais le déplacer.
 
-  Intitulé du poste : [adapter selon l'offre — ex : "Consultante en Stratégie SIC & Conduite de Projet" ou "Experte Transformation & Gestion de Projet" — refléter le vocabulaire exact du recruteur]
+  Intitulé du poste : Consultante indépendante SIC (Systèmes d'Information et Connaissance) — FIXE, ne jamais modifier
   Entreprise        : Activité indépendante
   Période           : Novembre 2025 – Présent
   Contexte          : Conseil en stratégie SIC (Systèmes d'Information et Connaissances) et conduite de projets toutes approches (agile, PMI, hybride). Formatrice professionnelle partenaire CEGOS et ORSYS. Auteure d'un ouvrage sur l'IA au service de la gestion de projet, édité par AFNOR.
@@ -275,6 +275,7 @@ Applique ces limites strictes pour y parvenir :
   · Postes de 3 à 10 ans : 2 puces maximum
   · Postes de plus de 10 ans : 1 puce maximum, ou une ligne synthétique sans bullets
   · Postes anciens et peu pertinents pour ce recrutement : à omettre complètement
+- ANTI-TROUS CHRONOLOGIQUES — RÈGLE ABSOLUE : la sélection des postes NE DOIT CRÉER AUCUN TROU de plus de 3 mois dans la chronologie. Si l'omission d'un poste crée un trou visible (ex : 2019–2022 non couvert), tu DOIS inclure ce poste avec une seule ligne synthétique (sans bullets) plutôt que de le supprimer. Un recruteur qui détecte un trou non expliqué disqualifie immédiatement le candidat.
 - LEADERSHIP : 1 ligne maximum — omettre si le CV est déjà dense
 - cv-job-context : une seule ligne courte, pas de phrase longue
 - Aucune ligne vide inutile entre les éléments
