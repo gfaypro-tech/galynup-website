@@ -1,0 +1,339 @@
+/* =====================================================
+   CV Builder — Thème Dark Galynup
+   Palette aubergine + gold sur fond sombre
+   Chargé par-dessus style.css — override uniquement
+   ===================================================== */
+
+/* ── Variables ───────────────────────────────────── */
+:root {
+  --aubergine:      #c060b0;        /* aubergine éclairci pour fond sombre */
+  --aubergine-dark: #6D155D;
+  --gold:           #D3A625;        /* gold inchangé — pop sur fond sombre */
+  --gold-light:     #f0d47a;
+  --bg:             #0e090c;        /* fond très sombre teinté aubergine */
+  --white:          #ffffff;
+  --text:           #f0e8ee;        /* blanc chaud */
+  --text-muted:     rgba(240,232,238,0.45);
+  --border:         rgba(109,21,93,0.28);
+  --sidebar-bg:     #160c13;
+  --sidebar-text:   rgba(232,213,228,0.70);
+  --sidebar-hover:  rgba(255,255,255,0.07);
+  --sidebar-active: rgba(211,166,37,0.18);
+  --success:        #5dba87;
+  --error:          #e05555;
+  --step-done:      #c060b0;
+  --step-active:    #D3A625;
+  --step-todo:      rgba(255,255,255,0.18);
+  --shadow:         0 8px 32px rgba(0,0,0,0.55);
+  --radius:         10px;
+}
+
+/* ── Body ────────────────────────────────────────── */
+body {
+  background: #0e090c;
+  background-image:
+    radial-gradient(ellipse at 10% 60%, rgba(109,21,93,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 10%, rgba(211,166,37,0.04) 0%, transparent 40%);
+  color: var(--text);
+}
+
+/* ── Sidebar ─────────────────────────────────────── */
+.sidebar {
+  background: #120a10;
+  border-right: 1px solid rgba(109,21,93,0.30);
+}
+
+.sidebar-brand  { border-bottom: 1px solid rgba(109,21,93,0.25); }
+.brand-icon     { color: var(--gold); }
+.brand-name     { color: #ffffff; }
+
+.nav-item       { color: rgba(232,213,228,0.65); }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #ffffff; }
+.nav-item.active { background: rgba(211,166,37,0.16); color: var(--gold); }
+
+.nav-item--cta {
+  background: var(--aubergine-dark);
+  color: #ffffff;
+  border: none;
+}
+.nav-item--cta:hover {
+  background: var(--gold);
+  color: var(--aubergine-dark);
+}
+
+.nav-item--logout { color: rgba(232,213,228,0.30); }
+.sidebar-footer   { border-top: 1px solid rgba(109,21,93,0.25); }
+
+/* ── Page header ─────────────────────────────────── */
+.page-header {
+  background: rgba(255,255,255,0.025);
+  border-bottom: 1px solid rgba(109,21,93,0.25);
+}
+.page-title { color: var(--gold); }
+
+/* ── Cards ───────────────────────────────────────── */
+.card {
+  background: rgba(109,21,93,0.08);
+  border: 1px solid rgba(109,21,93,0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.40);
+}
+.card-title { color: var(--gold); }
+
+/* ── Stat cards ──────────────────────────────────── */
+.stat-card {
+  background: rgba(109,21,93,0.08);
+  border: 1px solid rgba(109,21,93,0.22);
+}
+.stat-number { color: var(--gold); }
+.stat-label  { color: rgba(240,232,238,0.42); }
+
+/* ── Login ───────────────────────────────────────── */
+.login-page { background: #0e090c; }
+
+.login-box {
+  background: rgba(109,21,93,0.12);
+  border: 1px solid rgba(109,21,93,0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 64px rgba(0,0,0,0.65), inset 0 1px 0 rgba(211,166,37,0.08);
+}
+.login-logo .brand-icon { color: var(--gold); }
+.login-logo .brand-name { color: #ffffff; }
+
+.login-error {
+  background: rgba(224,85,85,0.10);
+  border: 1px solid rgba(224,85,85,0.25);
+  color: rgba(255,140,140,0.90);
+}
+
+/* ── Forms ───────────────────────────────────────── */
+.form-group label { color: rgba(240,232,238,0.65); }
+
+.form-control {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(109,21,93,0.30);
+  color: #f0e8ee;
+}
+.form-control::placeholder { color: rgba(240,232,238,0.28); }
+.form-control:focus {
+  border-color: var(--aubergine);
+  box-shadow: 0 0 0 3px rgba(109,21,93,0.20);
+  background: rgba(255,255,255,0.07);
+  outline: none;
+}
+
+/* ── Boutons ─────────────────────────────────────── */
+.btn-primary { background: var(--aubergine-dark); color: #ffffff; }
+.btn-primary:hover { background: #5a1050; }
+
+.btn-gold { background: var(--gold); color: var(--aubergine-dark); }
+.btn-gold:hover { background: #c09820; }
+
+.btn-outline {
+  color: var(--aubergine);
+  border: 2px solid rgba(192,96,176,0.45);
+  background: transparent;
+}
+.btn-outline:hover {
+  background: rgba(109,21,93,0.25);
+  color: #ffffff;
+  border-color: var(--aubergine);
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.04);
+  color: rgba(240,232,238,0.55);
+  border: 1px solid rgba(109,21,93,0.22);
+}
+.btn-ghost:hover { background: rgba(109,21,93,0.15); color: #f0e8ee; }
+
+.btn-danger { background: rgba(224,85,85,0.80); color: #ffffff; }
+.btn-danger:hover { background: rgba(224,85,85,1); }
+
+/* ── Steps bar ───────────────────────────────────── */
+.steps-bar {
+  background: rgba(109,21,93,0.07);
+  border: 1px solid rgba(109,21,93,0.22);
+}
+
+.step:not(:last-child)::after      { background: rgba(255,255,255,0.12); }
+.step.done:not(:last-child)::after { background: var(--aubergine); }
+
+.step-circle {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.18);
+  color: rgba(240,232,238,0.38);
+}
+.step.done .step-circle {
+  background: var(--aubergine);
+  border-color: var(--aubergine);
+  color: #ffffff;
+}
+.step.active .step-circle {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--aubergine-dark);
+}
+
+.step-label              { color: rgba(240,232,238,0.38); }
+.step.active .step-label { color: var(--gold); font-weight: 600; }
+.step.done .step-label   { color: var(--aubergine); }
+
+/* ── Prompt / Response ───────────────────────────── */
+.prompt-block {
+  background: rgba(109,21,93,0.10);
+  border: 1px solid rgba(109,21,93,0.25);
+}
+.prompt-block-title { color: var(--aubergine); }
+
+.prompt-text {
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(109,21,93,0.18);
+  color: rgba(240,232,238,0.80);
+}
+
+.response-block {
+  background: rgba(93,186,135,0.07);
+  border: 1px solid rgba(93,186,135,0.22);
+}
+.response-block-title { color: #5dba87; }
+
+/* ── Badges ──────────────────────────────────────── */
+.badge-experience  { background: rgba(192,96,176,0.15); color: #e090d4; }
+.badge-competence  { background: rgba(130,170,255,0.12); color: rgba(170,200,255,0.90); }
+.badge-formation   { background: rgba(93,186,135,0.11); color: rgba(93,186,135,0.90); }
+.badge-import      { background: rgba(211,166,37,0.14); color: #f0d47a; }
+.badge-autre       { background: rgba(255,255,255,0.07); color: rgba(240,232,238,0.50); }
+
+.badge-status-draft      { background: rgba(255,255,255,0.07); color: rgba(240,232,238,0.45); }
+.badge-status-completed  { background: rgba(93,186,135,0.11); color: rgba(93,186,135,0.90); }
+.badge-status-dialogue   { background: rgba(211,166,37,0.14); color: #f0d47a; }
+.badge-status-generating { background: rgba(192,96,176,0.15); color: #e090d4; }
+.badge-status-analysis   { background: rgba(130,170,255,0.12); color: rgba(170,200,255,0.90); }
+.badge-status-matching   { background: rgba(130,170,255,0.12); color: rgba(170,200,255,0.90); }
+
+/* ── Tabs ────────────────────────────────────────── */
+.tabs { border-bottom-color: rgba(109,21,93,0.28); }
+.tab-btn { color: rgba(240,232,238,0.42); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.sub-tabs { border-bottom-color: rgba(109,21,93,0.22); }
+.sub-tab-btn { color: rgba(240,232,238,0.42); }
+.sub-tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.tab-badge { background: rgba(211,166,37,0.18); color: #f0d47a; }
+
+/* ── Question cards ──────────────────────────────── */
+.question-card {
+  background: rgba(109,21,93,0.10);
+  border: 1px solid rgba(211,166,37,0.35);
+}
+.question-number { color: var(--gold); }
+.question-text   { color: #f0e8ee; }
+.question-why    { color: rgba(240,232,238,0.42); }
+
+/* ── Alerts ──────────────────────────────────────── */
+.alert-info    { background: rgba(130,170,255,0.09); color: rgba(170,200,255,0.90); border-color: rgba(130,170,255,0.22); }
+.alert-success { background: rgba(93,186,135,0.09); color: rgba(93,186,135,0.90);  border-color: rgba(93,186,135,0.22); }
+.alert-warning { background: rgba(211,166,37,0.10); color: #f0d47a;               border-color: rgba(211,166,37,0.28); }
+.alert-error   { background: rgba(224,85,85,0.09);  color: rgba(255,140,140,0.90); border-color: rgba(224,85,85,0.22); }
+
+/* ── Knowledge items ─────────────────────────────── */
+.knowledge-item {
+  background: rgba(109,21,93,0.07);
+  border: 1px solid rgba(109,21,93,0.22);
+}
+.knowledge-item:hover {
+  border-color: var(--aubergine);
+  box-shadow: 0 0 0 1px rgba(192,96,176,0.12);
+}
+.knowledge-title   { color: #f0e8ee; }
+.knowledge-preview { color: rgba(240,232,238,0.45); }
+
+/* ── Application items ───────────────────────────── */
+.application-item {
+  background: rgba(109,21,93,0.07);
+  border: 1px solid rgba(109,21,93,0.22);
+}
+.application-item:hover {
+  border-color: var(--aubergine);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+.application-company  { color: #f0e8ee; }
+.application-position { color: rgba(240,232,238,0.48); }
+.application-date     { color: rgba(240,232,238,0.38); }
+.application-link:hover .application-company { color: var(--gold); }
+
+#platform-badge { background: rgba(211,166,37,0.14); color: #f0d47a; }
+.source-platform a { color: var(--gold); }
+
+/* ── Exp pills ───────────────────────────────────── */
+.exp-pill {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(109,21,93,0.30);
+  color: rgba(240,232,238,0.65);
+}
+.exp-pill:hover { border-color: var(--aubergine); color: #f0e8ee; }
+.exp-pill.selected {
+  background: var(--aubergine-dark);
+  border-color: var(--aubergine-dark);
+  color: #ffffff;
+}
+.exp-pill-new {
+  border-style: dashed;
+  border-color: rgba(192,96,176,0.40);
+  color: rgba(192,96,176,0.85);
+  background: rgba(109,21,93,0.06);
+}
+.exp-pill-new.selected { background: var(--aubergine-dark); color: #fff; }
+.exp-pills-group-label { color: rgba(240,232,238,0.22); }
+
+/* ── Hiring pipeline ─────────────────────────────── */
+.hiring-select.hiring-non_envoye { background: rgba(255,255,255,0.07);  color: rgba(240,232,238,0.45); }
+.hiring-select.hiring-envoye     { background: rgba(130,170,255,0.13);  color: rgba(170,200,255,0.90); }
+.hiring-select.hiring-repondu    { background: rgba(211,166,37,0.14);   color: #f0d47a; }
+.hiring-select.hiring-entretien  { background: rgba(192,96,176,0.15);   color: #e090d4; }
+.hiring-select.hiring-offre      { background: rgba(93,186,135,0.13);   color: rgba(93,186,135,0.90); }
+.hiring-select.hiring-refuse     { background: rgba(224,85,85,0.11);    color: rgba(255,140,140,0.90); }
+.hiring-select.hiring-abandon    { background: rgba(255,255,255,0.04);  color: rgba(240,232,238,0.28); font-style: italic; }
+
+/* ── CV preview (blanc pour lisibilité + impression) */
+.cv-preview {
+  background: #ffffff;
+  border: none;
+  color: #1c1c18;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.60);
+}
+.cv-preview .cv-section-title { color: var(--aubergine-dark); border-bottom-color: var(--aubergine-dark); }
+.cv-preview .cv-subtitle      { color: var(--aubergine-dark); }
+.cv-preview .cv-list-2col li::before  { color: var(--aubergine-dark); }
+.cv-preview .cv-job-bullets li::before { color: var(--aubergine-dark); }
+
+/* ── Letter preview ──────────────────────────────── */
+.letter-preview {
+  background: #ffffff;
+  border: none;
+  color: #1c1c18;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.60);
+}
+
+/* ── Mobile ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mobile-topbar {
+    background: #120a10;
+    border-bottom: 1px solid rgba(109,21,93,0.30);
+  }
+  .mobile-brand-name { color: #ffffff; }
+  .hamburger span    { background: #ffffff; }
+  .sidebar { background: #120a10; }
+}
+
+/* ── Print ───────────────────────────────────────── */
+@media print {
+  body { background: #ffffff; color: #1c1c18; }
+  .sidebar, .page-header, .steps-bar, .btn, .alert { display: none !important; }
+  .main-content { margin-left: 0; }
+  .cv-preview { box-shadow: none; }
+}

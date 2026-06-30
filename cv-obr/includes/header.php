@@ -11,17 +11,14 @@ $pageTitle  = $pageTitle ?? CV_TITLE;
   <title><?= htmlspecialchars($pageTitle) ?> — CV Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<?php $cvTheme = CV_THEME ?? 'default'; ?>
-<?php if ($cvTheme === 'glass'): ?>
+<?php if ((CV_THEME ?? 'default') === 'glass'): ?>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <?php else: ?>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <?php endif; ?>
   <link rel="stylesheet" href="<?= cvUrl('css/style.css') ?>">
-<?php if ($cvTheme === 'glass'): ?>
+<?php if ((CV_THEME ?? 'default') === 'glass'): ?>
   <link rel="stylesheet" href="<?= cvUrl('css/style-glass.css') ?>">
-<?php elseif ($cvTheme === 'dark'): ?>
-  <link rel="stylesheet" href="<?= cvUrl('css/style-dark.css') ?>">
 <?php endif; ?>
 </head>
 <body>

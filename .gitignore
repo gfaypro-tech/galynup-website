@@ -25,6 +25,7 @@ logs/
 # Credentials — ne jamais committer
 php/config.php
 cv/config.php
+cv-obr/config.php
 
 # PrestaShop (prestations/)
 prestations/vendor/
