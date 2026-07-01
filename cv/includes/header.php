@@ -9,6 +9,14 @@ $pageTitle  = $pageTitle ?? CV_TITLE;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle) ?> — CV Builder</title>
+  <link rel="icon" type="image/svg+xml" href="<?= cvUrl('img/icon.svg') ?>">
+  <link rel="apple-touch-icon" href="<?= cvUrl('img/icon.php?size=180') ?>">
+  <link rel="manifest" href="<?= cvUrl('manifest.json') ?>">
+  <meta name="theme-color" content="#6D155D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CV Builder">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <?php $cvTheme = CV_THEME ?? 'default'; ?>

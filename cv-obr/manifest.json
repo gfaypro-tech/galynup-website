@@ -1,0 +1,28 @@
+{
+  "name": "CV Builder",
+  "short_name": "CV Builder",
+  "description": "Générateur de CV et lettres de motivation",
+  "start_url": "/cv-obr/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0d14",
+  "theme_color": "#0d0d14",
+  "icons": [
+    {
+      "src": "/cv-obr/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/cv-obr/img/icon.php?size=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/cv-obr/img/icon.php?size=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
