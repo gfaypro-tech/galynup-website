@@ -507,6 +507,7 @@ select.form-control {
 .badge-status-generating { background: #ede0f0; color: var(--aubergine); }
 .badge-status-analysis   { background: #e8f4fd; color: #1565c0; }
 .badge-status-matching   { background: #e8f4fd; color: #1565c0; }
+.badge-status-direct     { background: #fff4e0; color: #b36b00; font-style: italic; }
 
 /* ── Knowledge base list ─────────────────────────── */
 .knowledge-list {
@@ -645,10 +646,155 @@ select.form-control {
 .hiring-select.hiring-non_envoye { background: #f0f0f0;  color: #777; }
 .hiring-select.hiring-envoye     { background: #e3eeff;  color: #1565c0; }
 .hiring-select.hiring-repondu    { background: #fff4e0;  color: #b36b00; }
+.hiring-select.hiring-relance    { background: #e3f5ff;  color: #0277bd; }
 .hiring-select.hiring-entretien  { background: #ede0f0;  color: var(--aubergine); }
 .hiring-select.hiring-offre      { background: #e8f8ee;  color: var(--success); }
 .hiring-select.hiring-refuse     { background: #fde8e8;  color: #c62828; }
 .hiring-select.hiring-abandon    { background: #efefef;  color: #aaa;    font-style: italic; }
+
+/* ── Status groups (Parcours CV / Statut / Avancement) */
+.app-statuses {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.app-status-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.app-status-prefix {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Statut + bouton commentaire côte à côte */
+.status-with-comment {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Bouton commentaire de relance */
+.btn-comment {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 3px;
+  border-radius: 4px;
+  opacity: 0.2;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.btn-comment:hover    { opacity: 0.55; }
+.btn-comment.has-comment { opacity: 1; }
+
+/* ── Avancement select ───────────────────────────────── */
+.avancement-select {
+  border: none;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+.avancement-select.avancement-en_cours   { background: #e3eeff; color: #1565c0; }
+.avancement-select.avancement-a_relancer { background: #fff4e0; color: #b36b00; }
+.avancement-select.avancement-cloture    { background: #f0f0f0; color: #aaa; font-style: italic; }
+
+/* ── Date candidature inline ─────────────────────────── */
+.app-date-cand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.date-cand-input {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--white);
+  cursor: pointer;
+  max-width: 136px;
+  transition: border-color 0.15s;
+}
+.date-cand-input:focus { border-color: var(--aubergine); outline: none; }
+
+/* ── Modal ───────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--aubergine);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.modal-close:hover { background: var(--bg); color: var(--text); }
+
+.modal-body { padding: 20px 24px; }
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
 
 /* ── CV preview ─────────────────────────────────── */
 .cv-preview {
@@ -958,6 +1104,12 @@ select.form-control {
 
   .knowledge-item { flex-wrap: wrap; gap: 10px; }
   .knowledge-actions { width: 100%; justify-content: flex-end; }
+
+  .app-statuses { flex-wrap: wrap; gap: 8px; }
+  .app-date-cand { flex-direction: row; align-items: center; gap: 6px; }
+  .date-cand-input { max-width: 100%; }
+  .modal-box { max-width: 100%; }
+  .modal-header, .modal-body, .modal-footer { padding-left: 16px; padding-right: 16px; }
 
   .prompt-block, .response-block { padding: 14px; }
   .prompt-block-header { flex-wrap: wrap; gap: 8px; }

@@ -157,7 +157,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Contenu complet / formulaire d'édition (masqué par défaut) -->
-        <div id="expand-<?= $entry['id'] ?>" class="hidden card" style="border-top:none; border-radius:0 0 8px 8px; padding:0; background:#fafaf8;">
+        <div id="expand-<?= $entry['id'] ?>" class="hidden card" style="border-top:none; border-radius:0 0 8px 8px; padding:0;">
           <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.6; padding:16px 20px; margin:0;"><?= htmlspecialchars($entry['content']) ?></pre>
         </div>
       <?php endforeach; ?>

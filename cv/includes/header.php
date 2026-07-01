@@ -12,7 +12,7 @@ $pageTitle  = $pageTitle ?? CV_TITLE;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <?php $cvTheme = CV_THEME ?? 'default'; ?>
-<?php if ($cvTheme === 'glass'): ?>
+<?php if ($cvTheme === 'glass' || $cvTheme === 'dark'): ?>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <?php else: ?>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">

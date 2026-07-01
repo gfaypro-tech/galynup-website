@@ -26,6 +26,7 @@
   --step-todo:      rgba(255,255,255,0.18);
   --shadow:         0 8px 32px rgba(0,0,0,0.55);
   --radius:         10px;
+  --font-title:     'Space Grotesk', 'DM Sans', system-ui, sans-serif;
 }
 
 /* ── Body ────────────────────────────────────────── */
@@ -124,6 +125,17 @@ body {
   outline: none;
 }
 
+/* ── Select / dropdown ───────────────────────────── */
+select.form-control {
+  background-color: #1a0d16;
+}
+select.form-control option,
+.hiring-select option,
+.avancement-select option {
+  background: #1a0d16;
+  color: #f0e8ee;
+}
+
 /* ── Boutons ─────────────────────────────────────── */
 .btn-primary { background: var(--aubergine-dark); color: #ffffff; }
 .btn-primary:hover { background: #5a1050; }
@@ -213,6 +225,7 @@ body {
 .badge-status-generating { background: rgba(192,96,176,0.15); color: #e090d4; }
 .badge-status-analysis   { background: rgba(130,170,255,0.12); color: rgba(170,200,255,0.90); }
 .badge-status-matching   { background: rgba(130,170,255,0.12); color: rgba(170,200,255,0.90); }
+.badge-status-direct     { background: rgba(211,166,37,0.13); color: #f0d47a; font-style: italic; }
 
 /* ── Tabs ────────────────────────────────────────── */
 .tabs { border-bottom-color: rgba(109,21,93,0.28); }
@@ -239,6 +252,23 @@ body {
 .alert-success { background: rgba(93,186,135,0.09); color: rgba(93,186,135,0.90);  border-color: rgba(93,186,135,0.22); }
 .alert-warning { background: rgba(211,166,37,0.10); color: #f0d47a;               border-color: rgba(211,166,37,0.28); }
 .alert-error   { background: rgba(224,85,85,0.09);  color: rgba(255,140,140,0.90); border-color: rgba(224,85,85,0.22); }
+
+/* ── Enrich preview (fond clair intentionnel) ───── */
+#enrich-preview {
+  color: #1c1c18;
+}
+
+/* ── Knowledge expand panel ─────────────────────── */
+[id^="expand-"] {
+  background: rgba(109,21,93,0.10) !important;
+  color: #f0e8ee;
+}
+[id^="expand-"] pre {
+  color: #f0e8ee;
+}
+[id^="expand-"] label {
+  color: rgba(240,232,238,0.65) !important;
+}
 
 /* ── Knowledge items ─────────────────────────────── */
 .knowledge-item {
@@ -294,10 +324,39 @@ body {
 .hiring-select.hiring-non_envoye { background: rgba(255,255,255,0.07);  color: rgba(240,232,238,0.45); }
 .hiring-select.hiring-envoye     { background: rgba(130,170,255,0.13);  color: rgba(170,200,255,0.90); }
 .hiring-select.hiring-repondu    { background: rgba(211,166,37,0.14);   color: #f0d47a; }
+.hiring-select.hiring-relance    { background: rgba(130,200,255,0.13);  color: rgba(160,220,255,0.90); }
 .hiring-select.hiring-entretien  { background: rgba(192,96,176,0.15);   color: #e090d4; }
 .hiring-select.hiring-offre      { background: rgba(93,186,135,0.13);   color: rgba(93,186,135,0.90); }
 .hiring-select.hiring-refuse     { background: rgba(224,85,85,0.11);    color: rgba(255,140,140,0.90); }
 .hiring-select.hiring-abandon    { background: rgba(255,255,255,0.04);  color: rgba(240,232,238,0.28); font-style: italic; }
+
+/* ── Avancement select (dark) ────────────────────── */
+.avancement-select.avancement-en_cours   { background: rgba(130,170,255,0.13); color: rgba(170,200,255,0.90); }
+.avancement-select.avancement-a_relancer { background: rgba(211,166,37,0.14);  color: #f0d47a; }
+.avancement-select.avancement-cloture    { background: rgba(255,255,255,0.04); color: rgba(240,232,238,0.28); font-style: italic; }
+
+/* ── Date candidature (dark) ─────────────────────── */
+.date-cand-input {
+  background: rgba(109,21,93,0.10);
+  border-color: rgba(109,21,93,0.32);
+  color: var(--text);
+}
+.date-cand-input:focus {
+  border-color: var(--aubergine);
+  background: rgba(109,21,93,0.16);
+}
+
+/* ── Modal (dark) ────────────────────────────────── */
+.modal-box {
+  background: #160c13;
+  border: 1px solid rgba(109,21,93,0.38);
+  box-shadow: 0 20px 72px rgba(0,0,0,0.70), inset 0 1px 0 rgba(192,96,176,0.06);
+}
+.modal-header        { border-bottom-color: rgba(109,21,93,0.30); }
+.modal-header h3     { color: var(--aubergine); }
+.modal-footer        { border-top-color: rgba(109,21,93,0.30); }
+.modal-close         { color: rgba(240,232,238,0.45); }
+.modal-close:hover   { background: rgba(109,21,93,0.15); color: var(--text); }
 
 /* ── CV preview (blanc pour lisibilité + impression) */
 .cv-preview {
