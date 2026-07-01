@@ -157,7 +157,20 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Contenu complet / formulaire d'édition (masqué par défaut) -->
+        <?php
+          $meta    = $entry['meta_json'] ? json_decode($entry['meta_json'], true) : [];
+          $eRole   = htmlspecialchars($meta['role']    ?? '');
+          $eComp   = htmlspecialchars($meta['company'] ?? '');
+          $ePeriod = htmlspecialchars($meta['period']  ?? '');
+          $hasMeta = $entry['type'] === 'experience' && ($eRole || $eComp || $ePeriod);
+        ?>
         <div id="expand-<?= $entry['id'] ?>" class="hidden card" style="border-top:none; border-radius:0 0 8px 8px; padding:0;">
+          <?php if ($hasMeta): ?>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding:10px 20px; font-size:12px; border-bottom:1px solid var(--border);">
+            <span><strong><?= $eRole ?></strong><?= $eComp ? ' &middot; ' . $eComp : '' ?></span>
+            <span style="color:var(--text-muted);"><?= $ePeriod ?></span>
+          </div>
+          <?php endif; ?>
           <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.6; padding:16px 20px; margin:0;"><?= htmlspecialchars($entry['content']) ?></pre>
         </div>
       <?php endforeach; ?>
@@ -271,11 +284,23 @@ function editEntry(id) {
   expEl.classList.remove('hidden');
 }
 
+// Construit le HTML du panneau lecture (méta + contenu)
+function buildExpandContent(d) {
+  let meta = '';
+  if (d.type === 'experience' && (d.role || d.company || d.period)) {
+    meta = `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 20px;font-size:12px;border-bottom:1px solid var(--border);">
+      <span><strong>${esc(d.role)}</strong>${d.company ? ' &middot; ' + esc(d.company) : ''}</span>
+      <span style="color:var(--text-muted);">${esc(d.period)}</span>
+    </div>`;
+  }
+  return meta + `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;padding:16px 20px;margin:0;">${esc(d.content)}</pre>`;
+}
+
 // Annuler l'édition → revenir en mode lecture
 function cancelEdit(id) {
   const d = knowledgeData[id];
   const expEl = document.getElementById('expand-' + id);
-  expEl.innerHTML = `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;padding:16px 20px;margin:0;">${esc(d.content)}</pre>`;
+  expEl.innerHTML = buildExpandContent(d);
   expEl.classList.add('hidden');
 }
 
